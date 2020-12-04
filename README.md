@@ -1,4 +1,4 @@
-## RecipeBook
+## MyRecipes
 
 ## Grupo: 
 - Mateus de Melo Carvalho
@@ -7,7 +7,7 @@
 - Vitor Siman do Amaral Lamartine
 
 ## Descrição breve:
-O RecipeBook permite cadastro de receitas que podem ser compartilhadas entre usuários, os usuários podem avaliar as receitas e salva-lás como favorito. Além disso, permite que o usuário cadastre suas próprias receitas para que os demais usuários possam visualizá-las. 
+O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usuários, os usuários podem avaliar as receitas e salva-lás como favorito. Além disso, permite que o usuário cadastre suas próprias receitas para que os demais usuários possam visualizá-las. 
 
 ## Escopo Funcional:
 - Cadastro de Usuário, o usuário pode cadastrar-se.
