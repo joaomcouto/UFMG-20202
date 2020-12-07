@@ -20,7 +20,7 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
 
 ## Escopo Tecnológico:
 - backend: python, mySQL
-- frontend: javascript, html, css
+- frontend: javascript, html, css (Framework: React)
 
 ### Teremos sprint de colocar em produção
 
