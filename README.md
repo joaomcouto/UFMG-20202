@@ -24,4 +24,6 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
 
 ### Teremos sprint de colocar em produção
 
+### Kanban: https://github.com/VLamartine/pds2020-2/projects/1
+
 ### pds2020-2
