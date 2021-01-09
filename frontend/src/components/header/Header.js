@@ -5,7 +5,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 const Header = () => {
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-      <Navbar.Brand href="#home">MyRecipes</Navbar.Brand>
+      <Navbar.Brand href="/">MyRecipes</Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
@@ -20,8 +20,9 @@ const Header = () => {
           </NavDropdown> */}
         </Nav>
         <Nav>
-          <Nav.Link href="#deets">Login</Nav.Link>
-          <Nav.Link href="#deets">Logout</Nav.Link>
+          <Nav.Link href="/login">Entrar</Nav.Link>
+          <Nav.Link href="/register">Cadastrar</Nav.Link>
+          <Nav.Link href="#deets">Sair</Nav.Link>
           <Nav.Link eventKey={2} href="#memes">
             Perfil
           </Nav.Link>
