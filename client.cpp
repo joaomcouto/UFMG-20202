@@ -20,7 +20,13 @@ void main(int arc, char **argv){
         logexit("socket");
     } //verifica retorno das funções
 
-    if (0 != connect(s, addr, sizeof(addr))){
+    struct sockaddr_storage storage;
+    if(0!= addrparse(argv[1], argv[2], &storage)){
+        printf("deu pau no storage parse") ;
+    }
+    struct sockaddr *addr = (struct sockaddr *)(&storage) ;
+
+    if (0 != connect(s, addr, sizeof(storage))){
         logexit("connect");
     } 
     char addrstr[BUFSZ];
