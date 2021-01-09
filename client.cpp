@@ -4,6 +4,8 @@
 #include <sys/socket.h> 
 #include <sys/types.h>
 #include <unistd.h>
+#include <arpa/inet.h>
+#include <utils.cpp>
 
 
 void logexit(const char *msg){
@@ -14,32 +16,35 @@ void logexit(const char *msg){
 #define BUFSZ 1024
 
 void main(int arc, char **argv){
-    int s;
-    s = socket(AF_INET, SOCK_STREAM, 0);
-    if (s = -1){
-        logexit("socket");
-    } //verifica retorno das funções
+    
 
     struct sockaddr_storage storage;
     if(0!= addrparse(argv[1], argv[2], &storage)){
         printf("deu pau no storage parse") ;
     }
+
+    int s;
+    s = socket(storage.ss_family, SOCK_STREAM, 0);
+    if (s = -1){
+        logexit("socket");
+    } //verifica retorno das funções
+
     struct sockaddr *addr = (struct sockaddr *)(&storage) ;
 
     if (0 != connect(s, addr, sizeof(storage))){
         logexit("connect");
     } 
+    
     char addrstr[BUFSZ];
-
-    addrtostr(addr, addstr, BUFSZ);
+    addrtostr(addr, addrstr, BUFSZ);
 
     printf("connected to %s\n");
 
-    char buf[BUFSZ]);
+    char buf[BUFSZ];
     memset(buf, 0, BUFSZ);
     printf("mensagem> ");
     fgets(buf, BUFSZ-1, stdin);
-    int count = send(s, buf, strlen(buf)+1,0 ); //+1 eh pq do \0
+    size_t count = send(s, buf, strlen(buf)+1,0 ); //+1 eh pq do \0
 
     if (count != strlen(buf+1)){
         logexit("send");
@@ -59,5 +64,5 @@ void main(int arc, char **argv){
 
     printf("Received %u bytes \n", total) ; 
 
-    exit(EXIT_SUCCESS)
+    exit(EXIT_SUCCESS) ;
 }
