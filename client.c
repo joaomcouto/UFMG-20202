@@ -1,3 +1,4 @@
+#include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -5,17 +6,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <utils.cpp>
 
-
-void logexit(const char *msg){
-    perror(msg);
-    exit(EXIT_FAILURE);
-}
 
 #define BUFSZ 1024
 
-void main(int arc, char **argv){
+int main(int argc, char **argv){
     
 
     struct sockaddr_storage storage;
@@ -25,7 +20,7 @@ void main(int arc, char **argv){
 
     int s;
     s = socket(storage.ss_family, SOCK_STREAM, 0);
-    if (s = -1){
+    if (s == -1){
         logexit("socket");
     } //verifica retorno das funções
 
@@ -38,7 +33,7 @@ void main(int arc, char **argv){
     char addrstr[BUFSZ];
     addrtostr(addr, addrstr, BUFSZ);
 
-    printf("connected to %s\n");
+    printf("connected to %s\n",addrstr);
 
     char buf[BUFSZ];
     memset(buf, 0, BUFSZ);
