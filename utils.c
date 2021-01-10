@@ -58,7 +58,7 @@ void addrtostr (const struct sockaddr * addr , char * str, size_t strsize){
     } else if (addr->sa_family == AF_INET6){
         version = 6;
         struct sockaddr_in6 * addr6 = (struct sockaddr_in6 *) addr;
-        if(!inet_ntop(AF_INET, &(addr6->sin6_addr), addrstr, INET_ADDRSTRLEN+1 )){
+        if(!inet_ntop(AF_INET6, &(addr6->sin6_addr), addrstr, INET_ADDRSTRLEN+1 )){
             logexit("ntop") ;
         }
         port = ntohs(addr6->sin6_port); //network to host short

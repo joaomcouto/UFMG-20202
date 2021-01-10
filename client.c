@@ -41,10 +41,13 @@ int main(int argc, char **argv){
     fgets(buf, BUFSZ-1, stdin);
     size_t count = send(s, buf, strlen(buf)+1,0 ); //+1 eh pq do \0
 
-    if (count != strlen(buf+1)){
+
+    if (count != (strlen(buf)+1)){
         logexit("send");
     }
 
+     //printf("AAAAAAAAAAAAAAA ") ; 
+    
 
     memset(buf, 0, BUFSZ);
     unsigned total = 0 ;
@@ -56,8 +59,8 @@ int main(int argc, char **argv){
         total += count; 
     }
     close(s);
-
     printf("Received %u bytes \n", total) ; 
+    puts(buf) ;
 
     exit(EXIT_SUCCESS) ;
 }
