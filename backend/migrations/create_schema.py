@@ -1,6 +1,6 @@
 import sqlite3
 
-connection = sqlite3.connect('users.db')
+connection = sqlite3.connect('MyRecipes.db')
 cursor = connection.cursor()
 
 cursor.execute("""
