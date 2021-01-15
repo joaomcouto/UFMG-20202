@@ -1,10 +1,14 @@
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import classes from './Login.module.css';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/Auth';
+import fetch from '../../util/fetch';
 
 const Login = () => {
+  const [hasError, setHasError] = useState(false);
+
   const [isFormValid, setIsFormValid] = useState(false);
   const [formData, setFormData] = useState({
     email: {
@@ -17,7 +21,9 @@ const Login = () => {
       valid: false,
       touched: false
     }
-  })
+  });
+
+  const { authToken, setToken } = useAuth();
 
   useEffect(() => {
     for(let field in formData){
@@ -56,6 +62,18 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const data = {};
+
+    for(let prop in formData){
+      data[prop] = formData.prop.value
+    }
+
+    const response = fetch.post('/login', {body: data});
+    if(response.status === 200){
+      setToken(response.data);
+    } else {
+      setHasError(true);
+    }
   }
 
   const formClasses = [
@@ -64,30 +82,40 @@ const Login = () => {
     'border', 'border-dark', 'rounded'
   ];
 
-  return (
-    <Form className={formClasses.join` `} onSubmit={handleSubmit}>
-      <Form.Group controlId="email">
-        <Form.Label>Email</Form.Label>
-        <Form.Control onChange={handleChange} isInvalid={!formData.email.valid && formData.email.touched} type="email" placeholder="Digite seu email" />
-        <Form.Control.Feedback type="invalid">Digite um email válido</Form.Control.Feedback>
-      </Form.Group>
+  if(authToken){
+    return <Redirect to="/"/>
+  }
 
-      <Form.Group controlId="password">
-        <Form.Label>Senha</Form.Label>
-        <Form.Control onChange={handleChange} isInvalid={!formData.password.valid && formData.password.touched} type="password" placeholder="Senha" />
-      
-      </Form.Group>
-      <Button disabled={!isFormValid} className={'m-auto'} variant="primary" type="submit">
-        Entrar
-      </Button>
+  return ( 
+      <Form className={formClasses.join` `} onSubmit={handleSubmit}>
+        <Form.Group controlId="email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control onChange={handleChange} isInvalid={!formData.email.valid && formData.email.touched} type="email" placeholder="Digite seu email" />
+          <Form.Control.Feedback type="invalid">Digite um email válido</Form.Control.Feedback>
+        </Form.Group>
 
-      <Form.Text>
-        <Link to="/register">
-          Não possui uma conta? Cadastre-se agora!
-        </Link>
-      </Form.Text>
-    </Form>
-  );
+        <Form.Group controlId="password">
+          <Form.Label>Senha</Form.Label>
+          <Form.Control onChange={handleChange} isInvalid={!formData.password.valid && formData.password.touched} type="password" placeholder="Senha" />
+        
+        </Form.Group>
+        {hasError ? ( 
+        <Form.Text className={classes.invalid_data}>
+          Email ou senha inválidos
+        </Form.Text>
+        ) : ''
+        }
+        <Button disabled={!isFormValid} className={'m-auto'} variant="primary" type="submit">
+          Entrar
+        </Button>
+
+        <Form.Text>
+          <Link to="/register">
+            Não possui uma conta? Cadastre-se agora!
+          </Link>
+        </Form.Text>
+      </Form>
+    ) 
 }
 
 export default Login;

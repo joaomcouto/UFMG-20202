@@ -1,10 +1,12 @@
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import classes from './Register.module.css';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/Auth';
 
 const Register = () => {
+  const [hasError, setHasError] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [formData, setFormData] = useState({
     email: {
@@ -28,6 +30,8 @@ const Register = () => {
       touched: false
     }
   });
+
+  const { authToken, setToken } = useAuth();
 
   useEffect(() => {
     for(let field in formData){
@@ -72,8 +76,25 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    const data = {};
+
+    for(let prop in formData){
+      data[prop] = formData.prop.value
+    }
+
+    const response = fetch.post('/register', {body: data});
+    if(response.status === 200){
+      setToken(response.data);
+    } else {
+      setHasError(true);
+    }
   }
 
+
+  if(authToken){
+    return <Redirect to="/"/>
+  }
   const formClasses = [
     classes.Form, 'w-25','p-4' ,'m-auto', 'd-flex', 'flex-column',
     'border', 'border-dark', 'rounded'
@@ -102,6 +123,12 @@ const Register = () => {
         <Form.Control isInvalid={!formData.passwordConfirmation.valid && formData.passwordConfirmation.touched} onChange={handleChange} type="password" placeholder="Confirmar senha"  />
         <Form.Control.Feedback type="invalid">As duas senhas devem ser a mesma</Form.Control.Feedback>
       </Form.Group>
+      {hasError ? ( 
+        <Form.Text className={classes.invalid_data}>
+          Email ou senha inválidos
+        </Form.Text>
+        ) : ''
+      }
       <Button disabled={!isFormValid} className={'m-auto'} variant="primary" type="submit">
         Cadastrar
       </Button>
