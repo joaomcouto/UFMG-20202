@@ -3,13 +3,13 @@
 #include <arpa/inet.h>
 #include <string.h>
 
-void logexit(const char *msg){
+extern void logexit(const char *msg){
     perror(msg);
     exit(EXIT_FAILURE);
 }
 
 
-int addrparse(const char *addrstr, const char *portstr, struct sockaddr_storage *storage){
+extern int addrparse(const char *addrstr, const char *portstr, struct sockaddr_storage *storage){
     if (addrstr == NULL || portstr == NULL){
         return -1 ;
     }
@@ -19,10 +19,12 @@ int addrparse(const char *addrstr, const char *portstr, struct sockaddr_storage 
     if (port == 0 ){
         return -1 ;
     }
-    port = htons(port);
+
+    port = htons(port); //prepara o port para um formato usavel em rede (search later: "endian")
+
 
     struct in_addr inaddr4 ; //32-bit ip addr
-    if(inet_pton(AF_INET, addrstr, &inaddr4)){
+    if(inet_pton(AF_INET, addrstr, &inaddr4)){ //Converte a string com o ip de addrtstr e converte pra struct tipo in_addrt em binario e poe no inaddrt4 que tem que ser sizeof(in_addr)
         struct sockaddr_in * addr4 = (struct sockaddr_in *) storage;
         addr4->sin_family = AF_INET;
         addr4->sin_port = port;
@@ -43,7 +45,7 @@ int addrparse(const char *addrstr, const char *portstr, struct sockaddr_storage 
 
 }
 
-void addrtostr (const struct sockaddr * addr , char * str, size_t strsize){
+extern void addrtostr (const struct sockaddr * addr , char * str, size_t strsize){
     int version;
     char addrstr[INET6_ADDRSTRLEN+1] = "";
     uint16_t port ;
@@ -51,7 +53,7 @@ void addrtostr (const struct sockaddr * addr , char * str, size_t strsize){
     if(addr->sa_family == AF_INET){
         version = 4;
         struct sockaddr_in * addr4 = (struct sockaddr_in *) addr;
-        if(!inet_ntop(AF_INET, &(addr4->sin_addr), addrstr, INET_ADDRSTRLEN+1 )){
+        if(!inet_ntop(AF_INET, &(addr4->sin_addr), addrstr, INET_ADDRSTRLEN+1 )){ //Converte o endereço em binario que esta em addr para formato de leitura humano e poe na string addrstr
             logexit("ntop") ;
         }
         port = ntohs(addr4->sin_port); //network to host short
@@ -71,7 +73,7 @@ void addrtostr (const struct sockaddr * addr , char * str, size_t strsize){
     }
 }
 
-int server_sockaddr_init(const char *proto, const char *portstr, struct sockaddr_storage * storage){
+extern int server_sockaddr_init(const char *proto, const char *portstr, struct sockaddr_storage * storage){
     uint16_t port = (uint16_t)atoi(portstr);
     
     if (port == 0 ){
@@ -84,7 +86,7 @@ int server_sockaddr_init(const char *proto, const char *portstr, struct sockaddr
     if (0 == strcmp(proto, "v4")){
         struct sockaddr_in * addr4 = (struct sockaddr_in *) storage;
         addr4->sin_family = AF_INET;
-        addr4->sin_addr.s_addr = INADDR_ANY ;
+        addr4->sin_addr.s_addr = INADDR_ANY ; //Se colocasse 127.0.0.1 aqui significaria que apenas 
         addr4->sin_port = port;
 
         return 0;

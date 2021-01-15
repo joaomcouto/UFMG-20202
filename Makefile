@@ -1,5 +1,5 @@
 all:
-	gcc -Wall -c utils.c 
-	gcc -Wall client.c utils.o -o client
-	gcc -Wall server.c utils.o -o server 
-	gcc -Wall -pthread server-mt.c utils.o -o server-mt 
+	g++ -Wall -c utils.cpp 
+	g++ -Wall client.cpp utils.o -o client
+	g++ -Wall server.cpp utils.o -o server 
+	g++ -Wall -pthread server-mt.cpp utils.o -o server-mt 

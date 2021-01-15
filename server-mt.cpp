@@ -29,7 +29,7 @@ void * client_thread(void * data){
     printf("[msg] %s, %d bytes: %s \n", caddrstr, (int) count, buf) ; 
 
     sprintf(buf, "remote endpoint: %.1000s\n", caddrstr) ; 
-    count = send(cdata->csock, buf , strlen(buf)+1, 0 );
+    count = send(cdata->csock, buf , strlen(buf)+1, 0 ); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
     if (count != (strlen(buf)+1) ){
         logexit("send");
     }
@@ -61,11 +61,11 @@ int main(int argc, char ** argv){
 
 
     struct sockaddr *addr = (struct sockaddr *)(&storage) ;
-    if (0 != bind(s,addr, sizeof(storage))){
+    if (0 != bind(s,addr, sizeof(storage))){ //associa o socket s com o endereço especificado pela estrutura de endereço apontada por addr
         logexit("bind") ;
     }
 
-    if (0 != listen (s, 10)){
+    if (0 != listen (s, 10)){ //Efetivamente abre o socket para receber conexoes, colocando-as numa fila
         logexit("listen") ;
     }
 
@@ -75,21 +75,24 @@ int main(int argc, char ** argv){
 
     while(1){
         struct sockaddr_storage cstorage;
-        struct sockaddr *caddr = (struct sockaddr *)(&cstorage) ;
+        struct sockaddr *caddr = (struct sockaddr *)(&cstorage) ; //A aplicação não precisa de identificar exatamente o tipo de IP do cliente, entao usamos sockaddr e não sockaddr_in ou sockaddr_in6, a rede sabe que esta na outra ponta
         socklen_t caddrlen  = sizeof(cstorage) ; 
-
-        int csock = accept( s, caddr, &caddrlen) ; 
+        
+        int csock = accept( s, caddr, &caddrlen) ; //Cria um novo socket dedicado para a primeira conexao na fila do socket s
+        //Podemos entao entender o socket s como sendo um front-end, ele serve apenas como uma porta acessivel por outros processo..
+        //... Dai uma vez que o processo faz uma requisição no soquete s e ela é aceita pelo accept, cria-se esse novo socket para fazer conexão, "sessão" especificamente com o socket dentro do connect no client
 
         if(csock == -1){
             logexit("accept") ;
         } 
 
-        struct client_data *cdata = malloc(sizeof(*cdata)) ;
+        struct client_data *cdata = (struct client_data *)malloc(sizeof(*cdata)) ;
         if(!cdata){
             logexit("malloc")  ;
         } 
         cdata->csock = csock ;
         memcpy(&(cdata->storage), &cstorage , sizeof(cstorage)) ; 
+        //cstorage contem informações de endereço do soquete client aceito no accept
         
         pthread_t tid ; 
         pthread_create(&tid, NULL, client_thread, cdata) ;
