@@ -212,7 +212,8 @@ int main(int argc, char **argv)
 {
 
     struct sockaddr_storage storage;
-    if (0 != server_sockaddr_init(argv[1], argv[2], &storage))
+    //if (0 != server_sockaddr_init(argv[1], argv[2], &storage))
+    if (0 != server_sockaddr_init(argv[1], &storage))
     {
         printf("deu pau no storage parse");
     }
