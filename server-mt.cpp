@@ -19,6 +19,7 @@ using namespace std;
 
 std::vector<string> mensagens;
 std::mutex m1;
+int kill = 1; 
 
 struct client_data
 {
@@ -26,6 +27,18 @@ struct client_data
     struct sockaddr_storage storage;
     std::vector<std::string> subs;
 };
+
+void *LogMsg( const char * Header, char * msg){
+    std::cout << Header << ":" << msg << "\n";
+    return 0;
+}
+
+void *LogMsgS( const char * Header, string msg){
+    std::cout << Header << ":" << msg << "\n";
+    return 0;
+}
+
+std::mutex m;
 
 void *client_receive_thread(void *data)
 {
@@ -36,100 +49,116 @@ void *client_receive_thread(void *data)
     addrtostr(caddr, caddrstr, BUFSZ);
 
     char buf[BUFSZ];
-    while (1)
+    
+    while (kill !=0)
     {
-        sleep(1);
         //for (auto i = cdata->subs.begin(); i != cdata->subs.end(); ++i)
         //    std::cout << *i << ' ';
         memset(buf, 0, BUFSZ);
         //sleep(2);
         size_t count ;
-        std::cout << "O count antes do recv eh " << count <<  "\n" ;
+        //sleep(1);
+        //m.lock();
+        //std::cout << "O count antes do recv eh " << count <<  "\n" ;
         count = recv(cdata->csock, buf, BUFSZ - 1, 0);
-        if (count == 0) break ; //Soquete foi fechado
+        printf("[msg received] %s, %d bytes: %s \n", caddrstr, (int)count, buf);
+        if (count == 0) {
+            std::cout <<  "O soquete foi fechado" << cdata->csock;
+            break ; //Soquete foi fechado
+        }
         if (memchr(buf, 10 , 500) == NULL) {
             std::cout << "A mensagem não tem barra n em seus primeiros 500 bytes\n" ;
             break ;
         }
-        std::cout << "O count depois do recv eh" << count <<  "\n" ;
-        std::cout << "Sera que fica preso no recv?" << "\n" ;
+        //std::cout << "O count depois do recv eh" << count <<  "\n" ;
         //std::cout << "O buf é " << buf << "\n" ;
-        if (buf[0] == '+')
-        {
-            char *pos;
-            if ((pos = strchr(buf, '\n')) != NULL)
-                *pos = '\0'; //remove \n
-            //std::cout << "O buf é " << buf << "\n" ;
-            //printf("O buf é %s", buf);
-            //std::cout << "O strlen de buf+1 é " << strlen(buf+1) << "\n" ;
-            //std::cout << "o verificador retorna" << strspn(buf+1, "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM") << "\n";
-            if (strspn(buf+1, "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM") == strlen(buf+1))
-            {
 
-                //std::cout << "passei na verificação\n" ;
-                if (std::find(cdata->subs.begin(), cdata->subs.end(), buf + 1) != cdata->subs.end())
+        char * nextMessage = strtok (buf, "\n");
+        while(nextMessage!= NULL){
+            if(strcmp(nextMessage, "##kill") == 0){
+                kill = 0 ;
+                system("./cliente 127.0.0.1 5151") ; //Cria-se uma novo processo apenas para que no loop while na main saia do accept e avalie a condição do while referente ao kill
+                break ;
+            //std::cout << "Next message do strtok: "<< nextMessage << "\n";
+            } else if (nextMessage[0] == '+')
+            {
+                char *pos;
+                //if ((pos = strchr(nextMessage, '\n')) != NULL)
+                //    *pos = '\0'; //remove \n
+                //LogMsg( "Proxima tag de interesse encontrada em " , nextMessage ) ;
+                //printf("O nextMessage é %s", nextMessage);
+                //std::cout << "O strlen de nextMessage+1 é " << strlen(nextMessage+1) << "\n" ;
+                //std::cout << "o verificador retorna" << strspn(nextMessage+1, "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM") << "\n";
+                if (strspn(nextMessage+1, "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM") == strlen(nextMessage+1))
                 {
-                    std::cout << "detectou que ja tem"
-                              << "\n";
-                    std::string temp(buf);
-                    std::string mensagem = "already subscribed to " + temp + "\n";
-                    size_t count = send(cdata->csock, mensagem.c_str(), mensagem.length() , 0); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
-                    if (count != (mensagem.length() ))
+
+                    //std::cout << "passei na verificação\n" ;
+                    if (std::find(cdata->subs.begin(), cdata->subs.end(), nextMessage + 1) != cdata->subs.end())
                     {
-                        std::cout << "Mensagem de sub para cliente nao enviada";
+                        //std::cout << "detectou que ja tem"
+                                //<< "\n";
+                        std::string temp(nextMessage);
+                        std::string mensagem = "already subscribed to " + temp + "\n";
+                        size_t count = send(cdata->csock, mensagem.c_str(), mensagem.length() , 0); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
+                        if (count != (mensagem.length() ))
+                        {
+                            std::cout << "Mensagem de sub para cliente nao enviada";
+                        }
+                    }
+                    else
+                    {
+                        cdata->subs.push_back(nextMessage + 1);
                     }
                 }
-                else
-                {
-                    cdata->subs.push_back(buf + 1);
-                }
+                //for (auto i = cdata->subs.begin(); i != cdata->subs.end(); ++i)
+                //std::cout << "adicionei " << *i << ' ';
             }
-            //for (auto i = cdata->subs.begin(); i != cdata->subs.end(); ++i)
-            //  std::cout << "adicionei " << *i << ' ';
-        }
-        else if (buf[0] == '-')
-        {
-
-            char *pos;
-            if ((pos = strchr(buf, '\n')) != NULL)
-                *pos = '\0'; //remove \n
-            if (strspn(buf+1, "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM") == strlen(buf+1))
+            else if (nextMessage[0] == '-')
             {
 
-                if (std::find(cdata->subs.begin(), cdata->subs.end(), buf + 1) != cdata->subs.end())
+                char *pos;
+                //if ((pos = strchr(nextMessage, '\n')) != NULL)
+                //    *pos = '\0'; //remove \n
+                if (strspn(nextMessage+1, "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM") == strlen(nextMessage+1))
                 {
 
-                    std::vector<string>::iterator position = std::find(cdata->subs.begin(), cdata->subs.end(), buf + 1);
-                    if (position != cdata->subs.end()) // == myVector.end() means the element was not found
-                        cdata->subs.erase(position);
-                    for (auto i = cdata->subs.begin(); i != cdata->subs.end(); ++i)
-                        std::cout << "sobreviveu " << *i << ' ';
-                }
-                else
-                {
-                    std::cout << "detectou que nao tem"
-                              << "\n";
-                    std::string temp(buf);
-                    std::string mensagem = "not subscribed " + temp + "\n";
-                    size_t count = send(cdata->csock, mensagem.c_str(), mensagem.length() , 0); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
-                    if (count != (mensagem.length() ))
+                    if (std::find(cdata->subs.begin(), cdata->subs.end(), nextMessage + 1) != cdata->subs.end())
                     {
-                        std::cout << "Mensagem de sub para cliente nao enviada";
+
+                        std::vector<string>::iterator position = std::find(cdata->subs.begin(), cdata->subs.end(), nextMessage + 1);
+                        if (position != cdata->subs.end()) // == myVector.end() means the element was not found
+                            cdata->subs.erase(position);
+                        //for (auto i = cdata->subs.begin(); i != cdata->subs.end(); ++i)
+                            //std::cout << "permaneceu" << *i << ' ';
+                    }
+                    else
+                    {
+                        //std::cout << "detectou que nao tem"
+                        //          << "\n";
+                        std::string temp(nextMessage);
+                        std::string mensagem = "not subscribed " + temp + "\n";
+                        size_t count = send(cdata->csock, mensagem.c_str(), mensagem.length() , 0); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
+                        if (count != (mensagem.length() ))
+                        {
+                            std::cout << "Mensagem de sub para cliente nao enviada";
+                        }
                     }
                 }
             }
-        }
-        else
-        {
-            if (strspn(buf, "1234567890 qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM,.?!:;+-*/=@#$%()[]{}\n") == strlen(buf)){
-                m1.lock();
-                mensagens.push_back(buf);
-                std::cout << "o vector global recebeu " << mensagens[0];
-                m1.unlock();
+            else
+            {
+               // LogMsg( "Message received" , nextMessage );
+                if (strspn(nextMessage, "1234567890 qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM,.?!:;+-*/=@#$%()[]{}\n") == strlen(nextMessage)){
+                    m1.lock();
+                    mensagens.push_back(nextMessage);
+                   // LogMsg(  "Vetor messages lido por " , caddrstr );
+                    //for (auto i = mensagens.begin(); i != mensagens.end(); ++i)
+                      //      std::cout << "- " << *i << ' ' << "\n";
+                    m1.unlock();
+                }
             }
+            nextMessage = strtok(NULL, "\n") ;
         }
-
-        //printf("[msg] %s, %d bytes: %s \n", caddrstr, (int)count, buf);
     }
     pthread_exit(EXIT_SUCCESS);
 }
@@ -137,38 +166,66 @@ void *client_receive_thread(void *data)
 void *client_send_thread(void *data)
 {
     struct client_data *cdata = (struct client_data *)data;
-    struct sockaddr *caddr = (struct sockaddr *)(&cdata->storage);
     size_t latest_read = 0;
     //std::cout << "A thread send ta funcionando \n" ;
     //std::cout << mensagens.size() << "\n";
+
+    //LogOnly
+    struct sockaddr *caddr = (struct sockaddr *)(&cdata->storage);
+    char caddrstr[BUFSZ];
+    addrtostr(caddr, caddrstr, BUFSZ);
+
     while (1)
     {
-        sleep(1);
-        //std::cout << mensagens.size() << "\n";
+        //sleep(1);
+        //std::cout << caddrstr << " ja leu " << latest_read << " de " << mensagens.size() << " mensagens\n";
         if (mensagens.size() > latest_read)
         {
-            //std::cout << "Novas mensagens detectadas " << cdata->csock << "\n";
+            //std::cout << caddrstr << " detectou novas mensagens " << "\n";
             std::string mensagem = mensagens[latest_read];
             latest_read++;
             for (auto i = cdata->subs.begin(); i != cdata->subs.end(); ++i)
             {
-                std::string expr = ".*#";
-                expr.append(*i).append("[ \n]");
-                std::string expr2 = "^#";
-                expr2.append(*i).append(" \\.*");
-                //std::cout << expr << "\n";
-                //std::cout << expr2 << "\n";
-                if (regex_match(mensagem, regex(expr)) || regex_match(mensagem, regex(expr2)))
-                {
-                    //std::cout << "Deu match na: " << mensagem;
-                    mensagem.append("\n") ;
+                string HashTag("#");
+                HashTag.append(*i);
+                //std::cout << caddrstr << " verificando se " << *i << " esta em  " << mensagem << "\n";
+                char ParsingMessage[mensagem.length()+1];
+                strcpy(ParsingMessage,mensagem.c_str());
+                char * NextWord = strtok (ParsingMessage, " ");
+                while(NextWord!= NULL){
+                    //std::cout << caddrstr << " verificando se " << NextWord << " igual " << HashTag << "\n";
+                    //if ( 0 == strcmp(NextWord,*i.) ) 
+                    if ( HashTag.compare(NextWord) == 0 ) {
+                    //std::string expr = ".*#";
+                    //expr.append(*i).append("[ \n]");
+                    //std::string expr2 = "^#";
+                    //expr2.append(*i).append(" \\.*");
+                    //caso  "#dota"
+                    //std::string expr3 = "^#";
+                    //expr3.append(*i).append("$");
 
-                    size_t count = send(cdata->csock, mensagem.c_str(), mensagem.length() , 0); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
-                    //break ;
-                    if (count != (mensagem.length() ))
-                    {
-                        std::cout << "Mensagem de sub para cliente nao enviada";
+                    //std::cout << expr << "\n";
+                    //std::cout << expr2 << "\n";
+                    //std::cout << expr3 << "\n";
+
+                    //if (    regex_match(mensagem, regex(expr)  ) || 
+                    //        regex_match(mensagem, regex(expr2) ) ||
+                    //        regex_match(mensagem, regex(expr3) )
+                    //    )
+                    //{
+                        //std::cout << "Deu match na: " << mensagem;
+                        mensagem.append("\n") ;
+                        size_t count = send(cdata->csock, mensagem.c_str(), mensagem.length() , 0); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
+                        
+                        if (count != (mensagem.length() ))
+                        {
+                            std::cout << "Mensagem de sub para cliente nao enviada";
+                        }
+                        i = cdata->subs.end();
+                        i--; 
+                        break ;
                     }
+                    NextWord = strtok (NULL, " ");
                 }
             }
         }
@@ -204,6 +261,8 @@ void *client_thread(void *data)
     //}
 
     pthread_join(tid_receive, NULL);
+
+    pthread_cancel(tid_send);
     close(cdata->csock);
     pthread_exit(EXIT_SUCCESS);
 }
@@ -215,7 +274,7 @@ int main(int argc, char **argv)
     //if (0 != server_sockaddr_init(argv[1], argv[2], &storage))
     if (0 != server_sockaddr_init(argv[1], &storage))
     {
-        printf("deu pau no storage parse");
+        printf("storage parse failure");
     }
 
     int s;
@@ -245,11 +304,11 @@ int main(int argc, char **argv)
 
     char addrstr[BUFSZ];
     addrtostr(addr, addrstr, BUFSZ);
-    printf("bound to %s, waiting connection \n", addrstr);
+    printf("[log] bound to %s, awaiting connection \n", addrstr);
 
-    while (1)
+    while (kill !=0)
     {
-        sleep(1);
+        //sleep(1);
         struct sockaddr_storage cstorage;
         struct sockaddr *caddr = (struct sockaddr *)(&cstorage); //A aplicação não precisa de identificar exatamente o tipo de IP do cliente, entao usamos sockaddr e não sockaddr_in ou sockaddr_in6, a rede sabe que esta na outra ponta
         socklen_t caddrlen = sizeof(cstorage);
