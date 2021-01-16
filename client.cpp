@@ -1,3 +1,4 @@
+#include <pthread.h>
 #include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -6,8 +7,50 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <list>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <algorithm>
+#include <mutex>
+#include <regex>
+using namespace std;
 
 #define BUFSZ 1024
+void *client_receive_thread(void *data)
+{
+    //std::cout << "Aqui quem fala eh o receive do cliente"
+    // << "\n";
+    int *s = (int *)data;
+    char buf[BUFSZ];
+    while (1)
+    {
+        memset(buf, 0, BUFSZ);
+        unsigned total = 0;
+        //unsigned: na ausencia de int, é entendido como unsigned int por default
+        //while (1) //loop pra caso servido tenha separado em multiplos sends
+        //{
+        // std::cout << "Aqui quem fala eh o receive do cliente antes do recv"
+        //<< "\n";
+        total = recv(*s, buf + total, BUFSZ - total, 0);
+        // std::cout << "Aqui quem fala eh o receive do cliente depois do recv e nosso total eh " << total << " strlen buf " << strlen(buf) << "\n";
+        //Buf + total esta simplesmente deslocando o local (adicionando um delta em relacao ao local apontando pelo ponteiro buf) em que o recv vai escrever a proxima parte ("pacote") da mensagem
+        //... Alem disso reduzimos o numero de bytes maximo que ele deve receber do "pacote", pois o buf tem tamanho limitado BUFSZ
+        // ... Assim se a mensagem tiver sido espalhada em multiplos "pacotes", só escrevemos o que ainda couber no buf
+
+        //if (total == 0)
+        //{ //implies connection termination
+
+        //  break;
+        //}
+        //total += count;
+        //}
+        //printf("Received %u bytes \n", total);
+        if (strlen(buf) != 0)
+            puts(buf); //printa no stdout a mensagem salva no buffer pelo recv
+    }
+    pthread_exit(EXIT_SUCCESS);
+}
 
 int main(int argc, char **argv)
 {
@@ -15,7 +58,7 @@ int main(int argc, char **argv)
     struct sockaddr_storage storage;
     if (0 != addrparse(argv[1], argv[2], &storage))
     {
-        printf("deu pau no storage parse");
+        printf("falha storage parse");
     }
 
     int s;
@@ -41,45 +84,37 @@ int main(int argc, char **argv)
     //... Isso é particularmente importante à medida que a camada de rede vai ficando mais densa com traduções de endereços, nics virtuais, offloads de network (em hardware dedicados para manejo da rede por ex)
 
     printf("connected to %s\n", addrstr);
+    pthread_t tid_receive;
+    pthread_create(&tid_receive, NULL, client_receive_thread, &s);
 
     char buf[BUFSZ]; //Armazena a mensagem do usuario que sera mandada pela rede no send
-
-    memset(buf, 0, BUFSZ);
-    printf("mensagem> ");
-    fgets(buf, BUFSZ - 1, stdin);
-    size_t count = send(s, buf, strlen(buf) + 1, 0); //Send recebe o socket, o buffer e o tamanho maximo de leitura: necessario porque do contrario o send é interrompido com
-    //size_t : tamanho maximo de endereços memória que depende do ambiente em que se pretende executa o programa, todavia isso é definido no momento de compilação
-    //.. Então por exemplo, se estamos fazendo um programa pra rodar embarcado, deve-se cuidar para incluir headers que apropriadamente definam o ambiente embarco, inlucindo a definição do size_t
-    // ...
-    //O terceiro parametro de send é simplesmente o numero de bytes que ele deve ler no local apontado pelo pointer no segundo parametro
-    //O strlen para de contar o numero de bytes no momento que bater em um \0,
-
-    if (count != (strlen(buf) + 1))
-    {
-        logexit("send");
-    }
-
-    //printf("AAAAAAAAAAAAAAA ") ;
-
-    memset(buf, 0, BUFSZ);
-    unsigned total = 0;
-    //unsigned: na ausencia de int, é entendido como unsigned int por default
     while (1)
     {
-        count = recv(s, buf + total, BUFSZ - total, 0);
-        //Buf + total esta simplesmente deslocando o local (adicionando um delta em relacao ao local apontando pelo ponteiro buf) em que o recv vai escrever a proxima parte ("pacote") da mensagem
-        //... Alem disso reduzimos o numero de bytes maximo que ele deve receber do "pacote", pois o buf tem tamanho limitado BUFSZ
-        // ... Assim se a mensagem tiver sido espalhada em multiplos "pacotes", só escrevemos o que ainda couber no buf
+        memset(buf, 0, BUFSZ);
+        printf("mensagem> ");
+        fgets(buf, BUFSZ - 1, stdin);
 
-        if (count == 0)
-        { //implies connection termination
-            break;
+        if (strspn(buf, "1234567890 qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM,.?!:;+-*/=@#$%()[]{}\n") == strlen(buf))
+        {
+            size_t count = send(s, buf, strlen(buf) + 1, 0);
+            if (count != (strlen(buf) + 1))
+            {
+                logexit("send");
+            }
         }
-        total += count;
+
+        //Send recebe o socket, o buffer e o tamanho maximo de leitura: necessario porque do contrario o send é interrompido com
+        //size_t : tamanho maximo de endereços memória que depende do ambiente em que se pretende executa o programa, todavia isso é definido no momento de compilação
+        //.. Então por exemplo, se estamos fazendo um programa pra rodar embarcado, deve-se cuidar para incluir headers que apropriadamente definam o ambiente embarco, inlucindo a definição do size_t
+        // ...
+        //O terceiro parametro de send é simplesmente o numero de bytes que ele deve ler no local apontado pelo pointer no segundo parametro
+        //O strlen para de contar o numero de bytes no momento que bater em um \0,
+        //printf("AAAAAAAAAAAAAAA 2") ;
     }
+    //pthread_cancel(tid_receive);
+    //sleep(10) ;
+    //printf("AAAAAAAAAAAAAAA ") ;
     close(s);
-    printf("Received %u bytes \n", total);
-    puts(buf); //printa no stdout a mensagem salva no buffer pelo recv
 
     exit(EXIT_SUCCESS);
 }
