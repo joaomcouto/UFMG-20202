@@ -43,7 +43,16 @@ void *client_receive_thread(void *data)
         //    std::cout << *i << ' ';
         memset(buf, 0, BUFSZ);
         //sleep(2);
-        size_t count = recv(cdata->csock, buf, BUFSZ - 1, 0);
+        size_t count ;
+        std::cout << "O count antes do recv eh " << count <<  "\n" ;
+        count = recv(cdata->csock, buf, BUFSZ - 1, 0);
+        if (count == 0) break ; //Soquete foi fechado
+        if (memchr(buf, 10 , 500) == NULL) {
+            std::cout << "A mensagem não tem barra n em seus primeiros 500 bytes\n" ;
+            break ;
+        }
+        std::cout << "O count depois do recv eh" << count <<  "\n" ;
+        std::cout << "Sera que fica preso no recv?" << "\n" ;
         //std::cout << "O buf é " << buf << "\n" ;
         if (buf[0] == '+')
         {
@@ -63,9 +72,9 @@ void *client_receive_thread(void *data)
                     std::cout << "detectou que ja tem"
                               << "\n";
                     std::string temp(buf);
-                    std::string mensagem = "already subscribed to " + temp;
-                    size_t count = send(cdata->csock, mensagem.c_str(), mensagem.length() + 1, 0); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
-                    if (count != (mensagem.length() + 1))
+                    std::string mensagem = "already subscribed to " + temp + "\n";
+                    size_t count = send(cdata->csock, mensagem.c_str(), mensagem.length() , 0); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
+                    if (count != (mensagem.length() ))
                     {
                         std::cout << "Mensagem de sub para cliente nao enviada";
                     }
@@ -101,9 +110,9 @@ void *client_receive_thread(void *data)
                     std::cout << "detectou que nao tem"
                               << "\n";
                     std::string temp(buf);
-                    std::string mensagem = "not subscribed " + temp;
-                    size_t count = send(cdata->csock, mensagem.c_str(), mensagem.length() + 1, 0); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
-                    if (count != (mensagem.length() + 1))
+                    std::string mensagem = "not subscribed " + temp + "\n";
+                    size_t count = send(cdata->csock, mensagem.c_str(), mensagem.length() , 0); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
+                    if (count != (mensagem.length() ))
                     {
                         std::cout << "Mensagem de sub para cliente nao enviada";
                     }
@@ -151,11 +160,12 @@ void *client_send_thread(void *data)
                 //std::cout << expr2 << "\n";
                 if (regex_match(mensagem, regex(expr)) || regex_match(mensagem, regex(expr2)))
                 {
-                    std::cout << "Deu match na: " << mensagem;
+                    //std::cout << "Deu match na: " << mensagem;
+                    mensagem.append("\n") ;
 
-                    size_t count = send(cdata->csock, mensagem.c_str(), mensagem.length() + 1, 0); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
+                    size_t count = send(cdata->csock, mensagem.c_str(), mensagem.length() , 0); //o +1 é pq o \0, que não eh contado no strlen, de fato vai ser mandado na rede
                     //break ;
-                    if (count != (mensagem.length() + 1))
+                    if (count != (mensagem.length() ))
                     {
                         std::cout << "Mensagem de sub para cliente nao enviada";
                     }
