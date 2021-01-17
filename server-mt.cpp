@@ -37,6 +37,8 @@ void *client_receive_thread(void *data)
     addrtostr(caddr, caddrstr, BUFSZ);
 
     char buf[BUFSZ];
+    char *nextMessage = NULL;
+    char receiver[BUFSZ];
 
     while (kill != 0)
     {
@@ -44,26 +46,54 @@ void *client_receive_thread(void *data)
         //    std::cout << *i << ' ';
         memset(buf, 0, BUFSZ);
         //sleep(2);
+        //std::cout << "antes buf" << *buf ;
+        if (nextMessage != NULL)
+            strcpy(buf, nextMessage);
+        // std::cout << "depois buf" << *buf ;
         size_t count;
         //sleep(1);
         //m.lock();
         //std::cout << "O count antes do recv eh " << count <<  "\n" ;
-        count = recv(cdata->csock, buf, BUFSZ - 1, 0);
-        printf("[msg received] %s, %d bytes: %s \n", caddrstr, (int)count, buf);
+        count = recv(cdata->csock, receiver, BUFSZ - 1, 0);
+        printf("[msg received] %s, %d bytes: %s \n", caddrstr, (int)count, receiver);
         if (count == 0)
         {
             std::cout << "O soquete foi fechado" << cdata->csock;
             break; //Soquete foi fechado
         }
-        if (memchr(buf, 10, 500) == NULL)
+        if (memchr(receiver, 10, 500) == NULL)
         {
             std::cout << "A mensagem não tem barra n em seus primeiros 500 bytes\n";
             break;
         }
+        receiver[count] = '\0';
+        //std::cout << "\n o len do receiver eh " << strlen(receiver) << "\n";
 
-        char *nextMessage = strtok(buf, "\n");
+        strcpy(buf, receiver);
+
+        //std::cout << "\n o len do buf eh " << strlen(buf) << "\n";
+        int carryOn = 1;
+        if (buf[count - 1] == '\n')
+        {
+            carryOn = 0;
+        }
+        else
+        {
+            carryOn = 1;
+        }
+
+        nextMessage = strtok(buf, "\n");
+        //std::cout << "\n o len do next message eh " << strlen(nextMessage) << "\n";
+        char *nextNextMessage;
+
         while (nextMessage != NULL)
         {
+            nextNextMessage = strtok(NULL, "\n");
+            if ((carryOn == 1) && (nextNextMessage == NULL))
+            {
+                //std::cout << "to brekando" ;
+                break;
+            }
             if (strcmp(nextMessage, "##kill") == 0)
             {
                 kill = 0;
@@ -131,7 +161,7 @@ void *client_receive_thread(void *data)
                     m1.unlock();
                 }
             }
-            nextMessage = strtok(NULL, "\n");
+            nextMessage = nextNextMessage;
         }
     }
     pthread_exit(EXIT_SUCCESS);
