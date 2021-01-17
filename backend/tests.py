@@ -67,7 +67,6 @@ class TestCase(BaseTestCase):
         with self.client:
             save_new_user(username, email, password)
             self.login(username, password)
-            newAuthor = current_user.get_id()
             response = self.client.get('/new_recipe', content_type='html/text')
             self.assertEqual(200, response.status_code)
 
@@ -107,7 +106,7 @@ class TestCase(BaseTestCase):
             savedRecipes = get_user_recipes_as_dic(newAuthor)
             self.assertEqual(len(savedRecipes), 2)
 
-            
+#Testes Vinicius
 
 
 if __name__ == '__main__':
