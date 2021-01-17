@@ -20,41 +20,28 @@ using namespace std;
 void *client_receive_thread(void *data)
 
 {
-    //std::cout << "Aqui quem fala eh o receive do cliente"
-    // << "\n";
+
     int *s = (int *)data;
     char buf[BUFSZ];
     while (1)
     {
         memset(buf, 0, BUFSZ);
         unsigned total = 0;
-        //unsigned: na ausencia de int, é entendido como unsigned int por default
-        //while (1) //loop pra caso servido tenha separado em multiplos sends
-        //{
-        // std::cout << "Aqui quem fala eh o receive do cliente antes do recv"
-        //<< "\n";
+
         total = recv(*s, buf + total, BUFSZ - total, 0);
         if (total == 0)
         {
             std::cout << "Cliente detectou fechamento da conexao\n";
             break;
         }
-        //std::cout << total << "\n" ;
-        // std::cout << "Aqui quem fala eh o receive do cliente depois do recv e nosso total eh " << total << " strlen buf " << strlen(buf) << "\n";
+
         //Buf + total esta simplesmente deslocando o local (adicionando um delta em relacao ao local apontando pelo ponteiro buf) em que o recv vai escrever a proxima parte ("pacote") da mensagem
         //... Alem disso reduzimos o numero de bytes maximo que ele deve receber do "pacote", pois o buf tem tamanho limitado BUFSZ
         // ... Assim se a mensagem tiver sido espalhada em multiplos "pacotes", só escrevemos o que ainda couber no buf
 
-        //if (total == 0)
-        //{ //implies connection termination
-
-        //  break;
-        //}
-        //total += count;
-        //}
-        //printf("Received %u bytes \n", total);
+       
         if (strlen(buf) != 0)
-            puts(strcat(buf, "\n")); //printa no stdout a mensagem salva no buffer pelo recv
+            puts(strcat(buf, "\n")); 
     }
     pthread_exit(EXIT_SUCCESS);
 }
@@ -62,14 +49,14 @@ void *client_receive_thread(void *data)
 void *client_send_thread(void *data)
 {
     int * s = (int *)data ; 
-    char buf[BUFSZ]; //Armazena a mensagem do usuario que sera mandada pela rede no send
+    char buf[BUFSZ]; 
     while (1)
     {
         memset(buf, 0, BUFSZ);
         printf("mensagem> ");
         fgets(buf, BUFSZ - 1, stdin);
 
-        if (strspn(buf, "1234567890 qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM,.?!:;+-*/=@#$%()[]{}\n") == strlen(buf))
+        if (strspn(buf, "1234567890 qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM,.?!:;+-*/=@#$%()[]{}\n") == strlen(buf)) //verificação de validade de caracters sendo enviados
         {
             size_t count = send(*s, buf, strlen(buf), 0);
             if (count != (strlen(buf)))
@@ -104,9 +91,9 @@ int main(int argc, char **argv)
     if (s == -1)
     {
         logexit("socket");
-    } //verifica retorno das funções
+    } 
 
-    struct sockaddr *addr = (struct sockaddr *)(&storage); //"Só um pointer pra estrutura de enreço pro socket usar"
+    struct sockaddr *addr = (struct sockaddr *)(&storage); //"um pointer pra estrutura de endereço que o socket possa usar"
 
     if (0 != connect(s, addr, sizeof(storage))) //conecta o socket criado com o endereço/porta apontado pelo addr
     {
@@ -130,7 +117,7 @@ int main(int argc, char **argv)
 
     pthread_join(tid_receive, NULL) ;
 
-    pthread_cancel(tid_send); //Cpmo a thread create retornou, a conexão foi interrompida pelo servido dai basta cancelar a send
+    pthread_cancel(tid_send); //Como a thread receive retornou, a conexão foi interrompida pelo servido dai basta cancelar a send tambem
 
     close(s);
 
