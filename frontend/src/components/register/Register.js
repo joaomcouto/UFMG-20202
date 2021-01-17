@@ -1,39 +1,42 @@
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import {Link, Redirect} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import classes from './Register.module.css';
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '../../context/Auth';
+import { post } from '../../util/fetch';
+
+export const formObject = {
+  email: {
+    value: '',
+    valid: false,
+    touched: false
+  },
+  name: {
+    value: '',
+    valid: false,
+    touched: false
+  },
+  password: {
+    value: '',
+    valid: false,
+    touched: false
+  },
+  passwordConfirmation: {
+    value: '',
+    valid: false,
+    touched: false
+  }
+};
 
 const Register = () => {
-  const [hasError, setHasError] = useState(false);
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [formData, setFormData] = useState({
-    email: {
-      value: '',
-      valid: false,
-      touched: false
-    },
-    name: {
-      value: '',
-      valid: false,
-      touched: false
-    },
-    password: {
-      value: '',
-      valid: false,
-      touched: false
-    },
-    passwordConfirmation: {
-      value: '',
-      valid: false,
-      touched: false
-    }
-  });
+  const [hasError, setHasError] = React.useState(false);
+  const [isFormValid, setIsFormValid] = React.useState(false);
+  const [formData, setFormData] = React.useState(formObject);
 
-  const { authToken, setToken } = useAuth();
+  const setToken = useAuth().setToken;
 
-  useEffect(() => {
+  React.useEffect(() => {
     for(let field in formData){
       if(!formData[field].valid){
         setIsFormValid(false);
@@ -46,6 +49,7 @@ const Register = () => {
   const handleChange = (e) => {
     const value = e.target.value;
     let valid;
+
     switch (e.target.id) {
       case 'name':
         valid = e.target.value.trim() !== ""
@@ -64,14 +68,19 @@ const Register = () => {
         break;
     }
 
-    setFormData({
-      ...formData,
-      [e.target.id]: {
-        valid: valid,
-        value: value,
-        touched: true
-      }
-    });
+    const data = { ...formData };
+    
+    data[e.target.id] = {
+      valid: valid,
+      value: value,
+      touched: true
+    }
+
+    if(e.target.id === "password"){
+      data['passwordConfirmation'].valid = data['passwordConfirmation'].value === value;
+    }
+
+    setFormData(data);
   }
 
   const handleSubmit = (e) => {
@@ -80,10 +89,10 @@ const Register = () => {
     const data = {};
 
     for(let prop in formData){
-      data[prop] = formData.prop.value
+      data[prop] = formData[prop].value
     }
 
-    const response = fetch.post('/register', {body: data});
+    const response = post('/register', {body: data});
     if(response.status === 200){
       setToken(response.data);
     } else {
@@ -91,19 +100,15 @@ const Register = () => {
     }
   }
 
-
-  if(authToken){
-    return <Redirect to="/"/>
-  }
   const formClasses = [
     classes.Form, 'w-25','p-4' ,'m-auto', 'd-flex', 'flex-column',
     'border', 'border-dark', 'rounded'
   ];
   return (
     <Form noValidate className={formClasses.join` `} onSubmit={handleSubmit}>
-      <Form.Group controlId="name">
+      <Form.Group>
         <Form.Label>Nome</Form.Label>
-        <Form.Control isInvalid={!formData.name.valid && formData.name.touched} required onChange={handleChange} type="text" placeholder="Seu email" />
+        <Form.Control id="name" isInvalid={!formData.name.valid && formData.name.touched} required onChange={handleChange} type="text" placeholder="Seu email" />
       </Form.Group>
 
       <Form.Group controlId="email">

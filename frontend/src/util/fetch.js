@@ -1,12 +1,12 @@
 const baseUrl = process.env.REACT_APP_SERVER_URL;
 
 
-const get = async (url) => {
+export async function get(url){
   const response = await fetch(baseUrl + url);
   return await response.json();
 }
 
-const post = async (url, reqOptions) => {
+export async function post(url, reqOptions){
 
   const options = {
     method: 'POST',
@@ -17,7 +17,3 @@ const post = async (url, reqOptions) => {
   const response = await fetch(baseUrl + url, options);
   return await response.json;
 }
-
-const functions = {get, post}
-
-export default functions;

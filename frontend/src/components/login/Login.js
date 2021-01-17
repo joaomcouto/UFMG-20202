@@ -1,13 +1,14 @@
+import React, { useState, useEffect } from 'react';
+
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import classes from './Login.module.css';
-import { Link, Redirect } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/Auth';
-import fetch from '../../util/fetch';
+import { post } from '../../util/fetch';
 
 const Login = () => {
-  const [hasError, setHasError] = useState(false);
+  const [hasError, setHasError] =   useState(false);
 
   const [isFormValid, setIsFormValid] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,7 +24,7 @@ const Login = () => {
     }
   });
 
-  const { authToken, setToken } = useAuth();
+  const  setToken  = useAuth().setToken;
 
   useEffect(() => {
     for(let field in formData){
@@ -65,10 +66,10 @@ const Login = () => {
     const data = {};
 
     for(let prop in formData){
-      data[prop] = formData.prop.value
+      data[prop] = formData[prop].value
     }
 
-    const response = fetch.post('/login', {body: data});
+    const response = post('/login', {body: JSON.stringify(data)});
     if(response.status === 200){
       setToken(response.data);
     } else {
@@ -81,10 +82,6 @@ const Login = () => {
     'w-25','p-4' ,'m-auto', 'd-flex', 'flex-column',
     'border', 'border-dark', 'rounded'
   ];
-
-  if(authToken){
-    return <Redirect to="/"/>
-  }
 
   return ( 
       <Form className={formClasses.join` `} onSubmit={handleSubmit}>

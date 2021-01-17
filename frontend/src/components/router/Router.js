@@ -5,19 +5,16 @@ import Login from '../login/Login';
 import Register from '../register/Register';
 
 const Router = () => {
-  const { authToken } = useAuth();
+  const token = useAuth().token;
   return (
     <BrowserRouter>
       <Switch>
-        <Route exact path="/">
-          <Home />
-        </Route>
+        <Route exact path="/" component={Home} />
         <Route path="/login">
-          <Login/>
+          {!token ? (<Login/>) : (<Redirect to="/" />)}
         </Route>
         <Route path="/register">
-          {/* {authToken ? (<Register/>) : (<Redirect to="/" />)}> */}
-          <Register/>
+          {!token ? (<Register/>) : (<Redirect to="/" />)}
         </Route>
       </Switch>
     </BrowserRouter>
