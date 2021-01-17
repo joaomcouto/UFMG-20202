@@ -38,5 +38,9 @@ class User(db.Model):
         """False, as anonymous users aren't supported."""
         return False
     
-    def as_dict(self):
-       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+    def as_dict(self): # Não usa a senha no dic, uma vez que ela está em bytes e não é serializável
+        return {
+            'UserID' : self.UserID,
+            'nome'   : self.nome,
+            'email'  : self.email
+        }
