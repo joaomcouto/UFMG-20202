@@ -7,6 +7,13 @@ class Recipe(db.Model):
     texto = db.Column(db.Text, nullable=False)
     autor = db.Column(db.Integer, db.ForeignKey('users.UserID'), nullable=False)
 
+    def get_id(self):
+        """Return the id to satisfy Flask-Login's requirements."""
+        return self.ReceitaID
+
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -30,3 +37,6 @@ class User(db.Model):
     def is_anonymous(self):
         """False, as anonymous users aren't supported."""
         return False
+    
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}

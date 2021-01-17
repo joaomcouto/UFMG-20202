@@ -3,7 +3,7 @@ import unittest
 from flask import request
 from flask_login import current_user
 from baseTest import BaseTestCase
-from project.controllers.routes import save_new_user, save_new_recipe
+from project.controllers.routes import save_new_user, save_new_recipe, get_user_recipes_as_dic
 from project.models import User, Recipe
 
 
@@ -37,7 +37,7 @@ class TestCase(BaseTestCase):
             savedUser = User.query.filter_by(nome=username).first()
             self.assertEqual(username, savedUser.nome)
 
-    # Ensure that login page login works user login, redirects to new_recipe
+    # Ensure that login page login works user login
     def test_login(self):
         user = 'test'
         email = 'test@email.com'
@@ -45,7 +45,7 @@ class TestCase(BaseTestCase):
         with self.client:
             save_new_user(user, email, password)
         # success
-            self.assertEqual(302, self.login(user, password).status_code)
+            self.assertEqual(200, self.login(user, password).status_code)
   
     # Ensure that logout works
     def test_logout(self):
@@ -88,6 +88,27 @@ class TestCase(BaseTestCase):
             self.assertEqual(newAuthor, savedRecipe.autor)
             self.assertEqual(newTitle, savedRecipe.titulo)
             self.assertEqual(newText, savedRecipe.texto)
+    
+    # Ensure all user recipes are fetched
+    def test_get_all_user_recipes(self):
+        username = 'test'
+        email = 'test@email.com'
+        password = 'test123'
+        newTitle = 'bolo'
+        newText = '2 ovos, 100ml leite, fermento'
+        newTitle2 = 'bolo2'
+        newText2 = '23 ovos, 1000ml leite, 2 fermento'
+        with self.client:
+            save_new_user(username, email, password)
+            self.login(username, password)            
+            newAuthor = current_user.get_id()
+            save_new_recipe(newTitle, newText, newAuthor)
+            save_new_recipe(newTitle2, newText2, newAuthor)
+            savedRecipes = get_user_recipes_as_dic(newAuthor)
+            self.assertEqual(len(savedRecipes), 2)
+
+            
+
 
 if __name__ == '__main__':
     unittest.main()

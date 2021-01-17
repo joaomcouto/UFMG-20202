@@ -4,6 +4,9 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from flask_bcrypt import Bcrypt
 from project import db, bcrypt   # pragma: no cover
 from project.models import User, Recipe   # pragma: no cover
+import json
+
+OK = json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
 ################
 #### config ####
@@ -26,44 +29,48 @@ def home():
 @routes_blueprint.route('/register', methods=['GET', 'POST'])
 def create_new_user():
     if request.method == 'GET':
-        return "<h1> new user <h1>"
+        return OK
     else:
         newUser = request.form['user']
         newEmail = request.form['user']
         newPassword = request.form['password']       
         save_new_user(newUser, newEmail, newPassword)
-        return redirect(url_for('login'))
+        return OK #redirect(url_for('login'))
 
 @routes_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        return "<h1>LOGIN PAGE</h1>"
+        return OK
     else:
         loginUser = request.form['user']
         loginPass = request.form['password']
         dbUser = User.query.filter_by(nome=loginUser).first()
         if(bcrypt.check_password_hash(dbUser.senha, loginPass)):
             login_user(dbUser)
-            return redirect(url_for('routes.new_recipe'))
+            return OK #redirect(url_for('routes.new_recipe'))
 
 @routes_blueprint.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('routes.login'))
+    return OK #redirect(url_for('routes.login'))
 
 ## Recipe API
 @routes_blueprint.route('/new_recipe')
 @login_required
 def new_recipe():
     if request.method == 'GET':
-        return"<h1> new Recipe <h1>"
+        return OK
     else:
         title = request.form['title']
         text = request.form['text']
         author = current_user.get_id()  
         save_new_recipe(title, text, author)
-        return"<h1> new Recipe registered <h1>"
+        return OK #"<h1> new Recipe registered <h1>"
 
+@routes_blueprint.route('/new_recipe')
+@login_required
+def get_user_recipes():
+    return json.dumps(get_user_recipes_as_dic(current_user.get_id()))
 
 def save_new_recipe(title, text, author):
     recipe = Recipe(
@@ -82,3 +89,10 @@ def save_new_user(newUser, newEmail, newPassword):
 
     db.session.add(user)
     db.session.commit()
+
+def get_user_recipes_as_dic(id):
+    recipeObjs = Recipe.query.filter_by(autor=id).all()
+    recipes = {}
+    for x in recipeObjs:
+        recipes[x.get_id()] = x.as_dict() 
+    return recipes
