@@ -47,7 +47,7 @@ def login():
         dbUser = User.query.filter_by(nome=loginUser).first()
         if(bcrypt.check_password_hash(dbUser.senha, loginPass)):
             login_user(dbUser)
-            return OK #redirect(url_for('routes.new_recipe'))
+            return json.dumps(dbUser.as_dict()) #redirect(url_for('routes.new_recipe'))
 
 @routes_blueprint.route('/logout')
 def logout():
