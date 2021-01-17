@@ -54,7 +54,7 @@ void *client_receive_thread(void *data)
         //}
         //printf("Received %u bytes \n", total);
         if (strlen(buf) != 0)
-            puts(buf); //printa no stdout a mensagem salva no buffer pelo recv
+            puts(strcat(buf, "\n")); //printa no stdout a mensagem salva no buffer pelo recv
     }
     pthread_exit(EXIT_SUCCESS);
 }
