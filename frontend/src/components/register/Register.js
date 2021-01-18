@@ -130,7 +130,7 @@ const Register = () => {
       </Form.Group>
       {hasError ? ( 
         <Form.Text className={classes.invalid_data}>
-          Email ou senha inválidos
+          Um erro aconteceu ao fazer o cadastro. Verifique seus dados e tente novamente
         </Form.Text>
         ) : ''
       }
