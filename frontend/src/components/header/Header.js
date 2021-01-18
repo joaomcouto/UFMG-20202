@@ -1,10 +1,11 @@
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 import Button from 'react-bootstrap/Button';
 import { useAuth } from '../../context/Auth';
 
 const Header = ({ logout }) => {
-  const token = useAuth().token;
+  const user = useAuth().user;
 
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
@@ -12,17 +13,20 @@ const Header = ({ logout }) => {
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link href="/recipes">Receitas</Nav.Link>
+          <NavDropdown title="Receitas" id="recipes-dropdown">
+            <NavDropdown.Item href="recipes">Ver todas</NavDropdown.Item>
+            { user ? <NavDropdown.Item href="recipes/new">Adicionar nova</NavDropdown.Item> : ''} 
+          </NavDropdown>
         </Nav>
         <Nav>
           {
-            token ?
+            user ?
               (
                 <>
-                <Nav.Link href="/profile">
-                  Perfil
-                </Nav.Link>
-                <Button onClick={() => logout(null)}>Sair</Button>
+                <Button variant="dark" href="/profile">
+                  {user.name}
+                </Button>
+                <Button id="logout" variant="dark" onClick={() => logout(null)}>Sair</Button>
                 </>
               ) :
               (

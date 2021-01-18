@@ -31,8 +31,8 @@ def create_new_user():
     if request.method == 'GET':
         return OK
     else:
-        newUser = request.form['user']
-        newEmail = request.form['user']
+        newUser = request.form['name']
+        newEmail = request.form['email']
         newPassword = request.form['password']       
         save_new_user(newUser, newEmail, newPassword)
         return OK #redirect(url_for('login'))
@@ -42,12 +42,14 @@ def login():
     if request.method == 'GET':
         return OK
     else:
-        loginUser = request.form['user']
+        loginUser = request.form['email']
         loginPass = request.form['password']
-        dbUser = User.query.filter_by(nome=loginUser).first()
+        dbUser = User.query.filter_by(email=loginUser).first()
         if(bcrypt.check_password_hash(dbUser.senha, loginPass)):
             login_user(dbUser)
             return json.dumps(dbUser.as_dict()) #redirect(url_for('routes.new_recipe'))
+        else:
+            return json.dumps({status: 400})
 
 @routes_blueprint.route('/logout')
 def logout():

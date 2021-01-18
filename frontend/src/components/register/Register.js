@@ -92,7 +92,7 @@ const Register = () => {
       data[prop] = formData[prop].value
     }
 
-    const response = post('/register', {body: data});
+    const response = post('/register', {body: JSON.stringify(data)});
     if(response.status === 200){
       setToken(response.data);
     } else {

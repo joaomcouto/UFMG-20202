@@ -2,8 +2,8 @@ import { createContext, useContext } from 'react';
 
 
 export const defaultContext = {
-  token: null,
-  setToken: (token) => {localStorage.setItem("token", JSON.stringify(token))}
+  user: null,
+  setUser: (user) => {localStorage.setItem("user", JSON.stringify(user))}
 }
 
 export const AuthContext = createContext(defaultContext);

@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import classes from './Login.module.css';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { useAuth } from '../../context/Auth';
 import { post } from '../../util/fetch';
 
 const Login = () => {
-  const [hasError, setHasError] =   useState(false);
 
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [formData, setFormData] = useState({
+  const serverWorking = process.env.REACT_APP_IS_SERVER_WORKING !== "false";
+
+  const [hasError, setHasError] =   React.useState(false);
+
+  const [isFormValid, setIsFormValid] = React.useState(false);
+  const [formData, setFormData] = React.useState({
     email: {
       value: '',
       valid: false,
@@ -24,7 +27,7 @@ const Login = () => {
     }
   });
 
-  const  setToken  = useAuth().setToken;
+  const {user, setUser}  = useAuth();
 
   useEffect(() => {
     for(let field in formData){
@@ -69,11 +72,19 @@ const Login = () => {
       data[prop] = formData[prop].value
     }
 
-    const response = post('/login', {body: JSON.stringify(data)});
-    if(response.status === 200){
-      setToken(response.data);
+    if(serverWorking){
+      const response = post('/login', {body: JSON.stringify(data)});
+      if(response.status === 200){
+        setUser(response.data);
+      } else {
+        setHasError(true);
+      }
     } else {
-      setHasError(true);
+      if(data['email'] === 'vitor@email.com' && data['password'] === '12345678'){
+        setUser({name: 'Vitor', email: 'vitor@email.com', id: 1});
+      } else {
+        setHasError(true);
+      }
     }
   }
 
@@ -83,6 +94,9 @@ const Login = () => {
     'border', 'border-dark', 'rounded'
   ];
 
+  if(user){
+    return <Redirect to="/"/>
+  }
   return ( 
       <Form className={formClasses.join` `} onSubmit={handleSubmit}>
         <Form.Group controlId="email">

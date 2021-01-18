@@ -19,10 +19,10 @@ describe("<Header/>", () => {
     expect(component.find(Nav.Link)).toHaveLength(3);
   })
 
-  it('should render two nav links and a button when is user logged', () => {    
+  it('should render three nav links and two button when is user logged', () => {    
     const context = {
-      token: 12345,
-      setToken: defaultContext.setToken
+      user: {name: 'vitor', email: 'vitor@email.com', id: 1},
+      setUser: defaultContext.setUser
     };
 
     const contextComponent = mount(
@@ -31,29 +31,29 @@ describe("<Header/>", () => {
       </AuthContext.Provider>
     );
 
-    expect(contextComponent.find(Nav.Link)).toHaveLength(2);
-    expect(contextComponent.find(Button)).toHaveLength(1)
+    expect(contextComponent.find(Nav.Link)).toHaveLength(1);
+    expect(contextComponent.find(Button)).toHaveLength(2)
   });
 
   it('should remove the token from localstorage on logout', () => {
-    localStorage.setItem("token", JSON.stringify(12345));
+    localStorage.setItem("user", JSON.stringify({name: 'vitor', email: 'vitor@email.com', id: 1}));
 
     const context = {
-      token: 12345,
-      setToken: defaultContext.setToken
+      user: {name: 'vitor', email: 'vitor@email.com', id: 1},
+      setUser: defaultContext.setUser
     };
 
     const contextComponent = mount(
       <AuthContext.Provider value={context}>
-        <Header logout={context.setToken}/>
+        <Header logout={context.setUser}/>
       </AuthContext.Provider>
     );
 
-    const logoutButton = contextComponent.find(Button);
+    const logoutButton = contextComponent.find('#logout').at(0);
 
     logoutButton.simulate('click');
 
-    const localToken = JSON.parse(localStorage.getItem("token"))
+    const localToken = JSON.parse(localStorage.getItem("user"))
     expect(localToken).toBe(null);
   });
 })
