@@ -39,22 +39,32 @@ class TestCase(BaseTestCase):
 
     # Ensure that login page login works user login
     def test_login(self):
-        user = 'test'
+        username = 'test'
         email = 'test@email.com'
         password = 'test123'
+        teste_data = {
+            "email":email,
+            "name":username,
+            "password":password,
+            }
         with self.client:
-            save_new_user(user, email, password)
+            save_new_user(username, email, password)
         # success
-            self.assertEqual(200, self.login(user, password).status_code)
+            self.assertEqual(200, self.login(teste_data).status_code)
   
     # Ensure that logout works
     def test_logout(self):
-        user = 'test'
+        username = 'test'
         email = 'test@email.com'
         password = 'test123'
+        teste_data = {
+            "email":email,
+            "name":username,
+            "password":password,
+            }
         with self.client:
-            save_new_user(user, email, password)
-            self.login(user, password)
+            save_new_user(username, email, password)
+            self.login(teste_data)
             response = self.client.get('/logout', follow_redirects=True)
             self.assertEqual(200, response.status_code)
             self.assertFalse(current_user.is_active)
@@ -64,9 +74,14 @@ class TestCase(BaseTestCase):
         username = 'test'
         email = 'test@email.com'
         password = 'test123'
+        teste_data = {
+            "email":email,
+            "name":username,
+            "password":password,
+            }
         with self.client:
             save_new_user(username, email, password)
-            self.login(username, password)
+            self.login(teste_data)
             response = self.client.get('/new_recipe', content_type='html/text')
             self.assertEqual(200, response.status_code)
 
@@ -75,12 +90,17 @@ class TestCase(BaseTestCase):
     def test_save_new_recipe(self):
         username = 'test'
         email = 'test@email.com'
-        password = 'test123'
+        password = 'test1234'
         newTitle = 'bolo'
         newText = '2 ovos, 100ml leite, fermento'
+        teste_data = {
+            "email":email,
+            "name":username,
+            "password":password,
+            }
         with self.client:
             save_new_user(username, email, password)
-            self.login(username, password)            
+            self.login(teste_data)     
             newAuthor = current_user.get_id()
             save_new_recipe(newTitle, newText, newAuthor)
             savedRecipe = Recipe.query.filter_by(titulo=newTitle).first()
@@ -97,9 +117,14 @@ class TestCase(BaseTestCase):
         newText = '2 ovos, 100ml leite, fermento'
         newTitle2 = 'bolo2'
         newText2 = '23 ovos, 1000ml leite, 2 fermento'
+        teste_data = {
+            "email":email,
+            "name":username,
+            "password":password,
+            }
         with self.client:
             save_new_user(username, email, password)
-            self.login(username, password)            
+            self.login(teste_data)            
             newAuthor = current_user.get_id()
             save_new_recipe(newTitle, newText, newAuthor)
             save_new_recipe(newTitle2, newText2, newAuthor)

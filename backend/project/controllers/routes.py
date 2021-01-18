@@ -31,19 +31,22 @@ def create_new_user():
     if request.method == 'GET':
         return OK
     else:
-        newUser = request.form['name']
-        newEmail = request.form['email']
-        newPassword = request.form['password']       
+        data = request.get_json()
+        newUser = data['name']
+        newEmail = data['email']
+        newPassword = data['password']
         save_new_user(newUser, newEmail, newPassword)
-        return OK #redirect(url_for('login'))
+        dbUser = User.query.filter_by(email=newEmail).first()
+        return json.dumps(dbUser.as_dict()) #redirect(url_for('login'))
 
 @routes_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return OK
     else:
-        loginUser = request.form['email']
-        loginPass = request.form['password']
+        data = request.get_json()
+        loginUser = data['email']
+        loginPass = data['password']
         dbUser = User.query.filter_by(email=loginUser).first()
         if(bcrypt.check_password_hash(dbUser.senha, loginPass)):
             login_user(dbUser)

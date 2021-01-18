@@ -3,7 +3,7 @@ import os
 
 # default config
 class BaseConfig(object):
-    DEBUG = False
+    DEBUG = True
     # shortened for readability
     SECRET_KEY = 'super secret string'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///MyRecipes.db'#os.environ['DATABASE_URL']

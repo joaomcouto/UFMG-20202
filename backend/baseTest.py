@@ -1,6 +1,7 @@
 from flask_testing import TestCase
 from project import app, db, login_manager
 from project.models import User, Recipe
+import json
 
 
 class BaseTestCase(TestCase):
@@ -15,8 +16,8 @@ class BaseTestCase(TestCase):
         db.create_all()
     
     # Login with the given user info
-    def login(self, user, password):
-        return self.client.post('/login', data=dict(user = user, password = password))
+    def login(self, test_data):
+        return self.client.post('/login', data=json.dumps(test_data), headers={'Content-type':'application/json'})
         
     def tearDown(self):
         db.session.remove()
