@@ -3,8 +3,8 @@
 #### imports ####
 #################
 
-from flask import Flask
-from flask_cors import CORS
+from flask import Flask, request
+from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
@@ -16,7 +16,7 @@ import os
 ################
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*":{"origins":"*"}})
 bcrypt = Bcrypt(app)
 login_manager = LoginManager()
 login_manager.init_app(app)

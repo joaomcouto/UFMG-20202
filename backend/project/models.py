@@ -18,9 +18,9 @@ class Recipe(db.Model):
 class User(db.Model):
     __tablename__ = 'users'
     UserID = db.Column(db.Integer, primary_key=True, nullable=False)
-    nome = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(20), unique=True, nullable=False)
-    senha = db.Column(db.String(20), nullable=False)
+    nome = db.Column(db.Text(100), unique=False, nullable=False)
+    email = db.Column(db.Text(100), unique=True, nullable=False)
+    senha = db.Column(db.Text(20), nullable=False)
     receitas = db.relationship('Recipe', backref='users', lazy=True)
 
     def is_authenticated(self):

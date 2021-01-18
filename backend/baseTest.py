@@ -11,7 +11,6 @@ class BaseTestCase(TestCase):
         return app
 
     def setUp(self):
-        login_manager.login_view = "routes.login"
         db.create_all()
     
     # Login with the given user info

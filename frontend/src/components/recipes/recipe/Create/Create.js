@@ -1,7 +1,7 @@
 import React from 'react';
-import { Redirect, useLocation } from 'react-router-dom';
-
-import Form from 'react-bootstrap/Form';
+import { useLocation } from 'react-router-dom';
+//import { Redirect } from 'react-router-dom';
+//import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { useAuth } from '../../../../context/Auth';
 import classes from './Create.module.css';
@@ -13,11 +13,13 @@ const Create = props => {
   
   
   console.log(location);
-
-  const formData = React.useState({
+/*
+const formData = React.useState({
     ingredients: '',
     howTo: ''
   });
+*/
+  
   
   const handleSubmit = () => {
 
