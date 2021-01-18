@@ -44,8 +44,9 @@ def login():
     if request.method == 'GET':
         return OK
     else:
-        loginUser = request.form['email']
-        loginPass = request.form['password']
+        data = request.get_json()
+        loginUser = data['email']
+        loginPass = data['password']
         dbUser = User.query.filter_by(email=loginUser).first()
         if(bcrypt.check_password_hash(dbUser.senha, loginPass)):
             login_user(dbUser)
