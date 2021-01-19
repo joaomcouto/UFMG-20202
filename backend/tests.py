@@ -8,9 +8,8 @@ from project.models import User, Recipe
 import json
 
 
-
 class TestCase(BaseTestCase):
-     # Ensure that Flask was set up correctly
+    # Ensure that Flask was set up correctly
     def test_index(self):
         with self.client:
             response = self.client.get('/login', content_type='html/text')
@@ -27,8 +26,8 @@ class TestCase(BaseTestCase):
         with self.client:
             response = self.client.get('/new_recipe', follow_redirects=True)
             self.assert200(response)
-            self.assertEqual('/login', request.path)  
-    
+            self.assertEqual('/login', request.path)
+
     # Ensure user is saved
     def test_save_new_user(self):
         with self.client:
@@ -44,72 +43,72 @@ class TestCase(BaseTestCase):
         username = 'test'
         email = 'test@email.com'
         password = 'test123'
-        teste_data = {
-            "email":email,
-            "name":username,
-            "password":password,
-            }
+        test_data = {
+            "email": email,
+            "name": username,
+            "password": password,
+        }
         with self.client:
             save_new_user(username, email, password)
         # success
-            self.assert200(self.login(teste_data))
-  
+            self.assert200(self.login(test_data))
+
     # Ensure that logout works
     def test_logout(self):
         username = 'test'
         email = 'test@email.com'
         password = 'test123'
-        teste_data = {
-            "email":email,
-            "name":username,
-            "password":password,
-            }
+        test_data = {
+            "email": email,
+            "name": username,
+            "password": password,
+        }
         with self.client:
             save_new_user(username, email, password)
-            self.login(teste_data)
+            self.login(test_data)
             response = self.client.get('/logout', follow_redirects=True)
             self.assert200(response)
             self.assertFalse(current_user.is_active)
-    
+
     # Ensure that new recipes page get works
     def test_save_get_new_recipe(self):
         username = 'test'
         email = 'test@email.com'
         password = 'test123'
-        teste_data = {
-            "email":email,
-            "name":username,
-            "password":password,
-            }
+        test_data = {
+            "email": email,
+            "name": username,
+            "password": password,
+        }
         with self.client:
             save_new_user(username, email, password)
-            self.login(teste_data)
+            self.login(test_data)
             response = self.client.get('/new_recipe', content_type='html/text')
             self.assert200(response)
 
-
     # Ensure recipe is saved
+
     def test_save_new_recipe(self):
         username = 'test'
         email = 'test@email.com'
         password = 'test1234'
         newTitle = 'bolo'
         newText = '2 ovos, 100ml leite, fermento'
-        teste_data = {
-            "email":email,
-            "name":username,
-            "password":password,
-            }
+        test_data = {
+            "email": email,
+            "name": username,
+            "password": password,
+        }
         with self.client:
             save_new_user(username, email, password)
-            self.login(teste_data)     
+            self.login(test_data)
             newAuthor = current_user.get_id()
             save_new_recipe(newTitle, newText, newAuthor)
             savedRecipe = Recipe.query.filter_by(titulo=newTitle).first()
             self.assertEqual(newAuthor, savedRecipe.autor)
             self.assertEqual(newTitle, savedRecipe.titulo)
             self.assertEqual(newText, savedRecipe.texto)
-    
+
     # Ensure all user recipes are fetched
     def test_get_all_user_recipes(self):
         username = 'test'
@@ -119,23 +118,23 @@ class TestCase(BaseTestCase):
         newText = '2 ovos, 100ml leite, fermento'
         newTitle2 = 'bolo2'
         newText2 = '23 ovos, 1000ml leite, 2 fermento'
-        teste_data = {
-            "email":email,
-            "name":username,
-            "password":password,
-            }
+        test_data = {
+            "email": email,
+            "name": username,
+            "password": password,
+        }
         with self.client:
             save_new_user(username, email, password)
-            self.login(teste_data)            
+            self.login(test_data)
             newAuthor = current_user.get_id()
             save_new_recipe(newTitle, newText, newAuthor)
             save_new_recipe(newTitle2, newText2, newAuthor)
             savedRecipes = get_user_recipes_as_dict(newAuthor)
             self.assertEqual(len(savedRecipes), 2)
 
-#Testes Vinicius
+# Testes Vinicius
 
-    def teste_home_endpoint(self):
+    def test_home_endpoint(self):
         with self.client:
             response = self.client.get('/', content_type='html/text')
             self.assert200(response)
@@ -144,13 +143,52 @@ class TestCase(BaseTestCase):
         username = 'test'
         email = 'test@email.com'
         password = 'test123'
-        teste_data = {
-            "email":email,
-            "name":username,
-            "password":password,
-            }
+        test_data = {
+            "email": email,
+            "name": username,
+            "password": password,
+        }
         with self.client:
-            response = self.client.post('/register', content_type='html/text', data=teste_data)
+            response = self.client.post(
+                '/register', data=json.dumps(test_data), headers={'Content-type': 'application/json'})
+            self.assert200(response)
+
+    def test_login_endpoint(self):
+        username = 'test'
+        email = 'test@email.com'
+        password = 'test123'
+        test_data = {
+            "email": email,
+            "name": username,
+            "password": password,
+        }
+        with self.client:
+            save_new_user(username, email, password)
+            response = self.client.post(
+                '/login', data=json.dumps(test_data), headers={'Content-type': 'application/json'})
+            self.assert200(response)
+
+    def test_new_recipe_endpoint(self):
+        username = 'test'
+        email = 'test@email.com'
+        password = 'test123'
+        test_user = {
+            "email": email,
+            "name": username,
+            "password": password,
+        }
+        title = 'titulo de teste'
+        text = 'texto de teste'
+        test_data = {
+            "title": title,
+            "text": text,
+        }
+        with self.client:
+            save_new_user(username, email, password)
+            self.client.post(
+                '/login', data=json.dumps(test_user), headers={'Content-type': 'application/json'})
+            response = self.client.post(
+                '/new_recipe', data=json.dumps(test_data), headers={'Content-type': 'application/json'})
             self.assert200(response)
 
 
