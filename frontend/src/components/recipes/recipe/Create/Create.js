@@ -1,5 +1,5 @@
 import React from 'react';
-//import { useLocation } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
@@ -10,16 +10,17 @@ import { post } from '../../../../util/fetch';
 
 const Create = props => {
   const user = useAuth().user;
-  //const location = useLocation();
-  
+
+  const [error, setError] = React.useState(false);
   const [formData, setFormData] = React.useState({
     title: '',
     ingredients: '',
     howTo: ''
   });
 
-  
-  
+  React.useEffect(() => {
+    // Buscar receita no back se tiver um Id
+  });
   const setTitle = (e) => {
     setFormData({
       ...formData,
@@ -54,7 +55,11 @@ const Create = props => {
     };
 
     const response = await post('/new_recipe', {body: JSON.stringify(data)});
-    console.log(response);
+    if(response.status === 200){
+      // Redirecionar para a tela da receita
+    } else {
+      setError(true);
+    }
   };
 
   if(!user){
@@ -67,13 +72,13 @@ const Create = props => {
         <div className={['w-100', 'text-center'].join` `}>
           <h4> Título </h4>
           <InputGroup size="sm" className={[classes.w80, classes.mAuto].join` `}>
-            <FormControl onChange={setTitle} aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+            <FormControl id="title" onChange={setTitle} aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
           </InputGroup>
         </div>
         <div className={['w-100', 'text-center'].join` `}>
           <h4>Ingredientes </h4>
           <p> Separe um ingrediente por linha</p>
-          <textarea cols="80" rows="10" onChange={setIngredients}/>
+          <textarea id="ingredients" cols="80" rows="10" onChange={setIngredients}/>
         </div>
       </div>
       <div className={[classes.flexgrow, 'd-flex', 'flex-column', 'align-items-center', 'justify-content-around'].join` `}>
@@ -81,8 +86,9 @@ const Create = props => {
           <h4> Modo de preparo:</h4>
           <p> Separe um passo por linha</p>
         </div>
-        <textarea cols="80" rows="15" onChange={setHowTo}/>
+        <textarea id="howto" cols="80" rows="15" onChange={setHowTo}/>
         <Button onClick={handleSubmit}> Salvar </Button>
+        {error ? <span> Não foi possível salvar a receita </span> : ''}
       </div>
     </div>
   )

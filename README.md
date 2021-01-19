@@ -53,6 +53,10 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
   - Implementação de alguns testes backend (até o fim da classe): https://github.com/VLamartine/pds2020-2/blob/d46a927834de3d42b0c33c0b802281212d105612/backend/tests.py#L135 
 
 - Vitor:
+  - Testes de todas as telas no frontend:
+    Exemplos:
+      Login: https://github.com/VLamartine/pds2020-2/blob/main/frontend/src/components/login/Login.test.js
+      Cadastro: https://github.com/VLamartine/pds2020-2/blob/main/frontend/src/components/register/Register.test.js
 
 #### Retrospective
 - Pontos positivos:

@@ -49,7 +49,7 @@ describe("<Router />", () => {
 
   it('should render a redirect when user is authenticated', () => {
     const contextValues = {
-      token: 12345,
+      user: {id: 2, name: 'Vitor'},
       setToken: null
     };
 
