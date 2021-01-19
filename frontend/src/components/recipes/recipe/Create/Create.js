@@ -19,7 +19,7 @@ const Create = props => {
     ingredients: '',
     howTo: ''
   });
-*/
+
   
   
   const setTitle = (e) => {

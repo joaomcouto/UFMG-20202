@@ -24,7 +24,7 @@ const Header = ({ logout }) => {
               (
                 <>
                 <Button variant="dark" href="/profile">
-                  {user.name}
+                  {user.nome}
                 </Button>
                 <Button id="logout" variant="dark" onClick={() => logout(null)}>Sair</Button>
                 </>

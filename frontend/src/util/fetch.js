@@ -13,6 +13,11 @@ export async function post(url, reqOptions){
     ...reqOptions
   }
 
-  const response = await fetch(baseUrl + url, options);
-  return await response.json;
+  try{
+    const response = await fetch(baseUrl + url, options);
+    const data = await response.json();
+    return {status: 200, data: data};
+  } catch (e) {
+    return { status: 500}
+  }
 }

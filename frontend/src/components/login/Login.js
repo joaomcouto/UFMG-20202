@@ -64,7 +64,7 @@ const Login = () => {
     });
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {};
 
@@ -72,19 +72,12 @@ const Login = () => {
       data[prop] = formData[prop].value
     }
 
-    if(serverWorking){
-      const response = post('/login', {body: JSON.stringify(data)});
-      if(response.status === 200){
-        setUser(response.data);
-      } else {
-        setHasError(true);
-      }
+    const response = await post('/login', {body: JSON.stringify(data)});
+    if(response.status === 200){
+      setUser(response.data);
+      return <Redirect to="/"></Redirect>
     } else {
-      if(data['email'] === 'vitor@email.com' && data['password'] === '12345678'){
-        setUser({name: 'Vitor', email: 'vitor@email.com', id: 1});
-      } else {
-        setHasError(true);
-      }
+      setHasError(true);
     }
   }
 

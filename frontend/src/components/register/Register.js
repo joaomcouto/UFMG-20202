@@ -1,6 +1,6 @@
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import classes from './Register.module.css';
 import React from 'react';
 import { useAuth } from '../../context/Auth';
@@ -34,7 +34,7 @@ const Register = () => {
   const [isFormValid, setIsFormValid] = React.useState(false);
   const [formData, setFormData] = React.useState(formObject);
 
-  const setToken = useAuth().setToken;
+  const setUser = useAuth().setUser;
 
   React.useEffect(() => {
     for(let field in formData){
@@ -83,7 +83,7 @@ const Register = () => {
     setFormData(data);
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     const data = {};
@@ -92,9 +92,10 @@ const Register = () => {
       data[prop] = formData[prop].value
     }
 
-    const response = post('/register', {body: JSON.stringify(data)});
+    const response = await post('/register', {body: JSON.stringify(data)});
     if(response.status === 200){
-      setToken(response.data);
+      setUser(response.data);
+      return <Redirect to="/"/>
     } else {
       setHasError(true);
     }
@@ -130,7 +131,7 @@ const Register = () => {
       </Form.Group>
       {hasError ? ( 
         <Form.Text className={classes.invalid_data}>
-          Um erro aconteceu ao fazer o cadastro. Verifique seus dados e tente novamente
+          Email já cadastrado
         </Form.Text>
         ) : ''
       }
