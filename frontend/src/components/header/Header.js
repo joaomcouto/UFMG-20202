@@ -14,8 +14,8 @@ const Header = ({ logout }) => {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
           <NavDropdown title="Receitas" id="recipes-dropdown">
-            <NavDropdown.Item href="recipes">Ver todas</NavDropdown.Item>
-            { user ? <NavDropdown.Item href="recipes/new">Adicionar nova</NavDropdown.Item> : ''} 
+            <NavDropdown.Item href="/recipes">Ver todas</NavDropdown.Item>
+            { user ? <NavDropdown.Item href="/recipes/new">Adicionar nova</NavDropdown.Item> : ''} 
           </NavDropdown>
         </Nav>
         <Nav>
