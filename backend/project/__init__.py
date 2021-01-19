@@ -31,7 +31,7 @@ app.register_blueprint(routes_blueprint)
 
 from project.models import User
 
-login_manager.login_view = "users.login"
+login_manager.login_view = "routes.login"
 
 
 ## LOGIN ##

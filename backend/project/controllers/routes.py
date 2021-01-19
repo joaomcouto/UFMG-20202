@@ -60,7 +60,7 @@ def logout():
     return OK #redirect(url_for('routes.login'))
 
 ## Recipe API
-@routes_blueprint.route('/new_recipe')
+@routes_blueprint.route('/new_recipe', methods=['GET', 'POST'])
 @login_required
 def new_recipe():
     if request.method == 'GET':

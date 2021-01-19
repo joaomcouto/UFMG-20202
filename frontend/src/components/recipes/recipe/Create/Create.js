@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+//import { useLocation } from 'react-router-dom';
 
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
@@ -10,7 +10,7 @@ import { post } from '../../../../util/fetch';
 
 const Create = props => {
   const user = useAuth().user;
-  const location = useLocation();
+  //const location = useLocation();
   
   const [formData, setFormData] = React.useState({
     title: '',

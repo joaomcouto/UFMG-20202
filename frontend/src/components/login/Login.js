@@ -9,7 +9,7 @@ import { post } from '../../util/fetch';
 
 const Login = () => {
 
-  const serverWorking = process.env.REACT_APP_IS_SERVER_WORKING !== "false";
+  //const serverWorking = process.env.REACT_APP_IS_SERVER_WORKING !== "false";
 
   const [hasError, setHasError] =   React.useState(false);
 
