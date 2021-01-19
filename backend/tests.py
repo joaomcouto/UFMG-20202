@@ -3,8 +3,9 @@ import unittest
 from flask import request
 from flask_login import current_user
 from baseTest import BaseTestCase
-from project.controllers.routes import save_new_user, save_new_recipe, get_user_recipes_as_dic
+from project.controllers.routes import save_new_user, save_new_recipe, get_user_recipes_as_dict
 from project.models import User, Recipe
+import json
 
 
 
@@ -13,18 +14,19 @@ class TestCase(BaseTestCase):
     def test_index(self):
         with self.client:
             response = self.client.get('/login', content_type='html/text')
-            self.assertEqual(response.status_code, 200)
+            self.assert200(response)
 
     # Ensure that register page loads
     def test_register_route_works_as_expected(self):
         with self.client:
             response = self.client.get('/register', content_type='html/text')
-            self.assertEqual(response.status_code, 200)
+            self.assert200(response)
 
     # Ensure that new recipe page requires user login
     def test_main_route_requires_login(self):
         with self.client:
-            self.assertEqual(200, self.client.get('/new_recipe', follow_redirects=True).status_code)
+            response = self.client.get('/new_recipe', follow_redirects=True)
+            self.assert200(response)
             self.assertEqual('/login', request.path)  
     
     # Ensure user is saved
@@ -50,7 +52,7 @@ class TestCase(BaseTestCase):
         with self.client:
             save_new_user(username, email, password)
         # success
-            self.assertEqual(200, self.login(teste_data).status_code)
+            self.assert200(self.login(teste_data))
   
     # Ensure that logout works
     def test_logout(self):
@@ -66,7 +68,7 @@ class TestCase(BaseTestCase):
             save_new_user(username, email, password)
             self.login(teste_data)
             response = self.client.get('/logout', follow_redirects=True)
-            self.assertEqual(200, response.status_code)
+            self.assert200(response)
             self.assertFalse(current_user.is_active)
     
     # Ensure that new recipes page get works
@@ -83,7 +85,7 @@ class TestCase(BaseTestCase):
             save_new_user(username, email, password)
             self.login(teste_data)
             response = self.client.get('/new_recipe', content_type='html/text')
-            self.assertEqual(200, response.status_code)
+            self.assert200(response)
 
 
     # Ensure recipe is saved
@@ -128,10 +130,28 @@ class TestCase(BaseTestCase):
             newAuthor = current_user.get_id()
             save_new_recipe(newTitle, newText, newAuthor)
             save_new_recipe(newTitle2, newText2, newAuthor)
-            savedRecipes = get_user_recipes_as_dic(newAuthor)
+            savedRecipes = get_user_recipes_as_dict(newAuthor)
             self.assertEqual(len(savedRecipes), 2)
 
 #Testes Vinicius
+
+    def teste_home_endpoint(self):
+        with self.client:
+            response = self.client.get('/', content_type='html/text')
+            self.assert200(response)
+
+    def test_register_endpoint(self):
+        username = 'test'
+        email = 'test@email.com'
+        password = 'test123'
+        teste_data = {
+            "email":email,
+            "name":username,
+            "password":password,
+            }
+        with self.client:
+            response = self.client.post('/register', content_type='html/text', data=teste_data)
+            self.assert200(response)
 
 
 if __name__ == '__main__':

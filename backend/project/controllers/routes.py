@@ -52,7 +52,7 @@ def login():
             login_user(dbUser)
             return json.dumps(dbUser.as_dict()) #redirect(url_for('routes.new_recipe'))
         else:
-            return json.dumps({status: 400})
+            return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/logout')
 def logout():
@@ -66,16 +66,17 @@ def new_recipe():
     if request.method == 'GET':
         return OK
     else:
-        title = request.form['title']
-        text = request.form['text']
+        data = request.get_json()
+        title = data['title']
+        text = data['text']
         author = current_user.get_id()  
         save_new_recipe(title, text, author)
         return OK #"<h1> new Recipe registered <h1>"
 
-@routes_blueprint.route('/new_recipe')
+@routes_blueprint.route('/user_all_recipes')
 @login_required
 def get_user_recipes():
-    return json.dumps(get_user_recipes_as_dic(current_user.get_id()))
+    return json.dumps(get_user_recipes_as_dict(current_user.get_id()))
 
 def save_new_recipe(title, text, author):
     recipe = Recipe(
@@ -95,7 +96,7 @@ def save_new_user(newUser, newEmail, newPassword):
     db.session.add(user)
     db.session.commit()
 
-def get_user_recipes_as_dic(id):
+def get_user_recipes_as_dict(id):
     recipeObjs = Recipe.query.filter_by(autor=id).all()
     recipes = {}
     for x in recipeObjs:
