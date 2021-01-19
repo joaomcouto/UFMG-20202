@@ -10,3 +10,11 @@
 .mAuto {
   margin: 0 auto 0 auto;
 }
+
+.contentEvenly {
+  justify-content: space-evenly;
+}
+
+.background {
+  background-color: #efefef;
+}

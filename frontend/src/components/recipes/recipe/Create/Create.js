@@ -6,14 +6,12 @@ import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import { useAuth } from '../../../../context/Auth';
 import classes from './Create.module.css';
+import { post } from '../../../../util/fetch';
 
 const Create = props => {
   const user = useAuth().user;
   const location = useLocation();
   
-  
-  console.log(location);
-
   const [formData, setFormData] = React.useState({
     title: '',
     ingredients: '',
@@ -32,7 +30,7 @@ const Create = props => {
   const setIngredients = (e) => {
     setFormData({
       ...formData,
-      title: e.target.value
+      ingredients: e.target.value
     })
   }
 
@@ -43,8 +41,20 @@ const Create = props => {
     });
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
+    const data = {
+      user_id: user.UserID,
+      title: formData.title,
+      text: JSON.stringify({
+        ingredients: formData.ingredients,
+        howTo: formData.howTo
+      })
+    };
+
+    const response = await post('/new_recipe', {body: JSON.stringify(data)});
+    console.log(response);
   };
 
   if(!user){
@@ -52,23 +62,25 @@ const Create = props => {
   }
 
   return (
-    <div className={[classes.flexgrow, 'd-flex'].join` `}>
-      <div className={[classes.flexgrow, 'd-flex', 'flex-column', 'align-items-center'].join` `} style={{background:'yellow'}}>
-        <div className={['w-100']}>
+    <div className={[classes.flexgrow, 'd-flex', classes.background].join` `}>
+      <div className={[classes.flexgrow, 'd-flex', 'flex-column', 'align-items-center', classes.contentEvenly].join` `}>
+        <div className={['w-100', 'text-center'].join` `}>
           <h4> Título </h4>
           <InputGroup size="sm" className={[classes.w80, classes.mAuto].join` `}>
-            <FormControl aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+            <FormControl onChange={setTitle} aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
           </InputGroup>
         </div>
-        <div>
+        <div className={['w-100', 'text-center'].join` `}>
           <h4>Ingredientes </h4>
-          <p> Separe um passo por linha</p>
-          <textarea cols="80" rows="10" onChange={setHowTo}/>
+          <p> Separe um ingrediente por linha</p>
+          <textarea cols="80" rows="10" onChange={setIngredients}/>
         </div>
       </div>
-      <div className={[classes.flexgrow, 'd-flex', 'flex-column', 'align-items-center', 'justify-content-around'].join` `} style={{background:'blue'}}>
-        <h4> Modo de preparo:</h4>
-        <p> Separe um passo por linha</p>
+      <div className={[classes.flexgrow, 'd-flex', 'flex-column', 'align-items-center', 'justify-content-around'].join` `}>
+        <div className={['w-100', 'text-center'].join` `}>
+          <h4> Modo de preparo:</h4>
+          <p> Separe um passo por linha</p>
+        </div>
         <textarea cols="80" rows="15" onChange={setHowTo}/>
         <Button onClick={handleSubmit}> Salvar </Button>
       </div>
