@@ -44,6 +44,22 @@ void print_oven(){
         // printf("next = %d", idNext);
 }
 
+int check_empty_line(){
+
+    int sum = 0;
+
+    for (int i = 0; i < personaCount; i++)
+    {
+       sum += ovenInterest[i];
+    }
+
+    if (sum > 0)
+    {
+        return 0;
+    }else return 1;
+
+}
+
 int existsCouple(){
 
     int sheldon = ovenInterest[0];
@@ -263,10 +279,10 @@ if(!((p->name == "Kripke") || (p->name == "Stuart"))){
 void wait_oven(struct persona *p)
 {
     pthread_mutex_lock(&initMutex);
-    if (init == 1)
+    if (check_empty_line())
     {
         idNext = p->id;
-        init++;
+        // init++;
 
         pthread_mutex_lock(&interestMutex);
         ovenInterest[p->id] = 1;                     
@@ -297,7 +313,6 @@ void wait_oven(struct persona *p)
 
 void use_oven(struct persona *p)
 {   
-    pthread_mutex_lock(&interestMutex); //Impede entrada de novos durante o calculo do proximo em cima do vetor ovenInterest
     
     printf("%s começa a esquentar algo\n", p->name);
     idCurrent = p->id;
@@ -305,6 +320,8 @@ void use_oven(struct persona *p)
     personaArray[p->id]->priority_couple = -1;
     sleep(1);
     
+    pthread_mutex_lock(&interestMutex); //Impede entrada de novos durante o calculo do proximo em cima do vetor ovenInterest
+
     
     printf("fila: ");
     print_oven();
