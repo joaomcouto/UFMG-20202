@@ -1,0 +1,90 @@
+Sheldon quer usar o forno
+Bernardette quer usar o forno
+Howard quer usar o forno
+Sheldon começa a esquentar algo
+Raj checked and deadlock = 0
+[00110000] fila: [00110000]   escolhido: 3
+Sheldon vai comer
+Amy quer usar o forno
+Leonard quer usar o forno
+Bernardette começa a esquentar algo
+fila: [01101000] Sheldon voltou para o trabalho
+Raj checked and deadlock = 1
+[01101000] escolhido: 1
+Bernardette vai comer
+Amy começa a esquentar algo
+fila: [00101000]   escolhido: 2
+Amy vai comer
+Howard começa a esquentar algo
+fila: [00001000]   escolhido: 4
+Howard vai comer
+Penny quer usar o forno
+Leonard começa a esquentar algo
+fila: [00000100]   escolhido: 5
+Leonard vai comer
+Penny começa a esquentar algo
+Bernardette voltou para o trabalho
+fila: [00000000]   escolhido: 0
+Penny vai comer
+Kripke quer usar o forno
+Stuart quer usar o forno
+Sheldon quer usar o forno
+Sheldon começa a esquentar algo
+Raj checked and deadlock = 0
+[00000011] Amy voltou para o trabalho
+fila: [00000011]   escolhido: 6
+Sheldon vai comer
+Kripke começa a esquentar algo
+fila: [00000001]   escolhido: 7
+Kripke vai comer
+Stuart começa a esquentar algo
+Howard voltou para o trabalho
+Leonard voltou para o trabalho
+fila: [00000000]   escolhido: 0
+Stuart vai comer
+Bernardette quer usar o forno
+Penny voltou para o trabalho
+Sheldon voltou para o trabalho
+Raj checked and deadlock = 0
+[00010000] Amy quer usar o forno
+Kripke voltou para o trabalho
+Howard quer usar o forno
+Leonard quer usar o forno
+Stuart voltou para o trabalho
+Kripke quer usar o forno
+Penny quer usar o forno
+Raj checked and deadlock = 0
+[01111110] Stuart quer usar o forno
+Stuart começa a esquentar algo
+fila: [01111110]   escolhido: 3
+Stuart vai comer
+Bernardette começa a esquentar algo
+fila: [01101110]   escolhido: 4
+Bernardette vai comer
+Leonard começa a esquentar algo
+fila: [01100110] Raj checked and deadlock = 1
+[01100110] escolhido: 5
+Leonard vai comer
+Penny começa a esquentar algo
+fila: [01100010]   escolhido: 1
+Penny vai comer
+Amy começa a esquentar algo
+Bernardette voltou para o trabalho
+fila: [00100010]   escolhido: 2
+Amy vai comer
+Howard começa a esquentar algo
+Stuart voltou para o trabalho
+fila: [00000010]   escolhido: 6
+Howard vai comer
+Kripke começa a esquentar algo
+fila: [00000000]   escolhido: 0
+Kripke vai comer
+Raj checked and deadlock = 0
+[00000000] 
+Leonard voltou para o trabalho
+Penny voltou para o trabalho
+Amy voltou para o trabalho
+Howard voltou para o trabalho
+Kripke voltou para o trabalho
+Raj checked and deadlock = 0
+[00000000]
