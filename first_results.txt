@@ -1,91 +1,67 @@
-Amy quer usar o forno
-Bernardette quer usar o forno
-Howard quer usar o forno
 Sheldon quer usar o forno
+Sheldon começa a esquentar algo
+Amy quer usar o forno
+Howard quer usar o forno
+Bernardette quer usar o forno
 Leonard quer usar o forno
 Penny quer usar o forno
 Kripke quer usar o forno
 Stuart quer usar o forno
-Raj checked and deadlock = 1
-[11111111] came
-came
-came
-Amy começa a esquentar algo
-fila: [10111111]   escolhido: 3
-Amy vai comer
-Bernardette começa a esquentar algo
-fila: [10101111]   escolhido: 4
-Bernardette vai comer
-Leonard começa a esquentar algo
-fila: [10100111] Raj checked and deadlock = 1
-[10100111] came
-  escolhido: 0
-Leonard vai comer
-Sheldon começa a esquentar algo
-fila: [00100111]   escolhido: 2
 Sheldon vai comer
 Howard começa a esquentar algo
-Amy voltou para o trabalho
-Bernardette voltou para o trabalho
-fila: [00000111]   escolhido: 5
 Howard vai comer
-Penny começa a esquentar algo
-fila: [00000011]   escolhido: 6
-Penny vai comer
+Leonard começa a esquentar algo
+Sheldon voltou para o trabalho
+Raj detectou um deadlock, liberando Kripke
+Leonard vai comer
 Kripke começa a esquentar algo
-fila: [00000001]   escolhido: 7
-Kripke vai comer
-Stuart começa a esquentar algo
+Howard voltou para o trabalho
 Leonard voltou para o trabalho
-Raj checked and deadlock = 0
-[00000000] Sheldon voltou para o trabalho
-Amy quer usar o forno
-Bernardette quer usar o forno
-fila: [01010000]   escolhido: 1
-Stuart vai comer
+Raj detectou um deadlock, liberando Amy
+Kripke vai comer
 Amy começa a esquentar algo
-Penny voltou para o trabalho
-fila: [00010000]   escolhido: 3
+Sheldon quer usar o forno
+Howard quer usar o forno
 Amy vai comer
 Bernardette começa a esquentar algo
-Howard voltou para o trabalho
-fila: [00000000]   escolhido: 0
-Bernardette vai comer
 Kripke voltou para o trabalho
-Leonard quer usar o forno
-Leonard começa a esquentar algo
-Sheldon quer usar o forno
-Amy voltou para o trabalho
-Raj checked and deadlock = 0
-[10000000] fila: [10000000]   escolhido: 0
-Leonard vai comer
+Raj detectou um deadlock, liberando Sheldon
+Bernardette vai comer
 Sheldon começa a esquentar algo
-Howard quer usar o forno
-Stuart voltou para o trabalho
-fila: [00100000]   escolhido: 2
+Leonard quer usar o forno
 Sheldon vai comer
-Howard começa a esquentar algo
-Penny quer usar o forno
-Bernardette voltou para o trabalho
-fila: [00000100]   escolhido: 5
-Howard vai comer
+Amy voltou para o trabalho
 Penny começa a esquentar algo
 Kripke quer usar o forno
-fila: [00000010]   escolhido: 6
 Penny vai comer
+Howard começa a esquentar algo
+Howard vai comer
+Leonard começa a esquentar algo
+Bernardette voltou para o trabalho
+Leonard vai comer
 Kripke começa a esquentar algo
 Sheldon voltou para o trabalho
-fila: [00000000]   escolhido: 0
 Kripke vai comer
-Raj checked and deadlock = 0
-[00000000] Leonard voltou para o trabalho
+Stuart começa a esquentar algo
+Amy quer usar o forno
+Howard voltou para o trabalho
+Stuart vai comer
+Amy começa a esquentar algo
+Bernardette quer usar o forno
+Penny voltou para o trabalho
+Amy vai comer
+Bernardette começa a esquentar algo
+Leonard voltou para o trabalho
+Kripke voltou para o trabalho
+Bernardette vai comer
+Penny quer usar o forno
+Penny começa a esquentar algo
+Stuart voltou para o trabalho
+Penny vai comer
+Amy voltou para o trabalho
+Bernardette voltou para o trabalho
+Penny voltou para o trabalho
 Stuart quer usar o forno
 Stuart começa a esquentar algo
-Howard voltou para o trabalho
-fila: [00000000]   escolhido: 0
 Stuart vai comer
-Penny voltou para o trabalho
-Kripke voltou para o trabalho
-Raj checked and deadlock = 0
-[00000000] Stuart voltou para o trabalho
-Raj checked and deadlock = 0
+Stuart voltou para o trabalho

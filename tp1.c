@@ -177,6 +177,8 @@ void check_deadlock(int *ovenInterest){
         }
         
     }
+
+    return;
  
 }
 
@@ -281,6 +283,7 @@ void wait_oven(struct persona *p)
     pthread_mutex_lock(&initMutex);
     if (check_empty_line())
     {
+        // printf("name %s" ,p->name);
         idNext = p->id;
         // init++;
 
@@ -290,6 +293,7 @@ void wait_oven(struct persona *p)
         printf("%s quer usar o forno\n", p->name);
  
         pthread_mutex_unlock(&interestMutex);
+        sleep(1);
     }
     else
     {
@@ -323,10 +327,10 @@ void use_oven(struct persona *p)
     pthread_mutex_lock(&interestMutex); //Impede entrada de novos durante o calculo do proximo em cima do vetor ovenInterest
 
     
-    printf("fila: ");
-    print_oven();
+    // printf("fila: ");
+    // print_oven();
     idNext = setIdNext(ovenInterest); //define a variável global nextId ou entra em looping até o raj resolver deadlocks. 
-    printf("  escolhido: %d\n", idNext);
+    // printf("  escolhido: %d\n", idNext);
 
     printf("%s vai comer\n", p->name);
 
@@ -352,23 +356,27 @@ void work(struct persona *p)
 
 void raj_verify(){
 
+    pthread_mutex_lock(&rajMutex); 
     check_deadlock(ovenInterest);
-    printf("Raj checked and deadlock = %d\n", deadlock);
-    print_oven();
+    // printf("Raj checked and deadlock = %d\n, nextid = %d  current id = %d\n", deadlock, idNext, idCurrent);
+    // printf("nextid = %d  current id = %d\n", );
+    // print_oven();
 
     if (deadlock == 1){
         int validId = 0;
         while(!validId){
             int id_aux = randomInt(0, 7);
-            printf("came\n");
             if((ovenInterest[id_aux] == 1) && (id_aux != idCurrent)) {
                 idNext = id_aux;
+                printf("Raj detectou um deadlock, liberando %s\n", personaArray[idNext]->name);
                 deadlock = 0;
                 validId = 1;
            }
         }
         
     }
+
+    pthread_mutex_unlock(&rajMutex); 
 }
 
 void *oven_checker(void *data)
