@@ -38,7 +38,7 @@ void print_oven(){
         {
             printf("%d", ovenInterest[i]);
         }
-        printf("] ");
+        printf("] \n");
         //buugggg
 
         // printf("next = %d", idNext);
@@ -280,6 +280,7 @@ if(!((p->name == "Kripke") || (p->name == "Stuart"))){
        
 void wait_oven(struct persona *p)
 {
+    sleep(randomInt(2, 5));
     pthread_mutex_lock(&initMutex);
     if (check_empty_line())
     {
@@ -293,7 +294,7 @@ void wait_oven(struct persona *p)
         printf("%s quer usar o forno\n", p->name);
  
         pthread_mutex_unlock(&interestMutex);
-        sleep(1);
+        //sleep(1);
     }
     else
     {
@@ -317,7 +318,7 @@ void wait_oven(struct persona *p)
 
 void use_oven(struct persona *p)
 {   
-    
+    printf("------->") ; 
     printf("%s começa a esquentar algo\n", p->name);
     idCurrent = p->id;
     ovenInterest[p->id] = 0;
@@ -328,7 +329,7 @@ void use_oven(struct persona *p)
 
     
     // printf("fila: ");
-    // print_oven();
+    print_oven();
     idNext = setIdNext(ovenInterest); //define a variável global nextId ou entra em looping até o raj resolver deadlocks. 
     // printf("  escolhido: %d\n", idNext);
 
@@ -345,13 +346,13 @@ void use_oven(struct persona *p)
 
 void eat(struct persona *p)
 { 
-    sleep(randomInt(3, 6));
+    sleep(randomInt(2, 5));
 }
 
 void work(struct persona *p)
 {
     printf("%s voltou para o trabalho\n", p->name);
-    sleep(randomInt(3, 6));   
+    sleep(randomInt(2, 5));   
 }
 
 void raj_verify(){
