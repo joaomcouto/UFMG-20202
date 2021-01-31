@@ -69,6 +69,35 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
   - Tivemos muitos erros que tiveram que ser solucionados, gastando um bom tempo, principalmente quando fomos ligar o back com o front através das APIs.
   - Atrasamos a primeira reunião de acompanhamento com o Professor.
 
+-------------------------------------------------------------------------------------------------------------------------
+
+## Sprint 2
+
+### Histórias de Usuário:
+
+#### Listagem:
+- Um usuário do MyRecipes deseja visualizar receitas cadastradas no sistema de MyRecipes
+- Um usuário do MyRecipes deseja visualizar receitas cadastradas no sistemas podendo filtrar de acordo com alguns parâmetros.
+
+#### Perfil & Receitas:
+- Um usuário do MyRecipes deseja favoritar receitas de seu interesse.
+- Um usuário do MyRecipes deseja visualizar suas receitas favoritadas.
+- Um usuário do MyRecipes deseja visualizar suas receitas cadastradas.
+
+#### Responsabilidades:
+
+#### Testes:
+- Pedro:
+
+- Vinicius:
+
+- Vitor:
+ 
+
+#### Retrospective
+- Pontos positivos:
+ 
+- Pontos Negativos:
 
 ### Kanban: https://github.com/VLamartine/pds2020-2/projects/1
 
