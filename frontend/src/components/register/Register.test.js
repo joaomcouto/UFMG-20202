@@ -6,28 +6,29 @@ import Form from 'react-bootstrap/Form';
 import {AuthContext} from '../../context/Auth';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import * as fetch from '../../util/fetch';
 
 describe('<Register />', () => {
-  let component, setFormData, useStateSpy, setHasError, setIsFormValid;
-  const runAllPromises = () => new Promise(setImmediate);
+  let component, setFormData, useStateSpy, setHasError, setIsFormValid, fetchSpy;
 
-  const context = {
-    token: null,
-    setToken: token => localStorage.setItem("token", JSON.stringify(token))
-  }
+  let user = null;
+  const setUser = jest.fn().mockImplementation(newUser => {
+    console.log("Being called")
+    user = newUser
+  });
+  
   beforeEach(() => {
     setFormData = jest.fn();
     setHasError = jest.fn();
     setIsFormValid = jest.fn();
 
-    useStateSpy = jest.spyOn(React, 'useState')
+    useStateSpy = jest.spyOn(React, 'useState');
+    fetchSpy = jest.spyOn(window, 'fetch');
     useStateSpy.mockImplementationOnce(init => [init, setHasError]);
     useStateSpy.mockImplementationOnce(init => [init, setIsFormValid]);
     useStateSpy.mockImplementationOnce(init => [init, setFormData]);
     component = mount(
       <BrowserRouter>
-        <AuthContext.Provider value={context}>
+        <AuthContext.Provider value={{user, setUser}}>
           <Register/>
         </AuthContext.Provider>
       </BrowserRouter>
@@ -72,17 +73,37 @@ describe('<Register />', () => {
     expect(setIsFormValid).toHaveBeenCalled();
   });
 
-  it('should submit the form', () => {
-    component.find(Form).simulate('submit');
-  });
+  // it('should call setHasError when form is submitted with invalid data', () => {
+  //   fetchSpy.mockImplementation(() => {
+  //     return Promise.resolve({
+  //       status: 400,
+  //       json:() => {
+  //         return Promise.resolve({
+  //           email: "vitor@email.com",
+  //           password: 1234567
+  //         })
+  //       }
+  //     })
+  //   })
+  //   component.find(Form).simulate('submit');
+  //   expect(setHasError).toHaveBeenCalled();
+  // });
 
-  it.skip('should call hasError when form is invalid', async () => {
+  // it('should redirect when form is submitted with valid data', () => {
+  //   fetchSpy.mockImplementation(() => {
+  //     return Promise.resolve({
+  //       status: 200,
+  //       json:() => {
+  //         return Promise.resolve({
+  //           UserId: 1,
+  //           email: "vitor@email.com",
+  //           password: 12345678
+  //         })
+  //       }
+  //     })
+  //   })
+  //   component.find(Form).simulate('submit');
+  //   expect(setUser).toBeCalled();
+  // });
 
-    const fetchSpy = jest.spyOn(fetch, 'post');
-
-    fetchSpy.mockReturnValue({status: 401, error: 'Email já cadastradado'});
-
-    await runAllPromises();
-    expect(setHasError).toHaveBeenCalled();
-  })
 });

@@ -5,7 +5,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import Create from "./Create";
 import React from 'react';
 
-describe('<Login />', () => {
+describe('<Create />', () => {
   let component, setFormData, useStateSpy, setError;
   const context = {
     user: {id: 1, name: 'Vitor'}

@@ -8,27 +8,27 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
 describe('<Login />', () => {
-  let component, setFormData, useStateSpy, setHasError, setIsFormValid;
+  let component, setFormData, useStateSpy, setHasError, setIsFormValid, fetchSpy;
 
   
-  const context = {
-    token: null,
-    setToken: token => localStorage.setItem("token", JSON.stringify(token))
-  }
+  const user = null;
+  const setUser = jest.fn();
 
   beforeEach(() => {
     setFormData = jest.fn();
     setHasError = jest.fn();
     setIsFormValid = jest.fn();
 
-    useStateSpy = jest.spyOn(React, 'useState')
+    useStateSpy = jest.spyOn(React, 'useState');
+    fetchSpy = jest.spyOn(window, 'fetch');
+    
     useStateSpy.mockImplementationOnce(init => [init, setHasError]);
     useStateSpy.mockImplementationOnce(init => [init, setIsFormValid]);
     useStateSpy.mockImplementationOnce(init => [init, setFormData]);
 
     component = mount(
       <BrowserRouter>
-        <AuthContext.Provider value={context}>
+        <AuthContext.Provider value={{user, setUser}}>
           <Login/>
         </AuthContext.Provider>
       </BrowserRouter>
@@ -36,7 +36,7 @@ describe('<Login />', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    // jest.restoreAllMocks();
   });
 
   it('should render the form', () => {
@@ -71,8 +71,35 @@ describe('<Login />', () => {
     expect(setIsFormValid).toHaveBeenCalled();
   });
 
-  it('should submit the form', () => {
-    component.find(Form).simulate('submit');
-  });
+  // it('should call setHasError when form is submitted with invalid data', () => {
+  //   fetchSpy.mockImplementation(() => {
+  //     return Promise.resolve({
+  //       status: 200,
+  //       json:() => {
+  //         return Promise.resolve({
+  //           email: "vitor@email.com",
+  //           password: 1234567
+  //         })
+  //       }
+  //     })
+  //   })
+  //   component.find(Form).simulate('submit');
+  // });
+
+  // it('should redirect when form is submitted with valid data', () => {
+  //   fetchSpy.mockImplementation(() => {
+  //     return Promise.resolve({
+  //       status: 200,
+  //       json:() => {
+  //         return Promise.resolve({
+  //           UserId: 1,
+  //           email: "vitor@email.com",
+  //           password: 12345678
+  //         })
+  //       }
+  //     })
+  //   })
+  //   component.find(Form).simulate('submit');
+  // });
 
 });

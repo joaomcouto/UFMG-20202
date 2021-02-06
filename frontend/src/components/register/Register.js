@@ -4,7 +4,6 @@ import {Link, Redirect} from 'react-router-dom';
 import classes from './Register.module.css';
 import React from 'react';
 import { useAuth } from '../../context/Auth';
-import { post } from '../../util/fetch';
 
 export const formObject = {
   email: {
@@ -92,12 +91,26 @@ const Register = () => {
       data[prop] = formData[prop].value
     }
 
-    const response = await post('/register', {body: JSON.stringify(data)});
-    if(response.status === 200){
-      setUser(response.data);
+    const url = `${process.env.REACT_APP_SERVER_URL}/register`;
+    const options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    };
+
+    try{
+      const json = await fetch(url, options);
+      if(json.status !== 200){
+        setHasError(true);
+        return;
+      }
+      const response = await json.json();
+      setUser(response);
       return <Redirect to="/"/>
-    } else {
+
+    } catch(e){
       setHasError(true);
+      return;
     }
   }
 

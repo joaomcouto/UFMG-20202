@@ -8,9 +8,17 @@ import FormControl from 'react-bootstrap/FormControl';
 const List = () => {
   const [recipes, setRecipes] = React.useState([]);
 
+  const getRecipes = async (params = "") => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/recipes`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    setRecipes(data.recipes);
+  }
+
   React.useEffect(() => {
     if(process.env.REACT_APP_IS_SERVER_WORKING !== 'false'){
-      // Fetch API
+      getRecipes();
     } else {
       setRecipes(recipesMock.data.recipes)
     }
@@ -24,7 +32,7 @@ const List = () => {
     }
 
     if(process.env.REACT_APP_IS_SERVER_WORKING !== 'false'){
-      // Fetch API
+      getRecipes(`search:${searchParam}`);
     } else {
       setRecipes(recipesMock.data.recipes.filter(recipe => recipe.titulo.includes(e.target.value)))
     }
@@ -38,7 +46,7 @@ const List = () => {
           <InputGroup.Prepend>
             <InputGroup.Text id="inputGroup-sizing-sm">Filtrar</InputGroup.Text>
           </InputGroup.Prepend>
-          <FormControl aria-label="Procurar" onChange={handleFilterChange} aria-describedby="inputGroup-sizing-sm" />
+          <FormControl aria-label="Procurar" id="filter" onChange={handleFilterChange} aria-describedby="inputGroup-sizing-sm" />
         </InputGroup>
       </div>
       <CardList list={recipes}/>

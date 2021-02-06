@@ -5,7 +5,6 @@ import Button from 'react-bootstrap/Button';
 import classes from './Login.module.css';
 import { Link, Redirect } from 'react-router-dom';
 import { useAuth } from '../../context/Auth';
-import { post } from '../../util/fetch';
 
 const Login = () => {
 
@@ -72,12 +71,25 @@ const Login = () => {
       data[prop] = formData[prop].value
     }
 
-    const response = await post('/login', {body: JSON.stringify(data)});
-    if(response.status === 200){
-      setUser(response.data);
-      return <Redirect to="/"></Redirect>
-    } else {
+    const url = `${process.env.REACT_APP_SERVER_URL}/login`;
+    const options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    };
+
+    try{
+      const json = await fetch(url, options);
+      const response = await json.json();
+      if(json.status !== 200){
+        setHasError(true);
+        return;
+      }
+      setUser(response);
+      return <Redirect to="/"/>
+    } catch(e){
       setHasError(true);
+      return;
     }
   }
 
