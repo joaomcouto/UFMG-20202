@@ -34,7 +34,8 @@ const List = () => {
     if(process.env.REACT_APP_IS_SERVER_WORKING !== 'false'){
       getRecipes(`search:${searchParam}`);
     } else {
-      setRecipes(recipesMock.data.recipes.filter(recipe => recipe.titulo.includes(e.target.value)))
+      console.log(e.target.value);
+      setRecipes(recipesMock.data.recipes.filter(recipe => recipe.titulo.toLowerCase().includes(e.target.value)))
     }
   }
 

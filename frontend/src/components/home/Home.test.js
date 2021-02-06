@@ -1,13 +1,13 @@
 import { mount } from 'enzyme';
 
 import React from 'react';
-import List from './List';
+import Home from './Home';
 
-import recipesMock from '../../../recipesMock.json';
-import CardList from '../../UX/CardList/CardList';
+import recipesMock from '../../recipesMock.json';
+import CardList from '../UX/CardList/CardList';
 
 
-describe('<List />', () => {
+describe('<Home />', () => {
   let component, useStateSpy, fetchSpy, setRecipes;
   const data = recipesMock.data;
 
@@ -26,7 +26,7 @@ describe('<List />', () => {
       })
     })
     component = mount(
-      <List/>
+      <Home/>
     );
   });
 
@@ -34,17 +34,7 @@ describe('<List />', () => {
     jest.restoreAllMocks();
   });
 
-  it('should render the card list with all the recipes', () => {
-    expect(component.find(CardList)).toHaveLength(1);
-  });
-
-  it('should handle filter changes', () => {
-    const input = component.find('#filter').at(0);
-
-    input.value = 'mousse';
-
-    input.simulate('change');
-
-    expect(setRecipes).toHaveBeenCalled();
+  it('should render both card list with the recipes', () => {
+    expect(component.find(CardList)).toHaveLength(2);
   });
 });

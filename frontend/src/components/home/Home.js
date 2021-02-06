@@ -10,18 +10,18 @@ const Home = () => {
     if(process.env.REACT_APP_IS_SERVER_WORKING !== 'false'){
       // Fetch API
     } else {
-      setRecipes(recipesMock.data.recipes)
+      setRecipes(recipesMock.data.recipes.slice(0, 5))
     }
   }, []);
 
   return (
     <div className={`${classes.Container}`}>
-      <div>
-      <h4>Últimas receitas:</h4>
+      <div className={classes.last_recipes}>
+      <h4 className={classes.header}>Últimas receitas:</h4>
       <CardList className={`${classes.List}`} list={recipes}/>
       </div>
       <div>
-      <h4>Receitas populares:</h4>
+      <h4 className={classes.header}>Receitas populares:</h4>
       <CardList list={recipes}/>
       </div>
     </div>

@@ -1,11 +1,22 @@
-.Container {
-  display: flex;
-}
-
-.Container > div {
-  width: 50%;
-}
-
-.Container h4 {
+.header {
+  margin-top: 1rem;
   text-align: center;
+}
+
+.last_recipes {
+  border-bottom: 1px solid gray;
+}
+
+@media (min-width: 768px){
+  .Container {
+    display: flex;
+  }
+
+  .Container > div {
+    width: 50%;
+  }
+
+  .Container h4 {
+    text-align: center;
+  }
 }
