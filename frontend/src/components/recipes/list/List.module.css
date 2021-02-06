@@ -1,0 +1,22 @@
+/* .Container {
+}*/
+
+.search_bar {
+  width: calc(100% - 2rem);
+  margin: 0.5rem 1rem;
+}
+@media (min-width: 992px){
+  
+  .Container > div {
+    width: 50%;
+  }
+  
+  .Container h4 {
+    text-align: center;
+  }
+  
+  .search_bar {
+    margin: 1rem auto;
+    width: 100%;
+  }
+}

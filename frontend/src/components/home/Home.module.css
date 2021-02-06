@@ -1,0 +1,11 @@
+.Container {
+  display: flex;
+}
+
+.Container > div {
+  width: 50%;
+}
+
+.Container h4 {
+  text-align: center;
+}

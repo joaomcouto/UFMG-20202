@@ -1,0 +1,9 @@
+.Card {
+  margin: 1rem;
+  background-color: #ffffcb !important;
+}
+
+.Link {
+  text-decoration: none;
+  color: black;
+}

@@ -22,7 +22,7 @@ function App() {
     <div className={['d-flex', 'flex-column', 'h-100'].join` `}>
       <AuthContext.Provider value={{user, setUser}}>
         <Header logout={setUser}/>
-        <Router/>
+        <Router />
       </AuthContext.Provider>
     </div>
   );
