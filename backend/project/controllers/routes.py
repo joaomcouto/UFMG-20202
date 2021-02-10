@@ -101,4 +101,14 @@ def get_user_recipes_as_dict(id):
     recipes = {}
     for x in recipeObjs:
         recipes[x.get_id()] = x.as_dict() 
-    return recipes    
+    return recipes
+
+@routes_blueprint.route('/receitas', methods=['GET'])
+@login_required
+def get_recipe_by_search():
+    search = request.args.get('search',type=str)
+    if (search):
+        
+        return json.dumps({'success': True, 'search': search}), 200, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
