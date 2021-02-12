@@ -20,7 +20,7 @@ describe('<Login />', () => {
     setIsFormValid = jest.fn();
 
     useStateSpy = jest.spyOn(React, 'useState');
-    fetchSpy = jest.spyOn(window, 'fetch');
+    fetchSpy = jest.spyOn(global, 'fetch');
     
     useStateSpy.mockImplementationOnce(init => [init, setHasError]);
     useStateSpy.mockImplementationOnce(init => [init, setIsFormValid]);

@@ -1,5 +1,6 @@
-/* .Container {
-}*/
+ .Container {
+  background: #efefef
+}
 
 .search_bar {
   width: calc(100% - 2rem);

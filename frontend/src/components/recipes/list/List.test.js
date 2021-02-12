@@ -15,7 +15,7 @@ describe('<List />', () => {
     setRecipes = jest.fn();
 
     useStateSpy = jest.spyOn(React, 'useState');
-    fetchSpy = jest.spyOn(window, 'fetch');
+    fetchSpy = jest.spyOn(global, 'fetch');
     useStateSpy.mockImplementationOnce(init => [init, setRecipes]);
     fetchSpy.mockImplementationOnce(() => {
       return Promise.resolve({

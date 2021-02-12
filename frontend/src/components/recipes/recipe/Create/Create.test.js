@@ -6,18 +6,31 @@ import Create from "./Create";
 import React from 'react';
 
 describe('<Create />', () => {
-  let component, setFormData, useStateSpy, setError;
+  let component, useStateSpy, setFormData, setError, setImageUrl, fetchSpy, alertSpy;
   const context = {
     user: {id: 1, name: 'Vitor'}
   };
 
+
+  const mockData = {
+    title: "Brigadeiro",
+    portions: 10,
+    time: 0,
+    ingredients: "Leite condensado e chocolate",
+    howTo: "Jogar na panela"
+  }
   beforeEach(() => {
     setFormData = jest.fn();
     setError = jest.fn();
+    fetchSpy = jest.spyOn(global, 'fetch');
 
-    useStateSpy = jest.spyOn(React, 'useState')
+    alertSpy = jest.spyOn(window, 'alert');
+    alertSpy.mockImplementation(() => {})
+    
+    useStateSpy = jest.spyOn(React, 'useState');
     useStateSpy.mockImplementationOnce(init => [init, setError]);
-    useStateSpy.mockImplementationOnce(init => [init, setFormData]);
+    useStateSpy.mockImplementationOnce(() => [mockData, setFormData]);
+    useStateSpy.mockImplementationOnce(init => [init, setImageUrl]);
 
     component = mount(
       <AuthContext.Provider value={context}>
@@ -30,8 +43,8 @@ describe('<Create />', () => {
     jest.clearAllMocks();
   });
 
-  it('should render the two textareas and one input', () => {
-    expect(component.find(FormControl)).toHaveLength(1);
+  it('should render the two textareas and three inputs', () => {
+    expect(component.find(FormControl)).toHaveLength(3);
     expect(component.find('textarea')).toHaveLength(2);
   });
 
@@ -56,7 +69,7 @@ describe('<Create />', () => {
   });
 
   it('should handle howTo changes', () => {
-    const input = component.find('#howto').at(0);
+    const input = component.find('#howTo').at(0);
 
     input.value = 'Ferva a água';
 
@@ -64,4 +77,34 @@ describe('<Create />', () => {
 
     expect(setFormData).toHaveBeenCalled();
   });
+
+  it('should call hasError when submitting form with no data', () => {
+    const submit = component.find('#submit').at(0);
+
+    submit.simulate('click');
+
+    expect(setError).toHaveBeenCalled()
+  });
+  it.skip('should alert the user that the recipe was saved', () => {
+    fetchSpy.mockImplementationOnce(() => {
+      return Promise.resolve({
+        status: 200,
+        json: () => {
+          return Promise.resolve({
+            id: 1
+          })
+        }
+      })
+    })
+    
+    for(let prop in mockData){
+      const input = component.find(`#${prop}`).at(0);
+      input.value = mockData[prop];
+      input.simulate('change');
+    }
+
+    const submit = component.find('#submit').at(0);
+    submit.simulate('click');
+    expect(window.alert).toHaveBeenCalled();
+  })
 });
