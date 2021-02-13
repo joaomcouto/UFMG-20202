@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import ReactRouter from 'react-router';
 import classes from './Show.module.css';
 import recipeIcon from '../../../../assets/dinner.svg';
 import Image from 'react-bootstrap/Image';
@@ -14,24 +14,24 @@ const Show = () => {
     howTo: '',
     favourite: false
   });
-  const { id } = useParams();
+  const { id } = ReactRouter.useParams();
 
   React.useEffect(() => {
-    console.log("useEffect");
     const getRecipe = async () => {
       const url = `${process.env.REACT_APP_SERVER_URL}/receita/${id}`
       const response = await fetch(url);
-      setRecipe(await response.json());
+      const data = (await response.json()).data;
+      setRecipe(data);
     }
 
-    if(process.env.REACT_APP_IS_SERVER_WORKING !== 'false'){
+    // if(process.env.REACT_APP_IS_SERVER_WORKING === 'false'){
       getRecipe();
-    } else {
-      console.log(recipesMock.data.recipes[0]);
-      const recipe = recipesMock.data.recipes[0];
-      recipe.imagem = recipe.imagem ? mockImage : null;
-      setRecipe(recipesMock.data.recipes[0]);
-    }
+    // } else {
+    //   console.log(recipesMock.data.recipes[0]);
+    //   const recipe = recipesMock.data.recipes[0];
+    //   recipe.imagem = recipe.imagem ? mockImage : null;
+    //   setRecipe(recipesMock.data.recipes[0]);
+    // }
   }, [id]);
 
 
