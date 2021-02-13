@@ -6,6 +6,7 @@ class Recipe(db.Model):
     titulo = db.Column(db.String(200), nullable=False)
     ingredientes = db.Column(db.String(200), nullable=False)
     modo_preparo = db.Column(db.String(200), nullable=False)
+    latest_change_date = db.Column(db.DateTime, nullable=False)
     texto = db.Column(db.Text, nullable=True)
     tempo_preparo = db.Column(db.String(200), nullable=True)
     imagem = db.Column(db.String(200), nullable=True)

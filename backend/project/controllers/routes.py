@@ -5,6 +5,7 @@ from flask_bcrypt import Bcrypt
 from project import db, bcrypt   # pragma: no cover
 from project.models import User, Recipe   # pragma: no cover
 import json
+from datetime import datetime
 
 OK = json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
@@ -77,16 +78,31 @@ def new_recipe():
         save_new_recipe(title, ingredients, directions, author, time, text, image)
         return OK #"<h1> new Recipe registered <h1>"
 
-@routes_blueprint.route('/user_all_recipes')
+@routes_blueprint.route('/receitas/user_all_recipes')
 @login_required
 def get_user_recipes():
     return json.dumps(get_user_recipes_as_dict(current_user.get_id()))
+
+@routes_blueprint.route('/receitas', methods=['GET'])
+@login_required
+def get_recipe_by_search():
+    search = request.args.get('search',type=str)
+    if (search):
+        
+        return json.dumps({'success': True, 'search': search}), 200, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+
+@routes_blueprint.route('/receitas/')
+
+
 
 def save_new_recipe(title, ingredients, directions, author, time=None, text=None, image=None):
     recipe = Recipe(
         titulo = title,
         ingredientes = ingredients,
         modo_preparo = directions,
+        latest_change_date = datetime.now(),
         autor = author,
         tempo_preparo = time,
         texto = text,
@@ -111,13 +127,3 @@ def get_user_recipes_as_dict(id):
     for x in recipeObjs:
         recipes[x.get_id()] = x.as_dict() 
     return recipes
-
-@routes_blueprint.route('/receitas', methods=['GET'])
-@login_required
-def get_recipe_by_search():
-    search = request.args.get('search',type=str)
-    if (search):
-        
-        return json.dumps({'success': True, 'search': search}), 200, {'ContentType':'application/json'}
-    else:
-        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}

@@ -1,5 +1,6 @@
 import unittest
 
+from datetime import datetime
 from flask import request
 from flask_login import current_user
 from baseTest import BaseTestCase
@@ -159,7 +160,9 @@ class TestCase(BaseTestCase):
                 titulo = newTitle, 
                 ingredientes = newIngredients,
                 modo_preparo = newDirections,
-                autor = current_user.get_id() )
+                latest_change_date = datetime.now(), 
+                autor = current_user.get_id()
+                )
 
             self.assertEqual(recipe.titulo, newTitle)
             self.assertEqual(recipe.ingredientes, newIngredients)
