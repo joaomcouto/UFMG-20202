@@ -87,13 +87,13 @@ class TestCase(BaseTestCase):
             self.assert200(response)
 
     # Ensure recipe is saved
-
     def test_save_new_recipe(self):
         username = 'test'
         email = 'test@email.com'
         password = 'test1234'
         newTitle = 'bolo'
-        newText = '2 ovos, 100ml leite, fermento'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
         test_data = {
             "email": email,
             "name": username,
@@ -103,11 +103,12 @@ class TestCase(BaseTestCase):
             save_new_user(username, email, password)
             self.login(test_data)
             newAuthor = current_user.get_id()
-            save_new_recipe(newTitle, newText, newAuthor)
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
             savedRecipe = Recipe.query.filter_by(titulo=newTitle).first()
             self.assertEqual(newAuthor, savedRecipe.autor)
             self.assertEqual(newTitle, savedRecipe.titulo)
-            self.assertEqual(newText, savedRecipe.texto)
+            self.assertEqual(newIngredients, savedRecipe.ingredientes)
+            self.assertEqual(newDirections, savedRecipe.modo_preparo)
 
     # Ensure all user recipes are fetched
     def test_get_all_user_recipes(self):
@@ -115,9 +116,12 @@ class TestCase(BaseTestCase):
         email = 'test@email.com'
         password = 'test123'
         newTitle = 'bolo'
-        newText = '2 ovos, 100ml leite, fermento'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
         newTitle2 = 'bolo2'
-        newText2 = '23 ovos, 1000ml leite, 2 fermento'
+        newIngredients2 = '23 ovos, 1000ml leite, 2 fermento'
+        newDirections2 = 'batedeira tudo e assar'
+
         test_data = {
             "email": email,
             "name": username,
@@ -127,10 +131,40 @@ class TestCase(BaseTestCase):
             save_new_user(username, email, password)
             self.login(test_data)
             newAuthor = current_user.get_id()
-            save_new_recipe(newTitle, newText, newAuthor)
-            save_new_recipe(newTitle2, newText2, newAuthor)
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
+            save_new_recipe(newTitle2, newIngredients2, newDirections2, newAuthor)
             savedRecipes = get_user_recipes_as_dict(newAuthor)
             self.assertEqual(len(savedRecipes), 2)
+
+## Tests Sprint 2 - Pedro
+    def test_create_new_recipe_required_parameters(self):
+        newTitle = 'bolo'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
+
+        username = 'test'
+        email = 'test@email.com'
+        password = 'test123'
+        test_data = {
+            "email": email,
+            "name": username,
+            "password": password,
+        }
+            
+        with self.client:
+            save_new_user(username, email, password)
+            self.login(test_data)
+            
+            recipe = Recipe(
+                titulo = newTitle, 
+                ingredientes = newIngredients,
+                modo_preparo = newDirections,
+                autor = current_user.get_id() )
+
+            self.assertEqual(recipe.titulo, newTitle)
+            self.assertEqual(recipe.ingredientes, newIngredients)
+            self.assertEqual(recipe.modo_preparo, newDirections)
+
 
 # Testes Vinicius
 
@@ -178,10 +212,17 @@ class TestCase(BaseTestCase):
             "password": password,
         }
         title = 'titulo de teste'
+        ingredients = 'ingredientes de teste'
+        directions = 'modo prepraro de teste'
         text = 'texto de teste'
         test_data = {
             "title": title,
+            "ingredients": ingredients,
+            "directions": directions,
+            "title": title,
             "text": text,
+            "time": None,
+            "image": None
         }
         with self.client:
             save_new_user(username, email, password)

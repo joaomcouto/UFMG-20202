@@ -68,9 +68,13 @@ def new_recipe():
     else:
         data = request.get_json()
         title = data['title']
+        ingredients = data['ingredients']
+        directions = data['directions']
+        author = current_user.get_id() 
+        time = data['time'] 
         text = data['text']
-        author = current_user.get_id()  
-        save_new_recipe(title, text, author)
+        image = data['image']
+        save_new_recipe(title, ingredients, directions, author, time, text, image)
         return OK #"<h1> new Recipe registered <h1>"
 
 @routes_blueprint.route('/user_all_recipes')
@@ -78,11 +82,16 @@ def new_recipe():
 def get_user_recipes():
     return json.dumps(get_user_recipes_as_dict(current_user.get_id()))
 
-def save_new_recipe(title, text, author):
+def save_new_recipe(title, ingredients, directions, author, time=None, text=None, image=None):
     recipe = Recipe(
-        titulo = title, 
+        titulo = title,
+        ingredientes = ingredients,
+        modo_preparo = directions,
+        autor = author,
+        tempo_preparo = time,
         texto = text,
-        autor = author)
+        imagem = image
+        )
 
     db.session.add(recipe)
     db.session.commit()
