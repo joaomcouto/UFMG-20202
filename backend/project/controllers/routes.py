@@ -78,25 +78,58 @@ def new_recipe():
         save_new_recipe(title, ingredients, directions, author, time, text, image)
         return OK #"<h1> new Recipe registered <h1>"
 
+@routes_blueprint.route('/edit_recipe', methods=['GET', 'POST'])
+@login_required
+def edit_recipe():
+    if request.method == 'GET':
+        return OK
+    else:
+        data = request.get_json()
+        ID = data['id']
+        title = data['title']
+        ingredients = data['ingredients']
+        directions = data['directions']
+        author = current_user.get_id() 
+        time = data['time'] 
+        text = data['text']
+        image = data['image']
+        edit_recipe(ID, title, ingredients, directions, author, time, text, image)
+        return OK #"<h1> new Recipe registered <h1>"
+
 @routes_blueprint.route('/receitas/user_all_recipes')
 @login_required
 def get_user_recipes():
-    return json.dumps(get_user_recipes_as_dict(current_user.get_id()))
+    return json.dumps(get_user_recipes_as_dict(current_user.get_id()), default=str)
 
 @routes_blueprint.route('/receitas', methods=['GET'])
 @login_required
 def get_recipe_by_search():
     search = request.args.get('search',type=str)
-    if (search):
+    orderBy = request.args.get('orderBy',type=str)
+    
+    try:
+        return json.dumps(get_recipe_by_filters(search, orderBy), default=str)
+
+    except:    
+        return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
         
-        return json.dumps({'success': True, 'search': search}), 200, {'ContentType':'application/json'}
-    else:
-        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+        #return json.dumps({'success': True, 'search': search}), 200, {'ContentType':'application/json'}
 
-@routes_blueprint.route('/receitas/')
+###########################################
+#### User Functions #######################
+###########################################
+def save_new_user(newUser, newEmail, newPassword):
+    user = User(
+        nome = newUser, 
+        email = newEmail,
+        senha = bcrypt.generate_password_hash(newPassword))
 
+    db.session.add(user)
+    db.session.commit()
 
-
+###########################################
+#### Recipe Functions #####################
+###########################################
 def save_new_recipe(title, ingredients, directions, author, time=None, text=None, image=None):
     recipe = Recipe(
         titulo = title,
@@ -112,18 +145,42 @@ def save_new_recipe(title, ingredients, directions, author, time=None, text=None
     db.session.add(recipe)
     db.session.commit()
 
-def save_new_user(newUser, newEmail, newPassword):
-    user = User(
-        nome = newUser, 
-        email = newEmail,
-        senha = bcrypt.generate_password_hash(newPassword))
-
-    db.session.add(user)
-    db.session.commit()
+def get_recipe_by_id(id):
+    return Recipe.query.filter(Recipe.ID == id).first()
 
 def get_user_recipes_as_dict(id):
-    recipeObjs = Recipe.query.filter_by(autor=id).all()
+    recipeObjs = Recipe.query.filter(Recipe.autor == id).all()
     recipes = {}
     for x in recipeObjs:
         recipes[x.get_id()] = x.as_dict() 
     return recipes
+
+def get_recipe_by_filters(search, orderBy):
+    query = Recipe.query
+    if(search):
+        query = query.filter(Recipe.titulo.like("%"+search+"%"))  
+    if(orderBy):
+        query = query.order_by(orderBy)
+
+    recipeObjs = query.order_by(Recipe.latest_change_date).all()
+    recipes = {}
+
+    for x in recipeObjs:
+        recipes[x.get_id()] = x.as_dict() 
+
+    return recipes
+
+def edit_recipe(id, title, ingredients, directions, author, time=None, text=None, image=None):
+    recipe = Recipe.query.filter(Recipe.ID == id).first()
+    
+    recipe.titulo              = title
+    recipe.ingredientes        = ingredients
+    recipe.modo_preparo        = directions
+    recipe.tempo_preparo       = time
+    recipe.texto               = text
+    recipe.imagem              = image
+    recipe.latest_change_date  = datetime.now()
+
+    db.session.commit()
+
+    return recipe
