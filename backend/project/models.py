@@ -62,7 +62,7 @@ class User(db.Model):
 
     def get_id(self):
         """Return the id to satisfy Flask-Login's requirements."""
-        return self.UserID
+        return self.ID
 
     def is_anonymous(self):
         """False, as anonymous users aren't supported."""
@@ -70,7 +70,7 @@ class User(db.Model):
     
     def as_dict(self): # Não usa a senha no dic, uma vez que ela está em bytes e não é serializável
         return {
-            'UserID' : self.UserID,
+            'UserID' : self.ID,
             'nome'   : self.nome,
             'email'  : self.email
         }
