@@ -10,10 +10,35 @@ class Recipe(db.Model):
     texto = db.Column(db.Text, nullable=True)
     tempo_preparo = db.Column(db.String(200), nullable=True)
     imagem = db.Column(db.Text, nullable=True)
-    autor = db.Column(db.Integer, db.ForeignKey('users.UserID'), nullable=False)
+    autor = db.Column(db.Integer, db.ForeignKey('users.ID'), nullable=False)
 
     def get_id(self):
-        """Return the id to satisfy Flask-Login's requirements."""
+        return self.ID
+
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class FavoriteRecipes(db.Model):
+    __tablename__ = 'favorite_recipes'
+    ID = db.Column(db.Integer, primary_key=True, nullable=False)
+    user = db.Column(db.Integer, db.ForeignKey('users.ID'), nullable=False)
+    recipe = db.Column(db.Integer, db.ForeignKey('receitas.ID'), nullable=False)
+
+    def get_id(self):
+        return self.ID
+
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
+class ReviewRecipe(db.Model):
+    __tablename__ = 'review_recipe'
+    ID = db.Column(db.Integer, primary_key=True, nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+    user = db.Column(db.Integer, db.ForeignKey('users.ID'), nullable=False)
+    recipe = db.Column(db.Integer, db.ForeignKey('receitas.ID'), nullable=False)
+
+    def get_id(self):
         return self.ID
 
     def as_dict(self):
@@ -22,7 +47,7 @@ class Recipe(db.Model):
 
 class User(db.Model):
     __tablename__ = 'users'
-    UserID = db.Column(db.Integer, primary_key=True, nullable=False)
+    ID = db.Column(db.Integer, primary_key=True, nullable=False)
     nome = db.Column(db.Text(100), unique=False, nullable=False)
     email = db.Column(db.Text(100), unique=True, nullable=False)
     senha = db.Column(db.Text(20), nullable=False)
