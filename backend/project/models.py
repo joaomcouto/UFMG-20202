@@ -23,9 +23,13 @@ class FavoriteRecipes(db.Model):
     ID = db.Column(db.Integer, primary_key=True, nullable=False)
     user = db.Column(db.Integer, db.ForeignKey('users.ID'), nullable=False)
     recipe = db.Column(db.Integer, db.ForeignKey('receitas.ID'), nullable=False)
+    active = db.Column(db.Boolean, nullable=False)
 
     def get_id(self):
         return self.ID
+
+    def is_active(self):
+        return self.active
 
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -40,7 +44,10 @@ class ReviewRecipe(db.Model):
 
     def get_id(self):
         return self.ID
-
+    
+    def is_active(self):
+        return self.active
+    
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 

@@ -4,9 +4,12 @@ from datetime import datetime
 from flask import request
 from flask_login import current_user
 from baseTest import BaseTestCase
+
 from project.controllers.routes import (save_new_user, save_new_recipe, get_user_recipes_as_dict,
-get_recipe_by_filters, edit_recipe, get_recipe_by_id)
-from project.models import User, Recipe
+get_recipe_by_filters, edit_recipe, get_recipe_by_id, check_exists_favorite, save_new_favorite, 
+unfavorite_recipe, get_favorite_relation)
+
+from project.models import User, Recipe, FavoriteRecipes, ReviewRecipe
 import json
 
 
@@ -99,7 +102,7 @@ class TestCase(BaseTestCase):
             savedRecipes = get_user_recipes_as_dict(newAuthor)
             self.assertEqual(len(savedRecipes), 2)
 
-## Tests Sprint 2 - Pedro
+### Tests Sprint 2 - Pedro
     def test_create_new_recipe_required_parameters(self):
         newTitle = 'bolo'
         newIngredients = '2 ovos, 100ml leite, fermento'
@@ -156,9 +159,74 @@ class TestCase(BaseTestCase):
             save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
             save_new_recipe(newTitle2, newIngredients2, newDirections2, newAuthor)
             save_new_recipe(newTitle3, newIngredients3, newDirections3, newAuthor)
-
-            result = get_recipe_by_filters('bolo', 'titulo')
+            result = get_recipe_by_filters('bolo', 'titulo', None)
             self.assertEqual(len(result), 2)    
+
+    def test_save_favorite(self):
+        newTitle = 'bolo de chocolate'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
+        with self.client:
+            test_data = save_test_user()
+            self.login(test_data)
+            newAuthor = current_user.get_id()
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
+            save_new_favorite(1, newAuthor)
+            self.assertEqual(check_exists_favorite(1, newAuthor), True)
+    
+    def test_unfavorite(self):
+        newTitle = 'bolo de chocolate'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
+        with self.client:
+            test_data = save_test_user()
+            self.login(test_data)
+            newAuthor = current_user.get_id()
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
+            save_new_favorite(1, newAuthor)
+            unfavorite_recipe(1, newAuthor)
+            result = get_favorite_relation(1, newAuthor)
+            self.assertEqual(result.is_active(), False)
+
+    def test_favorite_status_response(self):
+        newTitle = 'bolo de chocolate'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
+        with self.client:
+            test_data = save_test_user()
+            self.login(test_data)
+            newAuthor = current_user.get_id()
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
+            save_new_favorite(1, newAuthor)
+            
+            response = self.client.get(
+                '/favoriteStatus?id=1', content_type='html/text')
+
+            self.assert200(response)
+
+    def test_get_recipe_by_filters_only_favorites(self):
+        newTitle = 'bolo de chocolate'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
+
+        newTitle2 = 'cake'
+        newIngredients2 = '2 ovos, 100ml leite, fermento'
+        newDirections2 = 'batedeira tudo e assar'
+
+        newTitle3 = 'bolo'
+        newIngredients3 = '2 ovos, 100ml leite, fermento'
+        newDirections3 = 'batedeira tudo e assar'
+
+        with self.client:
+            test_data = save_test_user()
+            self.login(test_data)
+            newAuthor = current_user.get_id()
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
+            save_new_recipe(newTitle2, newIngredients2, newDirections2, newAuthor)
+            save_new_recipe(newTitle3, newIngredients3, newDirections3, newAuthor)
+            save_new_favorite(1, newAuthor)
+            result = get_recipe_by_filters('bolo', 'titulo', True)
+            self.assertEqual(len(result), 1)
 
     def test_get_recipe_by_id(self):
         newTitle = 'bolo de chocolate'
@@ -228,6 +296,28 @@ class TestCase(BaseTestCase):
             self.assertEqual(result.titulo, editTitle)    
             self.assertEqual(result.ingredientes, editIngredients)    
             self.assertEqual(result.modo_preparo, editDirections)    
+    
+    def test_delete_recipe(self):
+        newTitle = 'bolo de chocolate'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
+        
+        test_recipe_data = {
+            "id": 1,
+        }
+        
+        with self.client:
+            test_data = save_test_user()
+            self.login(test_data)
+            newAuthor = current_user.get_id()
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
+            
+            response = self.client.post(
+                '/delete_recipe', data=json.dumps(test_recipe_data), headers={'Content-type': 'application/json'})
+            result = get_recipe_by_id(1)
+
+            self.assert200(response)
+            self.assertEqual(result, None)
 
 # Testes Vinicius
     def test_home_endpoint(self):
