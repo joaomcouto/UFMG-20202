@@ -184,6 +184,7 @@ def favorite_status():
     if(ID):
         favorite = FavoriteRecipes.query.filter(FavoriteRecipes.recipe == ID)\
                                 .filter(FavoriteRecipes.user == author)\
+                                .filter(FavoriteRecipes.active == True)\
                                 .first()
         return (json.dumps(True) if favorite else json.dumps(False))
     else:
@@ -235,7 +236,8 @@ def get_recipe_by_filters(search, orderBy, favorite):
         query = query.filter(Recipe.titulo.like("%"+search+"%"))  
     
     if(favorite):
-        favorites = FavoriteRecipes.query.filter(FavoriteRecipes.user == current_user.get_id()).all()
+        favorites = FavoriteRecipes.query.filter(FavoriteRecipes.user == current_user.get_id())\
+                                        .filter(FavoriteRecipes.active == True).all()
         favorites = [x.recipe for x in favorites]
         query = query.filter(Recipe.ID.in_(favorites))
     
