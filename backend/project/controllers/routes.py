@@ -115,6 +115,21 @@ def get_recipe_by_search():
         
         #return json.dumps({'success': True, 'search': search}), 200, {'ContentType':'application/json'}
 
+@routes_blueprint.route('/receitas/ById', methods=['GET'])
+@login_required
+def get_recipe_by_search():
+    Id = request.args.get('id', type=str)
+
+    if(ById):
+        try:
+            return json.dumps(get_recipe_by_id(Id))
+        else:
+            return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
+    else:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+
+
+
 ###########################################
 #### User Functions #######################
 ###########################################
