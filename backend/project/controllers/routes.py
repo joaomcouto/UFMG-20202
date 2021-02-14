@@ -190,6 +190,23 @@ def favorite_status():
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
 
+@routes_blueprint.route('/submit_review', methods=['POST'])
+@login_required
+def submit_review():
+    data = request.get_json()
+    ID = data['id']
+    stars = data['stars']
+    author = current_user.get_id()
+
+    if(check_exists_review(ID, author)):
+        return json.dumps({'success': False}), 505, {'ContentType':'application/json'}
+    
+    else:
+        try:
+            submit_new_review(ID, author, stars)
+            return OK
+
+
 ###########################################
 #### User Functions #######################
 ###########################################
@@ -215,6 +232,8 @@ def save_new_recipe(title, ingredients, directions, author, time=None, text=None
         tempo_preparo = time,
         texto = text,
         imagem = image
+        reviews = 0
+        stars = 0
         )
 
     db.session.add(recipe)
@@ -294,4 +313,26 @@ def unfavorite_recipe(id, author):
 def get_favorite_relation(id, author):
     return FavoriteRecipes.query.filter(FavoriteRecipes.recipe == id)\
                             .filter(FavoriteRecipes.user == author).first()
+
+###########################################
+#### Review Functions #####################
+###########################################
+
+def check_exists_review(id, author):
+    exists = ReviewRecipe.query.filter(ReviewRecipe.recipe == id)\
+                            .filter(ReviewRecipe.user == author).all()
+    return(len(exists) > 0)
+
+def submit_new_review(id, author, stars):
+    review = ReviewRecipe(
+        score = stars
+        user = author
+        recipe = id
+        active = True
+    )
+    recipe = Recipe.query.filter(Recipe.ID == id).first()
+    recipe.reviews = recipe.reviews + 1
+    recipe.stars = recipe.stars + stars
     
+    db.session.add(review)
+    db.session.commit()

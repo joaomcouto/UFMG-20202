@@ -11,6 +11,8 @@ class Recipe(db.Model):
     tempo_preparo = db.Column(db.String(200), nullable=True)
     imagem = db.Column(db.Text, nullable=True)
     autor = db.Column(db.Integer, db.ForeignKey('users.ID'), nullable=False)
+    reviews = db.Column(db.Integer, nullable=False)
+    stars = db.Column(db.Integer, nullable=False)
 
     def get_id(self):
         return self.ID
@@ -41,7 +43,7 @@ class ReviewRecipe(db.Model):
     score = db.Column(db.Integer, nullable=False)
     user = db.Column(db.Integer, db.ForeignKey('users.ID'), nullable=False)
     recipe = db.Column(db.Integer, db.ForeignKey('receitas.ID'), nullable=False)
-
+    active = db.Column(db.Boolean, nullable=False)
     def get_id(self):
         return self.ID
     

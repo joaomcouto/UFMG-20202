@@ -7,7 +7,7 @@ from baseTest import BaseTestCase
 
 from project.controllers.routes import (save_new_user, save_new_recipe, get_user_recipes_as_dict,
 get_recipe_by_filters, edit_recipe, get_recipe_by_id, check_exists_favorite, save_new_favorite, 
-unfavorite_recipe, get_favorite_relation)
+unfavorite_recipe, get_favorite_relation, check_exists_review, submit_new_review)
 
 from project.models import User, Recipe, FavoriteRecipes, ReviewRecipe
 import json
@@ -366,6 +366,43 @@ class TestCase(BaseTestCase):
             response = self.client.post(
                 '/new_recipe', data=json.dumps(test_data), headers={'Content-type': 'application/json'})
             self.assert200(response)
+
+    def test_submit_new_review(self):
+        newTitle = 'bolo de chocolate'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
+        
+        test_recipe_data = {
+            "id": 1,
+        }
+        stars = 5
+        with self.client:
+            test_data = save_test_user()
+            self.login
+            newAuthor = current_user.get_id()
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
+
+            submit_new_review(test_recipe_data.id, newAuthor, stars)
+            self.assertEqual(check_exists_review(1, newAuthor), True)
+
+    def test_submit_review_endpoint(self):
+        newTitle = 'bolo de chocolate'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
+        test_submit_data = {
+             "id": 1,
+             "stars": 5,
+        }
+        with self.client:
+            test_data = save_test_user()
+            self.login(test_data)
+            newAuthor = current_user.get_id()
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
+
+            response = self.client.post(
+                '/submit_review', data=json.dumps(test_submit_data)
+            )
+            self.assert200(response)        
 
 
 def save_test_user():
