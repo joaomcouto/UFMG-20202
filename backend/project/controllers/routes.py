@@ -32,28 +32,37 @@ def create_new_user():
     if request.method == 'GET':
         return OK
     else:
-        data = request.get_json()
-        newUser = data['name']
-        newEmail = data['email']
-        newPassword = data['password']
-        save_new_user(newUser, newEmail, newPassword)
-        dbUser = User.query.filter_by(email=newEmail).first()
-        return json.dumps(dbUser.as_dict()) #redirect(url_for('login'))
+        try:
+            data = request.get_json()
+            newUser = data['name']
+            newEmail = data['email']
+            newPassword = data['password']
+            save_new_user(newUser, newEmail, newPassword)
+            dbUser = User.query.filter_by(email=newEmail).first()
+            return json.dumps(dbUser.as_dict())
+       
+        except:
+            return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return OK
     else:
-        data = request.get_json()
-        loginUser = data['email']
-        loginPass = data['password']
-        dbUser = User.query.filter_by(email=loginUser).first()
-        if(bcrypt.check_password_hash(dbUser.senha, loginPass)):
-            login_user(dbUser)
-            return json.dumps(dbUser.as_dict()) #redirect(url_for('routes.new_recipe'))
-        else:
-            return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+        try:
+            data = request.get_json()
+            loginUser = data['email']
+            loginPass = data['password']
+            dbUser = User.query.filter_by(email=loginUser).first()
+            if(bcrypt.check_password_hash(dbUser.senha, loginPass)):
+                login_user(dbUser)
+                return json.dumps(dbUser.as_dict())
+                
+            else:
+                return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+            
+        except:
+            return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/logout')
 def logout():
@@ -67,16 +76,19 @@ def new_recipe():
     if request.method == 'GET':
         return OK
     else:
-        data = request.get_json()
-        title = data['title']
-        ingredients = data['ingredients']
-        directions = data['directions']
-        author = current_user.get_id() 
-        time = data['time'] 
-        text = data['text']
-        image = data['image']
-        save_new_recipe(title, ingredients, directions, author, time, text, image)
-        return OK #"<h1> new Recipe registered <h1>"
+        try:
+            data = request.get_json()
+            title = data['title']
+            ingredients = data['ingredients']
+            directions = data['directions']
+            author = current_user.get_id() 
+            time = data['time'] 
+            text = data['text']
+            image = data['image']
+            save_new_recipe(title, ingredients, directions, author, time, text, image)
+            return OK 
+        except:
+            return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/edit_recipe', methods=['GET', 'POST'])
 @login_required
@@ -84,19 +96,22 @@ def edit_recipe():
     if request.method == 'GET':
         return OK
     else:
-        data = request.get_json()
-        ID = data['id']
-        title = data['title']
-        ingredients = data['ingredients']
-        directions = data['directions']
-        author = current_user.get_id() 
-        time = data['time'] 
-        text = data['text']
-        image = data['image']
-        edit_recipe(ID, title, ingredients, directions, author, time, text, image)
-        return OK #"<h1> new Recipe registered <h1>"
+        try:
+            data = request.get_json()
+            ID = data['id']
+            title = data['title']
+            ingredients = data['ingredients']
+            directions = data['directions']
+            author = current_user.get_id() 
+            time = data['time'] 
+            text = data['text']
+            image = data['image']
+            edit_recipe(ID, title, ingredients, directions, author, time, text, image)
+            return OK
+        except:
+            return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
-@routes_blueprint.route('/receitas/user_all_recipes')
+@routes_blueprint.route('/receitas/user_all_recipes', , methods=['GET'])
 @login_required
 def get_user_recipes():
     return json.dumps(get_user_recipes_as_dict(current_user.get_id()), default=str)
@@ -113,8 +128,6 @@ def get_recipe_by_search():
     except:    
         return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
         
-        #return json.dumps({'success': True, 'search': search}), 200, {'ContentType':'application/json'}
-
 @routes_blueprint.route('/receitas/ById', methods=['GET'])
 @login_required
 def get_recipe_by_search():
