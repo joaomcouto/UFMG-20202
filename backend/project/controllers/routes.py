@@ -207,6 +207,18 @@ def submit_review():
         except:
             return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
 
+@routes_blueprint.route('/average_stars', methods=['GET'])
+@login_required
+def average_reviews():
+    ID = request.args.get('id', type=str)
+
+    if(ID):
+        recipe = Recipe.query.filter(Recipe.ID == ID).first()
+        average = recipe.stars / recipe.reviews
+        data = {
+            'average': average
+        }
+        return (json.dumps(data))
 
 ###########################################
 #### User Functions #######################
@@ -337,3 +349,4 @@ def submit_new_review(id, author, stars):
     
     db.session.add(review)
     db.session.commit()
+

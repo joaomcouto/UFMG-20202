@@ -136,7 +136,6 @@ class TestCase(BaseTestCase):
 
             response = self.client.get(
                 '/receitas?search=bolo', content_type='html/text')
-
             self.assert200(response)
 
     def test_get_recipe_by_filters(self):
@@ -398,7 +397,23 @@ class TestCase(BaseTestCase):
             response = self.client.post(
                 '/submit_review', data=json.dumps(test_submit_data), headers={'Content-type': 'application/json'}
             )
-            self.assert200(response)        
+            self.assert200(response)
+
+    def test_average_stars_endpoint(self):
+        newTitle = 'bolo de chocolate'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
+        with self.client:
+            test_data = save_test_user()
+            self.login(test_data)
+            newAuthor = current_user.get_id()
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
+            submit_new_review(1, newAuthor, 5)
+
+            response = self.client.get(
+                '/average_stars?id=1', content_type='html/text'
+            )
+            self.assert200(response)
 
 
 def save_test_user():
