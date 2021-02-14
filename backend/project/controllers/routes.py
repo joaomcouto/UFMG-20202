@@ -170,7 +170,7 @@ def favorite_or_unfavorite_a_recipe():
 
     else:
         try:
-            save_new_favorite(Id, author)
+            save_new_favorite(ID, author)
             return OK
         except:
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
@@ -200,11 +200,12 @@ def submit_review():
 
     if(check_exists_review(ID, author)):
         return json.dumps({'success': False}), 505, {'ContentType':'application/json'}
-    
     else:
         try:
             submit_new_review(ID, author, stars)
             return OK
+        except:
+            return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
 
 
 ###########################################
@@ -231,8 +232,8 @@ def save_new_recipe(title, ingredients, directions, author, time=None, text=None
         autor = author,
         tempo_preparo = time,
         texto = text,
-        imagem = image
-        reviews = 0
+        imagem = image,
+        reviews = 0,
         stars = 0
         )
 
@@ -325,9 +326,9 @@ def check_exists_review(id, author):
 
 def submit_new_review(id, author, stars):
     review = ReviewRecipe(
-        score = stars
-        user = author
-        recipe = id
+        score = stars,
+        user = author,
+        recipe = id,
         active = True
     )
     recipe = Recipe.query.filter(Recipe.ID == id).first()

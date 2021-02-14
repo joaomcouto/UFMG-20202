@@ -371,18 +371,14 @@ class TestCase(BaseTestCase):
         newTitle = 'bolo de chocolate'
         newIngredients = '2 ovos, 100ml leite, fermento'
         newDirections = 'batedeira tudo e assar'
-        
-        test_recipe_data = {
-            "id": 1,
-        }
         stars = 5
         with self.client:
             test_data = save_test_user()
-            self.login
+            self.login(test_data)
             newAuthor = current_user.get_id()
             save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
 
-            submit_new_review(test_recipe_data.id, newAuthor, stars)
+            submit_new_review(1, newAuthor, stars)
             self.assertEqual(check_exists_review(1, newAuthor), True)
 
     def test_submit_review_endpoint(self):
@@ -396,11 +392,11 @@ class TestCase(BaseTestCase):
         with self.client:
             test_data = save_test_user()
             self.login(test_data)
-            newAuthor = current_user.get_id()
+            newAuthor = current_user.get_id() 
             save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
-
+           
             response = self.client.post(
-                '/submit_review', data=json.dumps(test_submit_data)
+                '/submit_review', data=json.dumps(test_submit_data), headers={'Content-type': 'application/json'}
             )
             self.assert200(response)        
 
