@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactRouter from 'react-router';
+import {useParams} from 'react-router-dom';
 import classes from './Show.module.css';
 import recipeIcon from '../../../../assets/dinner.svg';
 import Image from 'react-bootstrap/Image';
@@ -14,7 +14,7 @@ const Show = () => {
     howTo: '',
     favourite: false
   });
-  const { id } = ReactRouter.useParams();
+  const { id } = useParams();
 
   React.useEffect(() => {
     const getRecipe = async () => {
