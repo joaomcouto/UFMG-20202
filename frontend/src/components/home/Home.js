@@ -17,13 +17,15 @@ const Home = () => {
 
   return (
     <div className={`${classes.Container}`}>
-      <div className={classes.last_recipes}>
-      <h4 className={classes.header}>Últimas receitas:</h4>
-      <CardList className={`${classes.List}`} list={recipes}/>
-      <div className={['w-100', 'text-right'].join` `}>
-        <Button variant="link" href="/recipes">Ver mais...</Button>
+
+      <div >
+        <h4 className={classes.header}>Últimas receitas:</h4>
+        <CardList className={`${classes.List}`} list={recipes}/>
+        <div className={['w-100', 'text-right'].join` `}>
+          <Button variant="link" href="/recipes">Ver mais...</Button>
+        </div>
       </div>
-      </div>
+      
       <div>
       <h4 className={classes.header}>Receitas populares:</h4>
       <CardList list={recipes}/>
