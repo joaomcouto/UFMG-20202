@@ -9,19 +9,15 @@ const List = () => {
   const [recipes, setRecipes] = React.useState([]);
 
   const getRecipes = async (params = "") => {
-    const url = `${process.env.REACT_APP_SERVER_URL}/recipes`;
+    const url = `${process.env.REACT_APP_SERVER_URL}/receitas`;
     const response = await fetch(url);
     const data = await response.json();
-
-    setRecipes(data.recipes);
+    console.log(data);
+    // setRecipes(data.recipes);
   }
 
   React.useEffect(() => {
-    if(process.env.REACT_APP_IS_SERVER_WORKING !== 'false'){
-      getRecipes();
-    } else {
-      setRecipes(recipesMock.data.recipes)
-    }
+    getRecipes();
   }, []);
 
   const handleFilterChange = (e) => {

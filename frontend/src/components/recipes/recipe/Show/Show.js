@@ -1,5 +1,5 @@
 import React from 'react';
-import {useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import classes from './Show.module.css';
 import recipeIcon from '../../../../assets/dinner.svg';
 import Image from 'react-bootstrap/Image';
@@ -33,7 +33,6 @@ const Show = () => {
     //   setRecipe(recipesMock.data.recipes[0]);
     // }
   }, [id]);
-
 
   return (
     <div className={[classes.container].join` `}>

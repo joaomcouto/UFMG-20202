@@ -15,7 +15,7 @@ const Create = () => {
   const [formData, setFormData] = React.useState({
     title: '',
     time: 0,
-    portions: 0,
+    servings: 0,
     ingredients: '',
     howTo: '',
     image: '',
@@ -24,7 +24,7 @@ const Create = () => {
 
   React.useEffect(() => {
     // Buscar receita no back se tiver um Id
-  });
+  }, []);
 
   const handleImageChange = (e) => {
     setFormData({
@@ -50,16 +50,21 @@ const Create = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
-    console.log("Handle submit");
+
     for(let prop in formData) {
       if(prop !== 'image' && !formData[prop]){
+        console.log(prop);
         setError(true);
         return
       }
-
-      data.append(prop, formData[prop]);
-
     }
+    
+    data.append('title', formData.title);
+    data.append('ingredients', formData.ingredients);
+    data.append('directions', formData.howTo);
+    data.append('time', formData.time);
+    data.append('text', formData.servings);
+    // data.append('image', formData.image);
 
     const url = `${process.env.REACT_APP_SERVER_URL}/new_recipe`
     const options = {
@@ -68,14 +73,13 @@ const Create = () => {
     }
     try{
       const json = await fetch(url, options);
-      /*const response = */await json.json();
+      const response = await json.json();
       console.log(json.status);
+      console.log(response);
       if(json.status !== 200){
         setError(true);
         return;
       }
-      console.log("Estamos aqui");
-      window.alert("Receita salva com sucesso");
       /*
         TODO: Redirecionar o usuário para a nova receita
       */ 
@@ -109,7 +113,7 @@ const Create = () => {
 
           <InputGroup className={['text-center', classes.portion].join` `}>
             <h5 className={[classes.info_title]}> Porções</h5>
-            <FormControl onChange={handleFormDataChange} id="portions" type="number" />
+            <FormControl onChange={handleFormDataChange} id="servings" type="number" />
           </InputGroup>
         </div>
 

@@ -29,6 +29,7 @@ export const formObject = {
 };
 
 const Register = () => {
+
   const [hasError, setHasError] = React.useState(false);
   const [isFormValid, setIsFormValid] = React.useState(false);
   const [formData, setFormData] = React.useState(formObject);
