@@ -1,0 +1,1 @@
+// Duas colunas: receitas do usuario, receitas favoritadas

@@ -6,6 +6,8 @@ import List from '../recipes/list/List';
 import Register from '../register/Register';
 import Home from '../home/Home';
 import Show from '../recipes/recipe/Show/Show';
+import Profile from '../profile/Profile';
+
 
 const Router = () => {
   const user = useAuth().user;
@@ -23,6 +25,7 @@ const Router = () => {
         <Route path="/recipes/new" component={Create}/>
         <Route path="/recipes" component={List}/>
         <Route path="/recipe/:id"component={Show}/>
+        <Route path="/profile" component={Profile}/>
       </Switch>
     </BrowserRouter>
   )
