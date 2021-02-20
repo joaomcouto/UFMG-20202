@@ -1,4 +1,5 @@
 from project import db
+import datetime
 
 class Recipe(db.Model):
     __tablename__ = 'receitas'
@@ -18,7 +19,7 @@ class Recipe(db.Model):
         return self.ID
 
     def as_dict(self):
-       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns if type(getattr(self, c.name)) is not datetime.datetime}
 
 class FavoriteRecipes(db.Model):
     __tablename__ = 'favorite_recipes'

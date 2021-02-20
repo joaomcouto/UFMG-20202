@@ -11,7 +11,7 @@ import recipesMock from '../../../../recipesMock.json';
 const Show = () => {
   const [recipe, setRecipe] = React.useState({
     ingredientes: '',
-    howTo: '',
+    modo_preparo: '',
     favourite: false
   });
   const { id } = useParams();
@@ -20,7 +20,8 @@ const Show = () => {
     const getRecipe = async () => {
       const url = `${process.env.REACT_APP_SERVER_URL}/receitas/${id}`
       const response = await fetch(url);
-      const data = (await response.json()).data;
+      const data = await response.json();
+      console.log(data);
       setRecipe(data);
     }
 
@@ -54,10 +55,10 @@ const Show = () => {
       </div>
       <div className={[classes.info].join` `}>
         <div className={[classes.time].join` `}>
-          < FaRegClock className={[classes.clock_icon]}/> {recipe.tempo} minutos
+          < FaRegClock className={[classes.clock_icon]}/> {recipe.tempo_preparo} minutos
         </div>
         <div className={[classes.servings].join` `}>
-          {recipe.porcoes} porções
+          {recipe.texto} porções
         </div>
       </div>
       <div className={[classes.ingredients].join` `}>
@@ -74,7 +75,7 @@ const Show = () => {
         <h5>MODO DE PREPARO</h5> 
         <ol>
           {
-            recipe ? recipe.howTo.split('\n').map((step, i) => {
+            recipe ? recipe.modo_preparo.split('\n').map((step, i) => {
               return <li key={i}>{step}</li>
             }) : ''
           }

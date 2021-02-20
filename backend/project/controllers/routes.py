@@ -89,7 +89,6 @@ def new_recipe():
             # image = data['image'] if data.has_key('image') else None
             image = ''
             recipe = save_new_recipe(title, ingredients, directions, author, time, text, image)
-            print(recipe)
             return json.dumps({'success': True, 'id': recipe.ID}), 201, {'ContentType':'application/json'}
         except:
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
@@ -148,11 +147,13 @@ def get_recipe_by_search():
 @routes_blueprint.route('/receitas/<id>', methods=['GET'])
 def get_recipe_by_ID(id):
     # Id = request.args.get('id', type=str)
-
     if(id):
         try:
-            return json.dumps(get_recipe_by_id(id))
-        except:
+            recipe = get_recipe_by_id(int(id))
+            print(recipe.as_dict())
+            return json.dumps(recipe.as_dict()), 200, {'ContentType':'application/json'}
+        except Exception as e:
+            print(e)
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}

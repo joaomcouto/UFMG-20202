@@ -1,5 +1,4 @@
 import React from 'react';
-import recipesMock from '../../../recipesMock.json';
 import CardList from '../../UX/CardList/CardList';
 import classes from './List.module.css';
 import InputGroup from 'react-bootstrap/InputGroup';
