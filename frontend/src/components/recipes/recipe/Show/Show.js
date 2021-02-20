@@ -18,7 +18,7 @@ const Show = () => {
 
   React.useEffect(() => {
     const getRecipe = async () => {
-      const url = `${process.env.REACT_APP_SERVER_URL}/receita/${id}`
+      const url = `${process.env.REACT_APP_SERVER_URL}/receitas/${id}`
       const response = await fetch(url);
       const data = (await response.json()).data;
       setRecipe(data);

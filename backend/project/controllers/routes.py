@@ -71,22 +71,26 @@ def logout():
 
 ## Recipe API
 @routes_blueprint.route('/new_recipe', methods=['GET', 'POST'])
-@login_required
 def new_recipe():
+    print("Hello")
     if request.method == 'GET':
         return OK
     else:
         try:
-            data = request.get_json()
+            data = request.form.to_dict()
+            # data = request.get_json()
             title = data['title']
             ingredients = data['ingredients']
             directions = data['directions']
-            author = current_user.get_id() 
+            author = data['userId'] 
+            # author = current_user.get_id() 
             time = data['time'] 
             text = data['text']
-            image = data['image']
-            save_new_recipe(title, ingredients, directions, author, time, text, image)
-            return OK 
+            # image = data['image'] if data.has_key('image') else None
+            image = ''
+            recipe = save_new_recipe(title, ingredients, directions, author, time, text, image)
+            print(recipe)
+            return json.dumps({'success': True, 'id': recipe.ID}), 201, {'ContentType':'application/json'}
         except:
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
@@ -129,7 +133,6 @@ def get_user_recipes():
     return json.dumps(get_user_recipes_as_dict(current_user.get_id()), default=str)
 
 @routes_blueprint.route('/receitas', methods=['GET'])
-@login_required
 def get_recipe_by_search():
     search = request.args.get('search',type=str)
     orderBy = request.args.get('orderBy',type=str)
@@ -140,15 +143,15 @@ def get_recipe_by_search():
 
     except:    
         return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
-        
-@routes_blueprint.route('/receitas/ById', methods=['GET'])
-@login_required
-def get_recipe_by_ID():
-    Id = request.args.get('id', type=str)
 
-    if(Id):
+#/receita/:id
+@routes_blueprint.route('/receitas/<id>', methods=['GET'])
+def get_recipe_by_ID(id):
+    # Id = request.args.get('id', type=str)
+
+    if(id):
         try:
-            return json.dumps(get_recipe_by_id(Id))
+            return json.dumps(get_recipe_by_id(id))
         except:
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
     else:
@@ -251,6 +254,7 @@ def save_new_recipe(title, ingredients, directions, author, time=None, text=None
 
     db.session.add(recipe)
     db.session.commit()
+    return recipe
 
 def get_recipe_by_id(id):
     return Recipe.query.filter(Recipe.ID == id).first()
@@ -267,11 +271,11 @@ def get_recipe_by_filters(search, orderBy, favorite):
     if(search):
         query = query.filter(Recipe.titulo.like("%"+search+"%"))  
     
-    if(favorite):
-        favorites = FavoriteRecipes.query.filter(FavoriteRecipes.user == current_user.get_id())\
-                                        .filter(FavoriteRecipes.active == True).all()
-        favorites = [x.recipe for x in favorites]
-        query = query.filter(Recipe.ID.in_(favorites))
+    # if(favorite):
+    #     favorites = FavoriteRecipes.query.filter(FavoriteRecipes.user == current_user.get_id())\
+    #                                     .filter(FavoriteRecipes.active == True).all()
+    #     favorites = [x.recipe for x in favorites]
+    #     query = query.filter(Recipe.ID.in_(favorites))
     
     if(orderBy):
         query = query.order_by(orderBy)

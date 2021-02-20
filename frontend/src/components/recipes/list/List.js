@@ -12,8 +12,7 @@ const List = () => {
     const url = `${process.env.REACT_APP_SERVER_URL}/receitas`;
     const response = await fetch(url);
     const data = await response.json();
-    console.log(data);
-    // setRecipes(data.recipes);
+    setRecipes(Object.values(data));
   }
 
   React.useEffect(() => {

@@ -7,11 +7,12 @@ import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
 import { useAuth } from '../../../../context/Auth';
 import classes from './Create.module.css';
-
+import { Redirect } from 'react-router-dom';
 const Create = () => {
   const user = useAuth().user;
 
   const [error, setError] = React.useState(false);
+  const [recipeId, setRecipeId] = React.useState(null);
   const [formData, setFormData] = React.useState({
     title: '',
     time: 0,
@@ -21,6 +22,7 @@ const Create = () => {
     image: '',
   });
   const [imageUrl, setImageUrl] = React.useState('');
+  const [formSent, setFormSent] = React.useState(false);
 
   React.useEffect(() => {
     // Buscar receita no back se tiver um Id
@@ -64,25 +66,26 @@ const Create = () => {
     data.append('directions', formData.howTo);
     data.append('time', formData.time);
     data.append('text', formData.servings);
+    data.append('userId', user.UserID);
     // data.append('image', formData.image);
 
     const url = `${process.env.REACT_APP_SERVER_URL}/new_recipe`
     const options = {
       method: 'POST',
-      body: formData
+      body: data,
     }
     try{
       const json = await fetch(url, options);
       const response = await json.json();
       console.log(json.status);
       console.log(response);
-      if(json.status !== 200){
+      if(json.status !== 201){
         setError(true);
         return;
       }
-      /*
-        TODO: Redirecionar o usuário para a nova receita
-      */ 
+      setRecipeId(response.id);
+      setFormSent(true)
+      return <Redirect to={`/recipe/${response.id}`}/>
     } catch(e){
       setError(true);
       return;
@@ -93,7 +96,7 @@ const Create = () => {
     return <p> Você não pode adicionar uma receita sem fazer login. <a href="/login">Faça seu login</a></p>
   }
 
-  return (
+  return formSent ? (<Redirect to={`/recipe/${recipeId}`}/>) : (
     <div className={[classes.container, 'd-flex', 'flex-column', 'align-items-center'].join` `}>
       <div className={[classes.form, 'd-flex', 'flex-column', 'align-items-center'].join` `}>
         <div className={['w-100', 'text-center', 'mb-4'].join` `}>
