@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 from project.extensions import db
 import datetime
-
-=======
-from project import db
-import datetime
->>>>>>> 587e97049ceb5bcf41cfd386da9dd4f22b1e34c3
 
 class Recipe(db.Model):
     __tablename__ = 'receitas'
