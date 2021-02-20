@@ -1,11 +1,12 @@
-from flask import Flask, flash, escape, request, render_template, redirect, url_for, Blueprint
+from flask import Flask, flash, escape, request, render_template, redirect, url_for, Blueprint, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user, UserMixin
 from flask_bcrypt import Bcrypt
-from project import db, bcrypt   # pragma: no cover
-from project.models import User, Recipe, FavoriteRecipes, ReviewRecipe  # pragma: no cover
+from flask_praetorian import auth_required, current_user
+from project import db, bcrypt, guard, User   # pragma: no cover
+from project.models import Recipe, FavoriteRecipes, ReviewRecipe  # pragma: no cover
 import json
 from datetime import datetime
+
 
 OK = json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
@@ -54,25 +55,34 @@ def login():
             loginUser = data['email']
             loginPass = data['password']
             dbUser = User.query.filter_by(email=loginUser).first()
-            if(bcrypt.check_password_hash(dbUser.senha, loginPass)):
-                login_user(dbUser)
-                return json.dumps(dbUser.as_dict())
-                
-            else:
-                return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+            loggedUser = guard.authenticate(loginUser, loginPass)
             
+            access = { 'access_token': guard.encode_jwt_token(loggedUser) }
+            login_info = dict(dbUser.as_dict(), **access)
+            return json.dumps(login_info)   
         except:
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
+@routes_blueprint.route('/refresh', methods=['GET'])
+def refresh():
+    """
+    Refreshes an existing JWT by creating a new one that is a copy of the old
+    except that it has a refrehsed access expiration.
+    """
+    old_token = guard.read_token_from_header()
+    new_token = guard.refresh_jwt_token(old_token)
+    access = {'access_token': new_token}
+    return json.dumps(access)
+
 @routes_blueprint.route('/logout')
+@auth_required
 def logout():
-    logout_user()
     return OK #redirect(url_for('routes.login'))
 
 ## Recipe API
 @routes_blueprint.route('/new_recipe', methods=['GET', 'POST'])
+@auth_required
 def new_recipe():
-    print("Hello")
     if request.method == 'GET':
         return OK
     else:
@@ -89,13 +99,12 @@ def new_recipe():
             # image = data['image'] if data.has_key('image') else None
             image = ''
             recipe = save_new_recipe(title, ingredients, directions, author, time, text, image)
-            print(recipe)
             return json.dumps({'success': True, 'id': recipe.ID}), 201, {'ContentType':'application/json'}
         except:
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/edit_recipe', methods=['GET', 'POST'])
-@login_required
+@auth_required
 def edit_recipe():
     if request.method == 'GET':
         return OK
@@ -116,7 +125,7 @@ def edit_recipe():
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/delete_recipe', methods=['POST'])
-@login_required
+@auth_required
 def delete_recipe():   
     try:
         data = request.get_json()
@@ -128,7 +137,7 @@ def delete_recipe():
 
 
 @routes_blueprint.route('/receitas/user_all_recipes', methods=['GET'])
-@login_required
+@auth_required
 def get_user_recipes():
     return json.dumps(get_user_recipes_as_dict(current_user.get_id()), default=str)
 
@@ -158,7 +167,7 @@ def get_recipe_by_ID(id):
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/favorite', methods=['POST'])
-@login_required
+@auth_required
 def favorite_or_unfavorite_a_recipe():
     data = request.get_json()
     ID = data['id']
@@ -179,7 +188,7 @@ def favorite_or_unfavorite_a_recipe():
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/favoriteStatus', methods=['GET'])
-@login_required
+@auth_required
 def favorite_status():
     ID = request.args.get('id',type=str)
     author = current_user.get_id()
@@ -194,7 +203,7 @@ def favorite_status():
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/submit_review', methods=['POST'])
-@login_required
+@auth_required
 def submit_review():
     data = request.get_json()
     ID = data['id']
@@ -211,7 +220,7 @@ def submit_review():
             return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/average_stars', methods=['GET'])
-@login_required
+@auth_required
 def average_reviews():
     ID = request.args.get('id', type=str)
 
@@ -230,7 +239,7 @@ def save_new_user(newUser, newEmail, newPassword):
     user = User(
         nome = newUser, 
         email = newEmail,
-        senha = bcrypt.generate_password_hash(newPassword))
+        senha = guard.hash_password(newPassword))
 
     db.session.add(user)
     db.session.commit()

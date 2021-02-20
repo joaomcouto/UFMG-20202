@@ -18,7 +18,14 @@ class BaseTestCase(TestCase):
     # Login with the given user info
     def login(self, test_data):
         return self.client.post('/login', data=json.dumps(test_data), headers={'Content-type':'application/json'})
-        
+    
+    def login_token(self, test_data):
+        return json.loads(self.login(test_data).data)['access_token']
+
+    def login_id_and_token(self, test_data):
+        logged = json.loads(self.login(test_data).data)
+        return(logged['UserID'], logged['access_token'])
+
     def tearDown(self):
         db.session.remove()
         db.drop_all()

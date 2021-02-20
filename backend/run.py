@@ -1,6 +1,7 @@
 from sys import argv
 from connect import create_database
 from project import app
+from project.models import User
 
 
 if __name__ == '__main__':
