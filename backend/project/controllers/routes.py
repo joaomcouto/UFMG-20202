@@ -72,7 +72,6 @@ def logout():
 ## Recipe API
 @routes_blueprint.route('/new_recipe', methods=['GET', 'POST'])
 def new_recipe():
-    print("Hello")
     if request.method == 'GET':
         return OK
     else:
@@ -150,10 +149,8 @@ def get_recipe_by_ID(id):
     if(id):
         try:
             recipe = get_recipe_by_id(int(id))
-            print(recipe.as_dict())
             return json.dumps(recipe.as_dict()), 200, {'ContentType':'application/json'}
         except Exception as e:
-            print(e)
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
