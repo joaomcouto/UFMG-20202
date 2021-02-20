@@ -38,6 +38,9 @@ while True: #A ideia aqui eh que o data SÓ VAI SER ZERO quando o outro lado fec
         #print('Travado\n')
         #conn.sendall(data)
 
+        data = conn.recv(25)
+        print('Received', repr(data))
+
 
 
     
