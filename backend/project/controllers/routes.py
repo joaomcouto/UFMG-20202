@@ -157,11 +157,11 @@ def get_recipe_by_search():
 @routes_blueprint.route('/receitas/<id>', methods=['GET'])
 def get_recipe_by_ID(id):
     # Id = request.args.get('id', type=str)
-
     if(id):
         try:
-            return json.dumps(get_recipe_by_id(id))
-        except:
+            recipe = get_recipe_by_id(int(id))
+            return json.dumps(recipe.as_dict()), 200, {'ContentType':'application/json'}
+        except Exception as e:
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}

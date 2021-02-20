@@ -1,5 +1,4 @@
 import React from 'react';
-import recipesMock from '../../../recipesMock.json';
 import CardList from '../../UX/CardList/CardList';
 import classes from './List.module.css';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -8,8 +7,8 @@ import FormControl from 'react-bootstrap/FormControl';
 const List = () => {
   const [recipes, setRecipes] = React.useState([]);
 
-  const getRecipes = async (params = "") => {
-    const url = `${process.env.REACT_APP_SERVER_URL}/receitas`;
+  const getRecipes = async (params = '') => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/receitas?${params || ''}`;
     const response = await fetch(url);
     const data = await response.json();
     setRecipes(Object.values(data));
@@ -20,18 +19,15 @@ const List = () => {
   }, []);
 
   const handleFilterChange = (e) => {
-    const searchParam = e.target.value;
-
-    if(!searchParam) {
-      setRecipes(recipesMock.data.recipes);
+    const params = {
+      search: ""
     }
+    
+    params.search = e.target.value
 
-    if(process.env.REACT_APP_IS_SERVER_WORKING !== 'false'){
-      getRecipes(`search:${searchParam}`);
-    } else {
-      console.log(e.target.value);
-      setRecipes(recipesMock.data.recipes.filter(recipe => recipe.titulo.toLowerCase().includes(e.target.value)))
-    }
+    const queryString = `search=${encodeURIComponent(params.search)}`;
+    
+    getRecipes(queryString);
   }
 
 
