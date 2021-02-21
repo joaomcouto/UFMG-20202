@@ -87,19 +87,18 @@ def new_recipe():
         return OK
     else:
         try:
-            data = request.form.to_dict()
-            # data = request.get_json()
+            #data = request.form.to_dict()
+            data = request.get_json()
             title = data['title']
             ingredients = data['ingredients']
             directions = data['directions']
-            author = data['userId'] 
-            # author = current_user.get_id() 
+            author = current_user().identity 
             time = data['time'] 
             text = data['text']
             # image = data['image'] if data.has_key('image') else None
             image = ''
             recipe = save_new_recipe(title, ingredients, directions, author, time, text, image)
-            return json.dumps({'success': True, 'id': recipe.ID}), 201, {'ContentType':'application/json'}
+            return json.dumps({'success': True, 'id': recipe.ID}), 200, {'ContentType':'application/json'}
         except:
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
@@ -115,7 +114,7 @@ def edit_recipe():
             title = data['title']
             ingredients = data['ingredients']
             directions = data['directions']
-            author = current_user.get_id() 
+            author = current_user().identity
             time = data['time'] 
             text = data['text']
             image = data['image']
@@ -139,24 +138,35 @@ def delete_recipe():
 @routes_blueprint.route('/receitas/user_all_recipes', methods=['GET'])
 @auth_required
 def get_user_recipes():
-    return json.dumps(get_user_recipes_as_dict(current_user.get_id()), default=str)
+    return json.dumps(get_user_recipes_as_dict(current_user.identity()), default=str)
 
 @routes_blueprint.route('/receitas', methods=['GET'])
 def get_recipe_by_search():
     search = request.args.get('search',type=str)
     orderBy = request.args.get('orderBy',type=str)
-    favorites = request.args.get('favorites', type=str)
     
     try:
-        return json.dumps(get_recipe_by_filters(search, orderBy, favorites), default=str)
+        return json.dumps(get_recipe_by_filters(search, orderBy), default=str)
 
     except:    
         return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
-#/receita/:id
+@routes_blueprint.route('/receitas/favoritas', methods=['GET'])
+@auth_required
+def get_favorite_recipe_by_search():
+    search = request.args.get('search',type=str)
+    orderBy = request.args.get('orderBy',type=str)
+    favorites = True
+    id = current_user().identity
+    
+    try:
+        return json.dumps(get_recipe_by_filters(search, orderBy, favorites, id), default=str)
+
+    except:    
+        return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
+
 @routes_blueprint.route('/receitas/<id>', methods=['GET'])
 def get_recipe_by_ID(id):
-    # Id = request.args.get('id', type=str)
     if(id):
         try:
             recipe = get_recipe_by_id(int(id))
@@ -171,7 +181,7 @@ def get_recipe_by_ID(id):
 def favorite_or_unfavorite_a_recipe():
     data = request.get_json()
     ID = data['id']
-    author = current_user.get_id()
+    author = current_user().identity
 
     if(check_exists_favorite(ID, author)):
         try:
@@ -191,7 +201,7 @@ def favorite_or_unfavorite_a_recipe():
 @auth_required
 def favorite_status():
     ID = request.args.get('id',type=str)
-    author = current_user.get_id()
+    author = current_user().identity
 
     if(ID):
         favorite = FavoriteRecipes.query.filter(FavoriteRecipes.recipe == ID)\
@@ -208,7 +218,7 @@ def submit_review():
     data = request.get_json()
     ID = data['id']
     stars = data['stars']
-    author = current_user.get_id()
+    author = current_user().identity
 
     if(check_exists_review(ID, author)):
         return json.dumps({'success': False}), 505, {'ContentType':'application/json'}
@@ -275,16 +285,13 @@ def get_user_recipes_as_dict(id):
         recipes[x.get_id()] = x.as_dict() 
     return recipes
 
-def get_recipe_by_filters(search, orderBy, favorite):
+def get_recipe_by_filters(search, orderBy, favorite=False, id=None):
     query = Recipe.query
     if(search):
         query = query.filter(Recipe.titulo.like("%"+search+"%"))  
     
-    # if(favorite):
-    #     favorites = FavoriteRecipes.query.filter(FavoriteRecipes.user == current_user.get_id())\
-    #                                     .filter(FavoriteRecipes.active == True).all()
-    #     favorites = [x.recipe for x in favorites]
-    #     query = query.filter(Recipe.ID.in_(favorites))
+    if(favorite):
+        query = filterWithFavorites(query, id)
     
     if(orderBy):
         query = query.order_by(orderBy)
@@ -296,6 +303,13 @@ def get_recipe_by_filters(search, orderBy, favorite):
         recipes[x.get_id()] = x.as_dict() 
 
     return recipes
+
+def filterWithFavorites(query, id):
+    favorites = FavoriteRecipes.query.filter(FavoriteRecipes.user == id)\
+                                        .filter(FavoriteRecipes.active == True).all()
+    favorites = [x.recipe for x in favorites]
+    query = query.filter(Recipe.ID.in_(favorites))
+    return query
 
 def edit_recipe(id, title, ingredients, directions, author, time=None, text=None, image=None):
     recipe = Recipe.query.filter(Recipe.ID == id).first()
