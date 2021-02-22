@@ -3,8 +3,18 @@ import sys
 import os
 import time
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('localhost', 5555))
+fileName = sys.argv[3]
+TCP_PORT = int(sys.argv[2])
+IP_ADDR = sys.argv[1]
+
+if ':' in IP_ADDR:
+    s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+else:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+
+
+s.connect((IP_ADDR, TCP_PORT))
 s.setblocking(0) 
 
 msg = (1).to_bytes(2, 'big')
@@ -41,7 +51,7 @@ while True: #A ideia aqui eh que o data SÓ VAI SER ZERO quando o outro lado fec
         udpPort = int.from_bytes(receiveMsg[2:6], 'big')
         print(udpPort)
 
-        fileName = sys.argv[3]
+        
         if (len(fileName) > 15 or len(fileName.split('.')) != 2 or not all(ord(c) < 128 for c in fileName) or len(fileName.split('.')[1]) > 3 ):
             print("Nome não permitido")
 
