@@ -1,4 +1,6 @@
 import socket
+import random
+import time
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -10,40 +12,86 @@ conn,addr = s.accept() # Conn é soquete da conexão
 print('Connected by', addr)
 
 
-receiveMsg = bytearray()
+
 while True: #A ideia aqui eh que o data SÓ VAI SER ZERO quando o outro lado fechar o soquete
-    data = conn.recv(2) #Fica travado aqui até receber bytes ou 0 (socket dead)
+    receiveMsg = bytearray()
+    data = conn.recv(1024) #Fica travado aqui até receber bytes ou 0 (socket dead)
     if not data:
         break
     else:
         receiveMsg.extend(data)
     print('Tamanho da mensagem recebida:', len(receiveMsg))
+    print('Server Received', repr(receiveMsg))
+
+
+    
+
     #print('Mensagem: ' , receiveMsg)
 
     code = receiveMsg[1]
-    print("Recebemos:" , code, '\n')
+    #print("Recebemos:" , code, '\n')
     if (code==1):
         print('Entrou no code 1')
-        #udpSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        #udpSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        #udpSocket.bind(('localhost', 5556))
+        udpSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        udpSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        udpSocket.bind(('localhost', 5556))
 
         sendMsg = (2).to_bytes(2,'big')
         sendMsg += (5556).to_bytes(4, 'big')
 
-        print(len(sendMsg))
-        print("Server prestes a mandar mensage")
+        #print(len(sendMsg))
+        #print("Server prestes a mandar mensage")
         conn.sendall(sendMsg)
         #print('Received', data)
         #print('Travado\n')
         #conn.sendall(data)
 
-        data = conn.recv(25)
-        print('Received', repr(data))
+        #data = conn.recv(25)
+        
+    if(code==3):
+        print('Entrou no code 3')
+        fileName = receiveMsg[2:17].decode()
+        fileSize = int.from_bytes(receiveMsg[17:25], 'big')
+        print("Cliente declaro filesize de ", fileSize)
+        #print(fileName)
+        #print(fileSize)
+
+        # CRIAR ESTRUTURA DE DADOS PARA JANELA DESLIZANTE (???)
+        fileDict = dict()
 
 
+        sendMsg = (4).to_bytes(2,'big')
+        conn.sendall(sendMsg) #ok enviado
 
-    
+        totalBytes = 0
+        while totalBytes < fileSize:
+            data, udpAddr = udpSocket.recvfrom(1024)
+            print('UDP Server Received', repr(data))
+
+            sequenceNum = int.from_bytes(data[2:6], 'big')
+            payloadSize = int.from_bytes(data[6:8], 'big')
+            
+            payload = data[8:].decode()
+
+            if sequenceNum not in fileDict:
+                totalBytes = totalBytes + payloadSize
+                
+                print('UDP Server Received PAYLOAD', repr(payload), "from sequence", sequenceNum , "total bytes: " , totalBytes)
+                
+                fileDict[sequenceNum] = payload
+
+
+            
+            sendMsg = (7).to_bytes(2, 'big') #Ack
+            sendMsg += (data[2:6])
+            time.sleep(random.uniform(0.3,1.2))
+            conn.sendall(sendMsg)
+        print("Final result: \n")
+        print("".join(list(fileDict.values()) ))
+        sendMsg = (5).to_bytes(2, 'big') 
+        conn.sendall(sendMsg) #FIM
+
+
 
 conn.close()
     

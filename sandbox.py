@@ -58,7 +58,7 @@ import os
 
 
 
-
+import time
 # string = 'arquivo.doc'
 
 # msg = (3).to_bytes(2, 'big')
@@ -74,5 +74,34 @@ import os
 
 # print(msg)
 
-fileName = 'arquivo.doc'
-print(os.path.getsize(fileName))
+#fileName = 'arquivo.doc'
+#print(os.path.getsize(fileName))
+
+
+
+
+#fileDict = dict()
+#ileDict[3] = 'banana'
+
+#print(fileDict[3]) 
+
+
+
+fileA = open('arquivo.doc', 'rb')
+# bytess = fileA.read(1000)
+# print(bytess)
+# bytess = fileA.read(5)
+# print(bytess)
+
+
+# print(os.path.getsize("arquivo.doc"))
+
+# lista = []
+# lista.append(fileA.read(1000))
+# lista.append(fileA.read(1000))
+# print(lista)
+
+timeA = time.time()
+time.sleep(0.6)
+timeB = time.time()
+print(timeB - timeA)
