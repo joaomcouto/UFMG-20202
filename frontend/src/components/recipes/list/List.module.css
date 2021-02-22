@@ -1,5 +1,6 @@
  .Container {
-  background: #efefef
+  background: #efefef;
+  flex-grow: 1;
 }
 
 .search_bar {

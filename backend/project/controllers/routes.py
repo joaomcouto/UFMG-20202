@@ -6,7 +6,7 @@ from project import db, bcrypt, guard, User   # pragma: no cover
 from project.models import Recipe, FavoriteRecipes, ReviewRecipe  # pragma: no cover
 import json
 from datetime import datetime
-
+import traceback
 
 OK = json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
@@ -60,7 +60,8 @@ def login():
             access = { 'access_token': guard.encode_jwt_token(loggedUser) }
             login_info = dict(dbUser.as_dict(), **access)
             return json.dumps(login_info)   
-        except:
+        except Exception as e:
+            print(e)
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/refresh', methods=['GET'])
@@ -87,8 +88,7 @@ def new_recipe():
         return OK
     else:
         try:
-            #data = request.form.to_dict()
-            data = request.get_json()
+            data = request.form.to_dict()
             title = data['title']
             ingredients = data['ingredients']
             directions = data['directions']
@@ -98,8 +98,9 @@ def new_recipe():
             # image = data['image'] if data.has_key('image') else None
             image = ''
             recipe = save_new_recipe(title, ingredients, directions, author, time, text, image)
-            return json.dumps({'success': True, 'id': recipe.ID}), 200, {'ContentType':'application/json'}
-        except:
+            return json.dumps({'success': True, 'id': recipe.ID}), 201, {'ContentType':'application/json'}
+        except Exception as e:
+            traceback.print_exc()
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/edit_recipe', methods=['GET', 'POST'])
@@ -144,9 +145,10 @@ def get_user_recipes():
 def get_recipe_by_search():
     search = request.args.get('search',type=str)
     orderBy = request.args.get('orderBy',type=str)
+    limit = request.args.get('limit',type=str)
     
     try:
-        return json.dumps(get_recipe_by_filters(search, orderBy), default=str)
+        return json.dumps(get_recipe_by_filters(search, orderBy, limit=limit), default=str)
 
     except:    
         return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
@@ -285,7 +287,7 @@ def get_user_recipes_as_dict(id):
         recipes[x.get_id()] = x.as_dict() 
     return recipes
 
-def get_recipe_by_filters(search, orderBy, favorite=False, id=None):
+def get_recipe_by_filters(search, orderBy, favorite=False, id=None, limit=None):
     query = Recipe.query
     if(search):
         query = query.filter(Recipe.titulo.like("%"+search+"%"))  
@@ -293,10 +295,12 @@ def get_recipe_by_filters(search, orderBy, favorite=False, id=None):
     if(favorite):
         query = filterWithFavorites(query, id)
     
-    if(orderBy):
-        query = query.order_by(orderBy)
+    query = query.order_by(orderBy) if orderBy else query.order_by(Recipe.latest_change_date)
 
-    recipeObjs = query.order_by(Recipe.latest_change_date).all()
+    if(limit):
+        query = query.limit(limit)
+
+    recipeObjs = query.all()
     recipes = {}
 
     for x in recipeObjs:

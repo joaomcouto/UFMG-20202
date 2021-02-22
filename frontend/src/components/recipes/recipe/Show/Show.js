@@ -4,9 +4,7 @@ import classes from './Show.module.css';
 import recipeIcon from '../../../../assets/dinner.svg';
 import Image from 'react-bootstrap/Image';
 import { FaRegClock, FaRegHeart, FaHeart } from 'react-icons/fa';
-
-import mockImage from '../../../../assets/brigadeiro.jpg';
-import recipesMock from '../../../../recipesMock.json';
+import { useAuth } from '../../../../context/Auth';
 
 const Show = () => {
   const [recipe, setRecipe] = React.useState({
@@ -15,36 +13,57 @@ const Show = () => {
     favourite: false
   });
   const { id } = useParams();
+  const user = useAuth().user;
 
   React.useEffect(() => {
     const getRecipe = async () => {
       const url = `${process.env.REACT_APP_SERVER_URL}/receitas/${id}`
       const response = await fetch(url);
       const data = await response.json();
-      console.log(data);
+
       setRecipe(data);
     }
 
-    // if(process.env.REACT_APP_IS_SERVER_WORKING === 'false'){
-      getRecipe();
-    // } else {
-    //   console.log(recipesMock.data.recipes[0]);
-    //   const recipe = recipesMock.data.recipes[0];
-    //   recipe.imagem = recipe.imagem ? mockImage : null;
-    //   setRecipe(recipesMock.data.recipes[0]);
-    // }
+    getRecipe();
   }, [id]);
 
+  const handleFavourite = async () => {
+    if(!user){
+      alert("Você precisa estar logado para favoritar receitas");
+      return;
+    }
+
+    const url = `${process.env.REACT_APP_SERVER_URL}/favorite`;
+    const options = {
+      method: "POST",
+      body: JSON.stringify({id: id}),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${user.access_token}`
+      }
+    }
+    const response = await fetch(url, options);
+    if(response.status !== 200){
+      alert("Não foi possível favoritar a receita, tente novamente mais tarde");
+    }
+
+    setRecipe({
+      ...recipe,
+      favourite: !recipe.favourite
+    });
+  }
   return (
     <div className={[classes.container].join` `}>
       <div className={[classes.lg_header_container]}>
         <div className = {[classes.title].join` `}>
           <h3 className={[classes.recipe_name]}> {recipe.titulo}</h3>
+          <button className={[classes.favourite_button].join` `} onClick={handleFavourite}>
           {
             recipe.favourite ? 
-            <FaHeart className={[classes.favourite_icon]}/>
-            : <FaRegHeart className={[classes.favourite_icon]}/> 
+            <FaHeart className={[classes.favourite_icon].join` `}/>
+            : <FaRegHeart className={[classes.favourite_icon].join` `}/> 
           }
+          </button>
         </div>
         <hr className={[classes.hr].join` `}/>
         <div className={[classes.recipe_header].join` `}>

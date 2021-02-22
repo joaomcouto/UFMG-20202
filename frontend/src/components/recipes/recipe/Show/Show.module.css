@@ -66,6 +66,9 @@ h5 {
   text-align: center;
 }
 
+.favourite_button {
+  border:none;
+}
 @media(min-width:992px){
   .lg_header_container {
     display: flex;

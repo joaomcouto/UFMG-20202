@@ -106,6 +106,7 @@ const Register = () => {
         return;
       }
       const response = await json.json();
+      console.log(response);
       setUser(response);
       return <Redirect to="/"/>
 

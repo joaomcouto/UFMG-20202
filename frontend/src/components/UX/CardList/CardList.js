@@ -3,9 +3,8 @@ import classes from './CardList.module.css';
 
 const CardList = ({list}) => {
   return (
-    <div className='m-auto'>
+    <div className={['m-auto', classes.w_100].join` `}>
       {list.map(element => {
-        console.log(element);
         return <Card border="dark" bg="#ff8282" className={classes.Card} key={element.ID}>
           <Card.Body>
             <Card.Title> <a className={classes.Link} href={`/recipe/${element.ID}`}> {element.titulo} </a></Card.Title>

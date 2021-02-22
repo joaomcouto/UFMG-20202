@@ -85,6 +85,7 @@ const Login = () => {
         setHasError(true);
         return;
       }
+      console.log(response)
       setUser(response);
       return <Redirect to="/"/>
     } catch(e){

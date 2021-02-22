@@ -20,7 +20,8 @@ import os
 ################
 
 app = Flask(__name__)
-CORS(app, resources={r"/*":{"origins":"*"}})
+CORS(app)
+# CORS(app, resources={r"/*":{"origins":"*"}})
 bcrypt = Bcrypt(app)
 login_manager = LoginManager()
 login_manager.init_app(app)

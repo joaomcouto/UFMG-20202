@@ -73,6 +73,9 @@ const Create = () => {
     const options = {
       method: 'POST',
       body: data,
+      headers: {
+        Authorization: `Bearer ${user.access_token}`
+      }
     }
     try{
       const json = await fetch(url, options);
@@ -84,8 +87,7 @@ const Create = () => {
         return;
       }
       setRecipeId(response.id);
-      setFormSent(true)
-      return <Redirect to={`/recipe/${response.id}`}/>
+      setFormSent(true);
     } catch(e){
       setError(true);
       return;
@@ -96,7 +98,10 @@ const Create = () => {
     return <p> Você não pode adicionar uma receita sem fazer login. <a href="/login">Faça seu login</a></p>
   }
 
-  return formSent ? (<Redirect to={`/recipe/${recipeId}`}/>) : (
+  if(formSent){
+    return (<Redirect to={`/recipe/${recipeId}`}/>);
+  }
+  return (
     <div className={[classes.container, 'd-flex', 'flex-column', 'align-items-center'].join` `}>
       <div className={[classes.form, 'd-flex', 'flex-column', 'align-items-center'].join` `}>
         <div className={['w-100', 'text-center', 'mb-4'].join` `}>
