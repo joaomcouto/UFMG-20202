@@ -40,8 +40,10 @@ def create_new_user():
             newPassword = data['password']
             save_new_user(newUser, newEmail, newPassword)
             dbUser = User.query.filter_by(email=newEmail).first()
-            return json.dumps(dbUser.as_dict())
-       
+            access = { 'access_token': guard.encode_jwt_token(dbUser) }
+            login_info = dict(dbUser.as_dict(), **access)
+            return json.dumps(login_info)
+
         except:
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
@@ -61,7 +63,7 @@ def login():
             login_info = dict(dbUser.as_dict(), **access)
             return json.dumps(login_info)   
         except Exception as e:
-            print(e)
+            #print(e)
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/refresh', methods=['GET'])
@@ -78,7 +80,7 @@ def refresh():
 @routes_blueprint.route('/logout')
 @auth_required
 def logout():
-    return OK #redirect(url_for('routes.login'))
+    return OK 
 
 ## Recipe API
 @routes_blueprint.route('/new_recipe', methods=['GET', 'POST'])
@@ -172,7 +174,7 @@ def get_recipe_by_ID(id):
     if(id):
         try:
             recipe = get_recipe_by_id(int(id))
-            return json.dumps(recipe.as_dict()), 200, {'ContentType':'application/json'}
+            return json.dumps(), 200, {'ContentType':'application/json'}
         except Exception as e:
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
     else:
@@ -278,7 +280,13 @@ def save_new_recipe(title, ingredients, directions, author, time=None, text=None
     return recipe
 
 def get_recipe_by_id(id):
-    return Recipe.query.filter(Recipe.ID == id).first()
+    recipe = Recipe.query.filter(Recipe.ID == id).first()
+    if(recipe != None):
+        author = User.query.filter(User.ID == recipe.autor).first()
+        all_recipe_info = dict(recipe.as_dict(), **author.as_dict())
+        return all_recipe_info
+    else:
+        return recipe
 
 def get_user_recipes_as_dict(id):
     recipeObjs = Recipe.query.filter(Recipe.autor == id).all()
@@ -304,7 +312,7 @@ def get_recipe_by_filters(search, orderBy, favorite=False, id=None, limit=None):
     recipes = {}
 
     for x in recipeObjs:
-        recipes[x.get_id()] = x.as_dict() 
+        recipes[x.get_id()] = get_recipe_by_ID(x.get_id()) 
 
     return recipes
 
