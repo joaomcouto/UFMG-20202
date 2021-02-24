@@ -12,7 +12,7 @@ const Profile = () =>{
 
     React.useEffect(() => {
       const getData = async() => {
-        const urls = [`${process.env.REACT_APP_SERVER_URL}/receitas?limit=5`, `${process.env.REACT_APP_SERVER_URL}/receitas?limit=5`];
+        const urls = [`${process.env.REACT_APP_SERVER_URL}/receitas/favoritas?limit=5`, `${process.env.REACT_APP_SERVER_URL}/receitas/user_all_recipes?limit=5`];
         const responses = await Promise.all(urls.map(url => fetch(url)));
         const lists = await Promise.all(responses.map(r => r.json()));
         setFavoriteRecipes(Object.values(lists[0]))
