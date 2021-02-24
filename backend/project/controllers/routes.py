@@ -91,11 +91,14 @@ def new_recipe():
         return OK
     else:
         try:
+            
             data = request.form.to_dict()
+            print(data)
+            #print(current_user())
             title = data['title']
             ingredients = data['ingredients']
             directions = data['directions']
-            author = current_user().identity 
+            author = data['userId']
             time = data['time'] 
             text = data['text']
             # image = data['image'] if data.has_key('image') else None
@@ -142,7 +145,7 @@ def delete_recipe():
 @routes_blueprint.route('/receitas/user_all_recipes', methods=['GET'])
 @auth_required
 def get_user_recipes():
-    return json.dumps(get_user_recipes_as_dict(current_user.identity()), default=str)
+    return json.dumps(get_user_recipes_as_dict(current_user().identity), default=str)
 
 @routes_blueprint.route('/receitas', methods=['GET'])
 def get_recipe_by_search():
@@ -192,7 +195,10 @@ def favorite_or_unfavorite_a_recipe():
 
     if(check_exists_favorite(ID, author)):
         try:
-            unfavorite_recipe(ID, author)           
+            if(check_favorite_relation_status(ID, author)):
+                unfavorite_recipe(ID, author)           
+            else:
+                favorite_recipe(ID, author)
             return OK
         except:
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
@@ -286,6 +292,9 @@ def get_recipe_by_id(id):
     recipe = Recipe.query.filter(Recipe.ID == id).first()
     if(recipe != None):
         author = User.query.filter(User.ID == recipe.autor).first()
+        #author = User.query.first()
+        #print(recipe.as_dict())
+        #print(author.as_dict())
         all_recipe_info = dict(recipe.as_dict(), **author.as_dict())
         return all_recipe_info
     else:
@@ -354,7 +363,13 @@ def check_exists_favorite(id, author):
                             .filter(FavoriteRecipes.user == author).all()
     return(len(exists) > 0)
 
+def check_favorite_relation_status(id, author):
+    active = FavoriteRecipes.query.filter(FavoriteRecipes.recipe == id)\
+                            .filter(FavoriteRecipes.user == author).first()
+    return active.is_active()
+
 def save_new_favorite(id, author):
+    #if(check_exists_favorite(id, author)):
     newFavorite = FavoriteRecipes(user = author, recipe = id, active = True)
     db.session.add(newFavorite)
     db.session.commit()
@@ -365,9 +380,17 @@ def unfavorite_recipe(id, author):
     recipe.active = False
     db.session.commit()
 
+def favorite_recipe(id, author):
+    recipe = FavoriteRecipes.query.filter(FavoriteRecipes.recipe == id)\
+                            .filter(FavoriteRecipes.user == author).first()
+    recipe.active = True
+    db.session.commit()
+
 def get_favorite_relation(id, author):
     return FavoriteRecipes.query.filter(FavoriteRecipes.recipe == id)\
                             .filter(FavoriteRecipes.user == author).first()
+
+
 
 ###########################################
 #### Review Functions #####################
