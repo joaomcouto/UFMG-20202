@@ -101,7 +101,7 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
 #### Retrospective
 
 - Pontos positivos:
-  - Conseguimos cumprir todas as histórias propostas (como listadis acima, sprint 2)
+  - Conseguimos cumprir todas as histórias propostas (como listados acima, sprint 2)
   - Ótima comunicação do grupo, conseguimos inclusive parear para resolver problemas, refatorar o código e trocar informações para melhorar a implementação.
   - A implementação de testes de back end logo no começo do sprint permitiu um fluxo mais dinamico e efetivo de escrita de código, teste, correções e refatorações
   - Entrada de novos membros no grupo permitiu uma divisão mais homogenea das tarefas pendentes
