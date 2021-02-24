@@ -124,7 +124,7 @@ const Register = () => {
     <Form noValidate className={formClasses.join` `} onSubmit={handleSubmit}>
       <Form.Group>
         <Form.Label>Nome</Form.Label>
-        <Form.Control id="name" isInvalid={!formData.name.valid && formData.name.touched} required onChange={handleChange} type="text" placeholder="Seu email" />
+        <Form.Control id="name" isInvalid={!formData.name.valid && formData.name.touched} required onChange={handleChange} type="text" placeholder="Nome" />
       </Form.Group>
 
       <Form.Group controlId="email">
