@@ -302,9 +302,10 @@ def get_recipe_by_id(id):
 
 def get_user_recipes_as_dict(id):
     recipeObjs = Recipe.query.filter(Recipe.autor == id).all()
-    recipes = {}
+    recipes = []
     for x in recipeObjs:
-        recipes[x.get_id()] = x.as_dict() 
+        recipes.append(get_recipe_by_id(x.get_id()))
+
     return recipes
 
 def get_recipe_by_filters(search, orderBy, favorite=False, id=None, limit=None):
