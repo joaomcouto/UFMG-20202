@@ -55,7 +55,6 @@ const Create = () => {
 
     for(let prop in formData) {
       if(prop !== 'image' && !formData[prop]){
-        console.log(prop);
         setError(true);
         return
       }
@@ -80,8 +79,7 @@ const Create = () => {
     try{
       const json = await fetch(url, options);
       const response = await json.json();
-      console.log(json.status);
-      console.log(response);
+
       if(json.status !== 201){
         setError(true);
         return;

@@ -2,6 +2,7 @@ from flask import Flask, flash, escape, request, render_template, redirect, url_
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_praetorian import auth_required, current_user
+from sqlalchemy import desc
 from project import db, bcrypt, guard, User   # pragma: no cover
 from project.models import Recipe, FavoriteRecipes, ReviewRecipe  # pragma: no cover
 import json
@@ -152,7 +153,8 @@ def get_recipe_by_search():
     try:
         return json.dumps(get_recipe_by_filters(search, orderBy, limit=limit), default=str)
 
-    except:    
+    except Exception as e:
+        print(e)
         return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/receitas/favoritas', methods=['GET'])
@@ -166,7 +168,7 @@ def get_favorite_recipe_by_search():
     try:
         return json.dumps(get_recipe_by_filters(search, orderBy, favorites, id), default=str)
 
-    except:    
+    except Exception as e:    
         return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/receitas/<id>', methods=['GET'])
@@ -174,8 +176,9 @@ def get_recipe_by_ID(id):
     if(id):
         try:
             recipe = get_recipe_by_id(int(id))
-            return json.dumps(), 200, {'ContentType':'application/json'}
+            return json.dumps(recipe), 200, {'ContentType':'application/json'}
         except Exception as e:
+            print(e)
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
@@ -305,14 +308,14 @@ def get_recipe_by_filters(search, orderBy, favorite=False, id=None, limit=None):
     
     query = query.order_by(orderBy) if orderBy else query.order_by(Recipe.latest_change_date)
 
-    if(limit):
-        query = query.limit(limit)
-
     recipeObjs = query.all()
-    recipes = {}
+    recipeObjs.reverse()
+
+    recipeObjs = recipeObjs if not limit else recipeObjs[:int(limit)]
+    recipes = []
 
     for x in recipeObjs:
-        recipes[x.get_id()] = get_recipe_by_ID(x.get_id()) 
+        recipes.append(get_recipe_by_id(x.get_id()))
 
     return recipes
 

@@ -17,7 +17,7 @@ describe('<Show />', () => {
 
   beforeEach(() => {
     setRecipe = jest.fn();
-
+    window.alert = () => {}
     useStateSpy = jest.spyOn(React, 'useState');
     useParamsSpy = jest.spyOn(ReactRouter, 'useParams');
     fetchSpy = jest.spyOn(global, 'fetch');
@@ -30,7 +30,7 @@ describe('<Show />', () => {
       return Promise.resolve({
         status: 200,
         json: () => Promise.resolve({
-          data: data.recipes[0]
+          ...data.recipes[0]
         })
       })
     })
@@ -76,5 +76,13 @@ describe('<Show />', () => {
     const element = component.find(`.${classes.howTo}`);
     
     expect(element.exists()).toBeTruthy();
+  });
+
+  it('should handle a recipe being marked as favourite', () => {
+    const element = component.find(`#favouriteButton`).at(0);
+
+    element.simulate('click');
+
+    expect(setRecipe).toHaveBeenCalled()
   });
 });

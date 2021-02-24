@@ -6,7 +6,10 @@ import Create from "./Create";
 import React from 'react';
 
 describe('<Create />', () => {
-  let component, useStateSpy, setFormData, setError, setImageUrl, fetchSpy, alertSpy;
+  let component;
+  let useStateSpy, fetchSpy, alertSpy, useEffectSpy;
+  let setError, setRecipeId, setFormData,  setImageUrl, setFormSent;
+
   const context = {
     user: {id: 1, name: 'Vitor'}
   };
@@ -14,14 +17,18 @@ describe('<Create />', () => {
 
   const mockData = {
     title: "Brigadeiro",
-    portions: 10,
     time: 0,
+    servings: 10,
     ingredients: "Leite condensado e chocolate",
-    howTo: "Jogar na panela"
+    howTo: "Jogar na panela",
   }
   beforeEach(() => {
-    setFormData = jest.fn();
     setError = jest.fn();
+    setRecipeId = jest.fn();
+    setFormData = jest.fn();
+    setImageUrl = jest.fn();
+    setFormSent = jest.fn();
+
     fetchSpy = jest.spyOn(global, 'fetch');
 
     alertSpy = jest.spyOn(window, 'alert');
@@ -29,8 +36,21 @@ describe('<Create />', () => {
     
     useStateSpy = jest.spyOn(React, 'useState');
     useStateSpy.mockImplementationOnce(init => [init, setError]);
+    useStateSpy.mockImplementationOnce(init => [init, setRecipeId]);
     useStateSpy.mockImplementationOnce(() => [mockData, setFormData]);
     useStateSpy.mockImplementationOnce(init => [init, setImageUrl]);
+    useStateSpy.mockImplementationOnce(init => [init, setFormSent]);
+
+    fetchSpy.mockImplementationOnce(() => {
+      return Promise.resolve({
+        status: 200,
+        json: () => {
+          return Promise.resolve({
+            id: 1
+          })
+        }
+      })
+    })
 
     component = mount(
       <AuthContext.Provider value={context}>
@@ -85,18 +105,8 @@ describe('<Create />', () => {
 
     expect(setError).toHaveBeenCalled()
   });
-  it.skip('should alert the user that the recipe was saved', () => {
-    fetchSpy.mockImplementationOnce(() => {
-      return Promise.resolve({
-        status: 200,
-        json: () => {
-          return Promise.resolve({
-            id: 1
-          })
-        }
-      })
-    })
-    
+
+  it.skip('should handle success on saving recipe', () => {    
     for(let prop in mockData){
       const input = component.find(`#${prop}`).at(0);
       input.value = mockData[prop];
@@ -105,6 +115,7 @@ describe('<Create />', () => {
 
     const submit = component.find('#submit').at(0);
     submit.simulate('click');
-    expect(window.alert).toHaveBeenCalled();
+    expect(setRecipeId).toHaveBeenCalled();
+    expect(setFormSent).toHaveBeenCalled();
   })
 });

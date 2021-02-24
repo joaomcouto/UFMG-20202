@@ -29,7 +29,7 @@ const Show = () => {
 
   const handleFavourite = async () => {
     if(!user){
-      alert("Você precisa estar logado para favoritar receitas");
+      window.alert("Você precisa estar logado para favoritar receitas");
       return;
     }
 
@@ -57,7 +57,7 @@ const Show = () => {
       <div className={[classes.lg_header_container]}>
         <div className = {[classes.title].join` `}>
           <h3 className={[classes.recipe_name]}> {recipe.titulo}</h3>
-          <button className={[classes.favourite_button].join` `} onClick={handleFavourite}>
+          <button id="favouriteButton" className={[classes.favourite_button].join` `} onClick={handleFavourite}>
           {
             recipe.favourite ? 
             <FaHeart className={[classes.favourite_icon].join` `}/>
@@ -78,6 +78,9 @@ const Show = () => {
         </div>
         <div className={[classes.servings].join` `}>
           {recipe.texto} porções
+        </div>
+        <div className={[classes.author].join` `}>
+          Por: {recipe.nome}
         </div>
       </div>
       <div className={[classes.ingredients].join` `}>
