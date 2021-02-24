@@ -96,7 +96,7 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu√
 
 - Vinicius: https://github.com/VLamartine/pds2020-2/blob/a1a57c2e09990d6d4ba19e729de35664b097c1ba/backend/tests.py#L376
 
-- Vitor:
+- Vitor: https://github.com/VLamartine/pds2020-2/blob/main/frontend/src/components/recipes/recipe/Show/Show.test.js
 
 #### Retrospective
 
