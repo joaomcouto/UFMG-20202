@@ -1,7 +1,7 @@
 ## MyRecipes
 
 ## Grupo: 
-- Mateus de Melo Carvalho
+- João Marcos Machado Couto
 - Pedro Nascimento Costa
 - Vinícius Brenner 
 - Vitor Siman do Amaral Lamartine
