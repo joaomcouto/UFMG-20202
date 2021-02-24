@@ -11,13 +11,15 @@ const Profile = () =>{
     const [userRecipes, setUserRecipes] = React.useState([]);
 
     React.useEffect(() => {
-        if(process.env.REACT_APP_IS_SERVER_WORKING !== 'false'){
-          // Fetch API
-        } else {
-          setUserRecipes(recipesMock.data.recipes.slice(0, 5))
-          setFavoriteRecipes(recipesMock.data.recipes.slice(0, 5))
-        }
-      }, []);
+      const getData = async() => {
+        const urls = [`${process.env.REACT_APP_SERVER_URL}/receitas?limit=5`, `${process.env.REACT_APP_SERVER_URL}/receitas?limit=5`];
+        const responses = await Promise.all(urls.map(url => fetch(url)));
+        const lists = await Promise.all(responses.map(r => r.json()));
+        setFavoriteRecipes(Object.values(lists[0]))
+        setUserRecipes(Object.values(lists[1]))
+      }
+      getData();
+    }, []);
 
       return (
         <div className={`${classes.Container}`}>
