@@ -7,7 +7,7 @@ from baseTest import BaseTestCase
 
 from project.controllers.routes import (save_new_user, save_new_recipe, get_user_recipes_as_dict,
 get_recipe_by_filters, edit_recipe, get_recipe_by_id, check_exists_favorite, save_new_favorite, 
-unfavorite_recipe, get_favorite_relation, check_exists_review, submit_new_review)
+unfavorite_recipe, get_favorite_relation, check_exists_review, submit_new_review, favorite_recipe)
 from project import User
 from project.models import Recipe, FavoriteRecipes, ReviewRecipe
 import json
@@ -193,6 +193,9 @@ class TestCase(BaseTestCase):
             unfavorite_recipe(1, newAuthor)
             result = get_favorite_relation(1, newAuthor)
             self.assertEqual(result.is_active(), False)
+
+
+
 
     def test_favorite_status_response(self):
         newTitle = 'bolo de chocolate'
@@ -416,6 +419,73 @@ class TestCase(BaseTestCase):
                 headers=get_headers('html/text', token)
             )
             self.assert200(response)
+
+# Testes João: Sprint 2
+
+    def test_favorite_unfavorite_favorite(self):
+        newTitle = 'bolo de chocolate'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
+        with self.client:
+            test_data = save_test_user()
+            newAuthor, token = self.login_id_and_token(test_data)
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
+
+            save_new_favorite(1, newAuthor)
+            result = get_favorite_relation(1, newAuthor)
+            self.assertEqual(result.is_active(), True)
+
+            unfavorite_recipe(1, newAuthor)
+            result = get_favorite_relation(1, newAuthor)
+            self.assertEqual(result.is_active(), False)
+
+            favorite_recipe(1, newAuthor)
+            result = get_favorite_relation(1, newAuthor)
+            self.assertEqual(result.is_active(), True)
+
+    def test_favorite_unfavorite_favorite_route(self):
+        newTitle = 'bolo de chocolate'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
+
+        test_submit_data = {
+             "id": 1,
+        }
+
+        with self.client:
+            test_data = save_test_user()
+            newAuthor, token = self.login_id_and_token(test_data)
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
+
+    
+            response = self.client.post(
+                '/favorite', data=json.dumps(test_submit_data), 
+                headers=get_headers('application/json', token)
+            )
+            self.assert200(response)
+            result = get_favorite_relation(1, newAuthor)
+            self.assertEqual(result.is_active(), True)
+
+            response = self.client.post(
+                '/favorite', data=json.dumps(test_submit_data), 
+                headers=get_headers('application/json', token)
+            )
+            self.assert200(response)
+            result = get_favorite_relation(1, newAuthor)
+            self.assertEqual(result.is_active(), False)
+
+            response = self.client.post(
+                '/favorite', data=json.dumps(test_submit_data), 
+                headers=get_headers('application/jason', token)
+            )
+            self.assert200(response)
+            result = get_favorite_relation(1, newAuthor)
+            self.assertEqual(result.is_active(), True)
+
+
+
+
+
 
 def get_headers(type, token):
     return  {
