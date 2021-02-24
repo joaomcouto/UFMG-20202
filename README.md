@@ -90,11 +90,11 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
 - Vitor e João responsável pelo frontend e implementação das telas com as quais o usuário interage para visualizar receitas cadastradas e favoritas, além de diversas outras modificações necessárias devido a mudanças nos endpoints
 
 #### Testes:
-- João: 
+- João: https://github.com/VLamartine/pds2020-2/blob/a1a57c2e09990d6d4ba19e729de35664b097c1ba/backend/tests.py#L423
 
-- Pedro:
+- Pedro: https://github.com/VLamartine/pds2020-2/blob/a1a57c2e09990d6d4ba19e729de35664b097c1ba/backend/tests.py#L115
 
-- Vinicius:
+- Vinicius: https://github.com/VLamartine/pds2020-2/blob/a1a57c2e09990d6d4ba19e729de35664b097c1ba/backend/tests.py#L376
 
 - Vitor:
 
