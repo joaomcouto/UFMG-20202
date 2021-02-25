@@ -38,18 +38,13 @@ while True: #A ideia aqui eh que o data SÓ VAI SER ZERO quando o outro lado fec
         break
     else:
         receiveMsg.extend(data)
-    print('Tamanho da mensagem recebida:', len(receiveMsg))
-    print('Client Received', repr(receiveMsg))
     code = receiveMsg[1]
 
 
-#print("Cliente prestes a receber mensage")
-#data = s.recv(6)
-#print('Received', repr(data))
     if (code == 2): #REceber porta UDP
 
         udpPort = int.from_bytes(receiveMsg[2:6], 'big')
-        print(udpPort)
+        #print(udpPort)
 
         
         if (len(fileName) > 15 or len(fileName.split('.')) != 2 or not all(ord(c) < 128 for c in fileName) or len(fileName.split('.')[1]) > 3 ):
@@ -65,11 +60,14 @@ while True: #A ideia aqui eh que o data SÓ VAI SER ZERO quando o outro lado fec
 
         msg += os.path.getsize(fileName).to_bytes(8,'big')
 
-        #print(len(msg))
         s.sendall(msg)
     if (code==4):
-        print("Cliente vai iniciar transferencia")
         udpSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
+
+        if ':' in IP_ADDR:
+            udpSocket = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+        else:
+            udpSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         nextSequence = 0
         windowSize = 4
@@ -78,7 +76,6 @@ while True: #A ideia aqui eh que o data SÓ VAI SER ZERO quando o outro lado fec
         windowIndex = dict()
 
         
-        #awaitingAck = [0] * windowSize
         timeout = [0] * windowSize
         inWindow = [0] * windowSize
         
@@ -93,16 +90,13 @@ while True: #A ideia aqui eh que o data SÓ VAI SER ZERO quando o outro lado fec
             sendMsg += (i).to_bytes(4,'big')    
             sendMsg += len(sequence).to_bytes(2, 'big')
             sendMsg += sequence
-            print("Cliente mandando INIT", repr(sendMsg))
-            udpSocket.sendto(sendMsg , ('localhost', udpPort))
+            udpSocket.sendto(sendMsg , (IP_ADDR, udpPort))
             timeout[i] = time.time()
         
         while(True):
             try:
-                #print("Cliente vai tentar ler ack")
                 ack = s.recv(6)
                 ackCode = int.from_bytes(ack[0:2], 'big')
-                #print("Cliente leu ack code ", ackCode)
                 if (ackCode == 5):
                     code = 5
                     break 
@@ -114,7 +108,6 @@ while True: #A ideia aqui eh que o data SÓ VAI SER ZERO quando o outro lado fec
                         
                         windowIndex[ackSequenceNum] = -1
 
-                        
                         window[ windowIndex[nextSequence] ] = f.read(1000)
                         if window[ windowIndex[nextSequence] ]:
                             inWindow[windowIndex[nextSequence]] = nextSequence
@@ -124,7 +117,7 @@ while True: #A ideia aqui eh que o data SÓ VAI SER ZERO quando o outro lado fec
                             sendMsg += (len(window[ windowIndex[nextSequence] ])).to_bytes(2, 'big') #Payload size
                             sendMsg += window[ windowIndex[nextSequence] ] 
 
-                            print("Cliente mandando ", repr(sendMsg))
+                            #print("Cliente mandando ", repr(sendMsg))
                             
                             udpSocket.sendto(sendMsg , ('localhost', udpPort))
                             timeout[ windowIndex[nextSequence] ] = time.time()
@@ -145,44 +138,9 @@ while True: #A ideia aqui eh que o data SÓ VAI SER ZERO quando o outro lado fec
                         sendMsg += inWindow[i].to_bytes(4, 'big')
                         sendMsg += len(window[i]).to_bytes(2, 'big')
                         sendMsg += window[i]
-
-                        print("Cliente REmandando ", repr(sendMsg))
-
+                        
                         udpSocket.sendto(sendMsg , ('localhost', udpPort))
                         timeout[i] = time.time()
                     
-
-
-
-                    
-
-            
-
-
-
-
-
-        
-        
-
-
-
-            #awaitingAck[i] = 1
-        
-
-        
-        
-
-
-
-
-
-
-
-        #udpSocket.sendto("banana".encode() , ('localhost', udpPort))
-
-
-#data = s.recv(2)
-
 
 s.close()
