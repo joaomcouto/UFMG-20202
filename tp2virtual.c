@@ -160,21 +160,24 @@ void execute_fifo(struct physical_page **physical_mem, struct logical_page **pag
 void execute_lru(struct physical_page **physical_mem, struct logical_page **page_table, unsigned addr, 
     char op, int *page_faults, int *dirty_pages, int num_pages ){
         
-        int ref_addr;        
+        int ref_addr, least;    
 
         if(page_table[addr]->validation_bit == 0){
         
             *page_faults+=1;
+            least  = num_pages-1;
 
-            if (physical_mem[num_pages-1]->control_bit == 1)
+            if (physical_mem[least]->control_bit == 1)
             {
-                ref_addr = physical_mem[num_pages-1]->addr;
+                ref_addr = physical_mem[least]->addr;
                 page_table[ref_addr]->validation_bit = 0;                
-                if (physical_mem[num_pages-1]->dirty_bit == 1) *dirty_pages += 1;  
+                if (physical_mem[least]->dirty_bit == 1) *dirty_pages += 1;
+                physical_mem[least]->dirty_bit = 0;
+                physical_mem[least]->control_bit = 0;
                 
             }         
             
-            for (int i = num_pages-1; i > 0; i--)
+            for (int i = least; i > 0; i--)
             {         
             
             *physical_mem[i] = *physical_mem[i-1];
@@ -212,7 +215,7 @@ void execute_lru(struct physical_page **physical_mem, struct logical_page **page
                 physical_mem[ref_addr]->dirty_bit = 1;
                 physical_mem[ref_addr]->last_op = 'W';
             }
-            else
+            else if (op == 'R')
             {
                 lidas++;
                 ref_addr = page_table[addr]->ref_addr;
