@@ -5,7 +5,7 @@
 #include <string.h>
 
 int fifo_next = 0;
-
+int filled_pages = 0;
 int lidas = 0;
 int escritas = 0; // temporárias só pra ajudar no debug, depois apagarei
 
@@ -24,6 +24,16 @@ struct logical_page
     unsigned ref_addr; // indica a posição no vetor physical_page
     int validation_bit; // indica se o endereço mapeado ali ainda é valido
 };
+
+
+int randomInt(int a, int b)
+{
+    /*
+    Retorna um inteiro aleatório no intervalo [a, b]
+    */
+    int rand = (int)1000 * drand48();
+    return (rand % (b - a)) + a;
+}
 
 void print_physical_memory(struct physical_page **physical_mem, int num_pages){
 
@@ -226,6 +236,90 @@ void execute_lru(struct physical_page **physical_mem, struct logical_page **page
     
     }
 
+void execute_new(struct physical_page **physical_mem, struct logical_page **page_table, unsigned addr, 
+    char op, int *page_faults, int *dirty_pages, int num_pages ){
+        
+        int ref_addr, index;   
+
+        if(page_table[addr]->validation_bit == 0){
+        
+            *page_faults+=1;          
+
+            if(*page_faults > num_pages){
+                index = randomInt((num_pages-1)/2, num_pages-1);
+            }else
+            {
+                index = num_pages-1;
+            }
+
+            if (physical_mem[index]->control_bit == 1)
+            {
+                ref_addr = physical_mem[index]->addr;
+                page_table[ref_addr]->validation_bit = 0;                
+                if (physical_mem[index]->dirty_bit == 1) *dirty_pages += 1;    
+            }         
+            
+            for (int i = index; i > 0; i--)
+            {         
+            
+            *physical_mem[i] = *physical_mem[i-1];
+            ref_addr = physical_mem[i]->addr;
+            page_table[ref_addr]->ref_addr = i;
+
+            }
+
+            physical_mem[0]->addr = addr;
+            physical_mem[0]->control_bit = 1;
+            physical_mem[0]->dirty_bit = 0;
+
+            page_table[addr]->ref_addr = 0;
+            page_table[addr]->validation_bit = 1;
+
+        
+            if (op == 'W')
+            {   
+                escritas++;
+                physical_mem[0]->dirty_bit = 1;
+                physical_mem[0]->last_op = 'W';
+                
+            }else
+            {
+                lidas++;
+                physical_mem[0]->last_op = 'R';
+            }
+            
+        }else{
+
+            if (op == 'W')
+            {
+                escritas++;
+                ref_addr = page_table[addr]->ref_addr;
+                physical_mem[ref_addr]->dirty_bit = 1;
+                physical_mem[ref_addr]->last_op = 'W';
+            }
+            else
+            {
+                lidas++;
+                ref_addr = page_table[addr]->ref_addr;
+                physical_mem[ref_addr]->last_op = 'R';
+            }   
+
+            int temp_index = page_table[addr]->ref_addr;
+            struct physical_page *temp = (struct physical_page*)malloc(sizeof(struct physical_page));
+            *temp = *physical_mem[temp_index];
+            for (int i = temp_index; i > 0; i--)
+            {
+            *physical_mem[i] = *physical_mem[i-1];
+            ref_addr = physical_mem[i]->addr;
+            page_table[ref_addr]->ref_addr = i;
+
+            }
+            *physical_mem[0] = *temp;
+
+            free(temp);
+        }
+    
+    }
 
 void allocate_memory(struct physical_page **physical_mem, struct logical_page **page_table, unsigned addr, 
     char *method, char op, int *page_faults, int *dirty_pages, int num_pages )
@@ -246,7 +340,7 @@ void allocate_memory(struct physical_page **physical_mem, struct logical_page **
     }
 
     if (strcmp(method, "new") == 0){
-        /*implementar metodo novo*/
+        execute_new(physical_mem, page_table, addr, op, page_faults, dirty_pages, num_pages);
     }
 
 }
