@@ -15,7 +15,7 @@ struct physical_page
     unsigned addr; // endereço logico (linha do arquivo.log) que vai ser vinculado  à pagina
     int control_bit; // bit indica se a pagina foi acessada recentemente
     int dirty_bit; // vira 1 quando existe escrita na pagina
-    int alloc_order; // era pra usar no lru mas nao precisou
+    double time; // era pra usar no lru mas nao precisou
     char last_op; // indica qual foi a ultima operação leitura ou escrita pra printar
 };
 
@@ -85,7 +85,7 @@ void init_physical_mem(struct physical_page **physical_mem, int num_pages)
         physical_mem[i]->addr = 0x00000000;
         physical_mem[i]->dirty_bit = 0;
         physical_mem[i]->control_bit = 0;
-        physical_mem[i]->alloc_order = 0;
+        physical_mem[i]->time = -1;
     }
 
 }
@@ -160,12 +160,31 @@ void execute_fifo(struct physical_page **physical_mem, struct logical_page **pag
 void execute_lru(struct physical_page **physical_mem, struct logical_page **page_table, unsigned addr, 
     char op, int *page_faults, int *dirty_pages, int num_pages ){
         
-        int ref_addr, least;    
+        int ref_addr, least;
+      
 
         if(page_table[addr]->validation_bit == 0){
         
             *page_faults+=1;
-            least  = num_pages-1;
+            
+            double menor;
+            if(*page_faults > num_pages){
+                menor = physical_mem[0]->time;
+                least = 0;
+            }else{
+                menor = 0;
+            }     
+                       
+
+            for(int i = 0; i < num_pages; i++ ){
+
+                if (physical_mem[i]->time < menor)
+                {    
+                    menor = physical_mem[i]->time;
+                    least = i;
+                }
+            }
+
 
             if (physical_mem[least]->control_bit == 1)
             {
@@ -173,37 +192,28 @@ void execute_lru(struct physical_page **physical_mem, struct logical_page **page
                 page_table[ref_addr]->validation_bit = 0;                
                 if (physical_mem[least]->dirty_bit == 1) *dirty_pages += 1;
                 physical_mem[least]->dirty_bit = 0;
-                physical_mem[least]->control_bit = 0;
                 
             }         
             
-            for (int i = least; i > 0; i--)
-            {         
-            
-            *physical_mem[i] = *physical_mem[i-1];
-            ref_addr = physical_mem[i]->addr;
-            page_table[ref_addr]->ref_addr = i;
-
-            }
-
-            physical_mem[0]->addr = addr;
-            physical_mem[0]->control_bit = 1;
-            physical_mem[0]->dirty_bit = 0;
-
-            page_table[addr]->ref_addr = 0;
+            physical_mem[least]->addr = addr;
+            physical_mem[least]->control_bit = 1;
+            physical_mem[least]->dirty_bit = 0;
+            physical_mem[least]->time = (double)clock()/CLOCKS_PER_SEC;
+           
+            page_table[addr]->ref_addr = least;
             page_table[addr]->validation_bit = 1;
 
         
             if (op == 'W')
             {   
                 escritas++;
-                physical_mem[0]->dirty_bit = 1;
-                physical_mem[0]->last_op = 'W';
+                physical_mem[least]->dirty_bit = 1;
+                physical_mem[least]->last_op = 'W';
                 
             }else
             {
                 lidas++;
-                physical_mem[0]->last_op = 'R';
+                physical_mem[least]->last_op = 'R';
             }
             
         }else{
@@ -222,22 +232,12 @@ void execute_lru(struct physical_page **physical_mem, struct logical_page **page
                 physical_mem[ref_addr]->last_op = 'R';
             }   
 
-            int temp_index = page_table[addr]->ref_addr;
-            struct physical_page *temp = (struct physical_page*)malloc(sizeof(struct physical_page));
-            *temp = *physical_mem[temp_index];
-            for (int i = temp_index; i > 0; i--)
-            {
-            *physical_mem[i] = *physical_mem[i-1];
-            ref_addr = physical_mem[i]->addr;
-            page_table[ref_addr]->ref_addr = i;
-
-            }
-            *physical_mem[0] = *temp;
-
-            free(temp);
+            physical_mem[ref_addr]->time = (double)clock()/CLOCKS_PER_SEC;
         }
     
     }
+
+
 
 void execute_new(struct physical_page **physical_mem, struct logical_page **page_table, unsigned addr, 
     char op, int *page_faults, int *dirty_pages, int num_pages ){
