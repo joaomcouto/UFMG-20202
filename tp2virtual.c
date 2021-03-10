@@ -7,12 +7,12 @@
 int fifo_next = 0;
 int filled_pages = 0;
 int lidas = 0;
-int escritas = 0; // temporárias só pra ajudar no debug, depois apagarei
+int escritas = 0; // #TODO mudar pra ingles
 
 struct physical_page
 {
     unsigned addr;   // endereço logico (linha do arquivo.log) que vai ser vinculado  à pagina
-    int control_bit; // bit indica se a pagina foi acessada recentemente
+    int control_bit; // bit indica se a página já está em uso no momento da substituição
     int dirty_bit;   // vira 1 quando existe escrita na pagina
     int chance_bit;  //Utilizado no 2a
     double time;     // era pra usar no lru mas nao precisou
