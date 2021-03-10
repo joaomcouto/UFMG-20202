@@ -15,7 +15,8 @@ shift $((OPTIND -1))
 
 
 for PROG in compilador.log matriz.log simulador.log compressor.log; do
-for MET in lru new; do
+#for MET in lru new; do
+for MET in 2a; do
   for MF in 128 516 1024 4096 16384; do
     >&2 echo $"----------------//-----------------"
     ./tp2virtual $MET $PROG 4 $MF >> resultsfixedpage.csv
