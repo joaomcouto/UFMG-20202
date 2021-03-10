@@ -12,10 +12,10 @@ int escritas = 0; // #TODO mudar pra ingles
 struct physical_page
 {
     unsigned addr;   // endereço logico (linha do arquivo.log) que vai ser vinculado  à pagina
-    int control_bit; // bit indica se a página já está em uso no momento da substituição
+    int init_bit; // bit indica se a página já está em uso no momento da substituição
     int dirty_bit;   // vira 1 quando existe escrita na pagina
     int chance_bit;  //Utilizado no 2a
-    double time;     // era pra usar no lru mas nao precisou
+    double time;     
     char last_op;    // indica qual foi a ultima operação leitura ou escrita pra printar
 };
 
@@ -87,7 +87,7 @@ void init_physical_mem(struct physical_page **physical_mem, int num_pages)
         physical_mem[i] = (struct physical_page *)malloc(sizeof(struct physical_page));
         physical_mem[i]->addr = 0x00000000;
         physical_mem[i]->dirty_bit = 0;
-        physical_mem[i]->control_bit = 0;
+        physical_mem[i]->init_bit = 0;
         physical_mem[i]->chance_bit = 0;
         physical_mem[i]->time = -1;
     }
@@ -115,7 +115,7 @@ void execute_fifo(struct physical_page **physical_mem, struct logical_page **pag
 
         *page_faults += 1; // Temos um page fault
 
-        if (physical_mem[fifo_next]->control_bit == 1)
+        if (physical_mem[fifo_next]->init_bit == 1)
         {
             old_addr = physical_mem[fifo_next]->addr;
 
@@ -131,7 +131,7 @@ void execute_fifo(struct physical_page **physical_mem, struct logical_page **pag
         page_table[addr]->validation_bit = 1;
 
         physical_mem[fifo_next]->addr = addr;
-        physical_mem[fifo_next]->control_bit = 1;
+        physical_mem[fifo_next]->init_bit = 1;
         physical_mem[fifo_next]->dirty_bit = 0;
 
         if (op == 'W')
@@ -181,7 +181,7 @@ void execute_2a(struct physical_page **physical_mem, struct logical_page **page_
 
         *page_faults += 1; // Temos um page fault
 
-        if (physical_mem[fifo_next]->control_bit == 1) //A memoria a ser substituida ja foi setada antes
+        if (physical_mem[fifo_next]->init_bit == 1) //A memoria a ser substituida ja foi setada antes
         {
             old_addr = physical_mem[fifo_next]->addr; //Pegamos o indice virtual da pagina a ser substituida
 
@@ -197,7 +197,7 @@ void execute_2a(struct physical_page **physical_mem, struct logical_page **page_
         page_table[addr]->validation_bit = 1;
 
         physical_mem[fifo_next]->addr = addr;
-        physical_mem[fifo_next]->control_bit = 1;
+        physical_mem[fifo_next]->init_bit = 1;
         physical_mem[fifo_next]->dirty_bit = 0;
 
         if (op == 'W')
@@ -264,7 +264,7 @@ void execute_lru(struct physical_page **physical_mem, struct logical_page **page
             }
         }
 
-        if (physical_mem[least]->control_bit == 1)
+        if (physical_mem[least]->init_bit == 1)
         {
             ref_addr = physical_mem[least]->addr;
             page_table[ref_addr]->validation_bit = 0;
@@ -274,7 +274,7 @@ void execute_lru(struct physical_page **physical_mem, struct logical_page **page
         }
 
         physical_mem[least]->addr = addr;
-        physical_mem[least]->control_bit = 1;
+        physical_mem[least]->init_bit = 1;
         physical_mem[least]->dirty_bit = 0;
         physical_mem[least]->time = (double)clock() / CLOCKS_PER_SEC;
 
@@ -334,7 +334,7 @@ void execute_new(struct physical_page **physical_mem, struct logical_page **page
             index = num_pages - 1;
         }
 
-        if (physical_mem[index]->control_bit == 1)
+        if (physical_mem[index]->init_bit == 1)
         {
             ref_addr = physical_mem[index]->addr;
             page_table[ref_addr]->validation_bit = 0;
@@ -351,7 +351,7 @@ void execute_new(struct physical_page **physical_mem, struct logical_page **page
         }
 
         physical_mem[0]->addr = addr;
-        physical_mem[0]->control_bit = 1;
+        physical_mem[0]->init_bit = 1;
         physical_mem[0]->dirty_bit = 0;
 
         page_table[addr]->ref_addr = 0;
