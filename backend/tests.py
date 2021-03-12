@@ -112,9 +112,9 @@ class TestCase(BaseTestCase):
             savedRecipes = get_user_recipes_as_dict(newAuthor)
             self.assertEqual(len(savedRecipes), 2)
 
-### Tests Sprint 2 - Pedro
+### Tests Sprint 2 - Pedro 
     def test_create_new_recipe_required_parameters(self):
-        newTitle = 'bolo'
+        newTitle = 'bolo2'
         newIngredients = '2 ovos, 100ml leite, fermento'
         newDirections = 'batedeira tudo e assar'
 
