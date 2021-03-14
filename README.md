@@ -1,7 +1,7 @@
 ## MyRecipes
 
 ## Grupo: 
-- Mateus de Melo Carvalho
+- João Marcos Machado Couto
 - Pedro Nascimento Costa
 - Vinícius Brenner 
 - Vitor Siman do Amaral Lamartine
@@ -77,7 +77,7 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
 
 #### Listagem:
 - Um usuário do MyRecipes deseja visualizar receitas cadastradas no sistema de MyRecipes
-- Um usuário do MyRecipes deseja visualizar receitas cadastradas no sistemas podendo filtrar de acordo com alguns parâmetros.
+- Um usuário do MyRecipes deseja visualizar receitas cadastradas no sistemas podendo filtrar de acordo com alguns parâmetros (por hora, faz filtragem apenas por titulo da receita)
 
 #### Perfil & Receitas:
 - Um usuário do MyRecipes deseja favoritar receitas de seu interesse.
@@ -85,19 +85,31 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
 - Um usuário do MyRecipes deseja visualizar suas receitas cadastradas.
 
 #### Responsabilidades:
+- Pedro, Vinícius e João responsáveis pelas tarefas de backend, modelando o domínio do problema, implementando as APIs, refatorando erros de backend, elaborando novos testes (de integração e unitários) e efetivando alterações do banco: através de novas tabelas e alteração de colunas já existentes
+
+- Vitor e João responsável pelo frontend e implementação das telas com as quais o usuário interage para visualizar receitas cadastradas e favoritas, além de diversas outras modificações necessárias devido a mudanças nos endpoints
 
 #### Testes:
-- Pedro:
+- João: https://github.com/VLamartine/pds2020-2/blob/a1a57c2e09990d6d4ba19e729de35664b097c1ba/backend/tests.py#L423
 
-- Vinicius:
+- Pedro: https://github.com/VLamartine/pds2020-2/blob/a1a57c2e09990d6d4ba19e729de35664b097c1ba/backend/tests.py#L115
 
-- Vitor:
- 
+- Vinicius: https://github.com/VLamartine/pds2020-2/blob/a1a57c2e09990d6d4ba19e729de35664b097c1ba/backend/tests.py#L376
+
+- Vitor: https://github.com/VLamartine/pds2020-2/blob/main/frontend/src/components/recipes/recipe/Show/Show.test.js
 
 #### Retrospective
+
 - Pontos positivos:
- 
-- Pontos Negativos:
+  - Conseguimos cumprir todas as histórias propostas (como listados acima, sprint 2)
+  - Ótima comunicação do grupo, conseguimos inclusive parear para resolver problemas, refatorar o código e trocar informações para melhorar a implementação.
+  - A implementação de testes de back end logo no começo do sprint permitiu um fluxo mais dinamico e efetivo de escrita de código, teste, correções e refatorações
+  - Entrada de novos membros no grupo permitiu uma divisão mais homogenea das tarefas pendentes
+  - A migração do sistema de autenticação dos usuários para JWP se provou extremamente positiva
+  
+- Pontos Negativos: 
+  - Problemas no login causaram a necessidade de migrar a infraestrutura de autenticação
+  - A proposta de utilizar o Selenium para simulações mais robustas se provou complexo demais para ser executado com apenas metade do tempo do sprint faltando. Estudaremos a possibilidade de dar continuidade a essa iniciativa durante o sprint 3.
 
 ### Kanban: https://github.com/VLamartine/pds2020-2/projects/1
 
