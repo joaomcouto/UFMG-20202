@@ -66,8 +66,19 @@ h5 {
   text-align: center;
 }
 
-.favourite_button {
+.action_button {
   border:none;
+  outline: none;
+}
+
+.edit_button {
+  font-size: 1.5rem;
+  margin-right: 10px;
+}
+
+.delete_button {
+  color: red;
+  font-size: 1.5rem;
 }
 @media(min-width:992px){
   .lg_header_container {
@@ -95,6 +106,7 @@ h5 {
   }
 
   .recipe_name {
-    font-size: 3rem;
+    font-size: 2rem;
+    max-width: 80%;
   }
 }

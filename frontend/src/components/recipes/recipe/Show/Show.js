@@ -1,9 +1,9 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Redirect, useParams } from 'react-router-dom';
 import classes from './Show.module.css';
 import recipeIcon from '../../../../assets/dinner.svg';
 import Image from 'react-bootstrap/Image';
-import { FaRegClock, FaRegHeart, FaHeart } from 'react-icons/fa';
+import { FaRegClock, FaRegHeart, FaHeart, FaPencilAlt, FaTrash } from 'react-icons/fa';
 import { useAuth } from '../../../../context/Auth';
 
 const Show = () => {
@@ -27,6 +27,25 @@ const Show = () => {
     getRecipe();
   }, [id]);
 
+  const handleDelete = async () => {
+    if(!window.confirm('Deletar receita? (Essa ação não pode ser revertida)')) return;
+
+    const url = `${process.env.REACT_APP_SERVER_URL}/delete_recipe`;
+    const options = {
+      method: 'POST',
+      body: JSON.stringify({id}),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${user.access_token}`
+      }
+    }
+
+    const json = await fetch(url, options);
+    if(json.status === 200){
+      window.alert("Receita deletada com sucesso");
+      setRecipe(null)
+    }
+  }
   const handleFavourite = async () => {
     if(!user){
       window.alert("Você precisa estar logado para favoritar receitas");
@@ -52,18 +71,43 @@ const Show = () => {
       favourite: !recipe.favourite
     });
   }
-  return (
-    <div className={[classes.container].join` `}>
-      <div className={[classes.lg_header_container]}>
-        <div className = {[classes.title].join` `}>
-          <h3 className={[classes.recipe_name]}> {recipe.titulo}</h3>
-          <button id="favouriteButton" className={[classes.favourite_button].join` `} onClick={handleFavourite}>
+
+  const renderActions = () => {
+    if(user?.UserID === recipe.UserID){
+      return (
+        <div>
+          <a id="editButton" className={[classes.action_button, classes.edit_button].join` `} href={`/recipes/edit/${id}`}>
+            <FaPencilAlt />
+          </a>
+          <button id="deleteButton" className={[classes.action_button, classes.delete_button].join` `} onClick={handleDelete}>
+            <FaTrash />
+          </button>
+        </div>
+      )
+    } else {
+      return (
+        <button id="favouriteButton" className={[classes.action_button, classes.favourite_button].join` `} onClick={handleFavourite}>
           {
             recipe.favourite ? 
             <FaHeart className={[classes.favourite_icon].join` `}/>
             : <FaRegHeart className={[classes.favourite_icon].join` `}/> 
           }
-          </button>
+        </button>
+      )
+    }
+  }
+
+  if(!recipe){
+    return <Redirect to="/" />
+  }
+
+  return (
+    <div className={[classes.container].join` `}>
+      <div className={[classes.lg_header_container]}>
+        <div className = {[classes.title].join` `}>
+          <h3 className={[classes.recipe_name]}> {recipe.titulo}</h3>
+          {renderActions()}
+          
         </div>
         <hr className={[classes.hr].join` `}/>
         <div className={[classes.recipe_header].join` `}>

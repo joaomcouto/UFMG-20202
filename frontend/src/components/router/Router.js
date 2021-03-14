@@ -7,6 +7,7 @@ import Register from '../register/Register';
 import Home from '../home/Home';
 import Show from '../recipes/recipe/Show/Show';
 import Profile from '../profile/Profile';
+import UserRecipes from '../profile/userRecipes/UserRecipes';
 
 
 const Router = () => {
@@ -22,10 +23,12 @@ const Router = () => {
         <Route path="/register">
           {!user ? (<Register/>) : (<Redirect to="/" />)}
         </Route>
-        <Route path="/recipes/new" component={Create}/>
+        <Route path="/recipes/new" component={Create} />
+        <Route path="/recipes/edit/:id" component={Create} />
         <Route path="/recipes" component={List}/>
         <Route path="/recipe/:id"component={Show}/>
-        <Route path="/profile" component={Profile}/>
+        <Route exact path="/profile" component={Profile}/>
+        <Route path="/profile/recipes" component={UserRecipes}/>
       </Switch>
     </BrowserRouter>
   )

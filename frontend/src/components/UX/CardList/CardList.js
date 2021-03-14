@@ -2,7 +2,7 @@ import Card from "react-bootstrap/Card"
 import classes from './CardList.module.css';
 import recipeIcon from '../../../assets/dinner.svg';
 
-const CardList = ({list}) => {
+const CardList = ({list, hideAuthor}) => {
   return (
     <div className={['m-auto', classes.w_100].join` `}>
       {list.map(element => {
@@ -11,7 +11,7 @@ const CardList = ({list}) => {
             <img className={[classes.image].join` `} alt="" src={element.imagem || recipeIcon}></img>
             <div className={[classes.card_body].join` `}>
               <Card.Title> <a className={classes.Link} href={`/recipe/${element.ID}`}> {element.titulo} </a></Card.Title>
-              <Card.Text> Por: {element.nome}</Card.Text>
+              {hideAuthor ? '' : (<Card.Text> Por: {element.nome}</Card.Text>)}
             </div>
           </Card.Body>
         </Card>

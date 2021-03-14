@@ -21,6 +21,7 @@ import os
 
 app = Flask(__name__)
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 # CORS(app, resources={r"/*":{"origins":"*"}})
 bcrypt = Bcrypt(app)
 login_manager = LoginManager()

@@ -113,7 +113,7 @@ def edit_recipe():
         return OK
     else:
         try:
-            data = request.get_json()
+            data = request.form.to_dict()
             ID = data['id']
             title = data['title']
             ingredients = data['ingredients']
@@ -121,10 +121,12 @@ def edit_recipe():
             author = current_user().identity
             time = data['time'] 
             text = data['text']
-            image = data['image']
+            # image = data['image']
+            image =''
             edit_recipe(ID, title, ingredients, directions, author, time, text, image)
             return OK
-        except:
+        except Exception as e:
+            print(e)
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/delete_recipe', methods=['POST'])
@@ -132,17 +134,19 @@ def edit_recipe():
 def delete_recipe():   
     try:
         data = request.get_json()
+        print(data)
         ID = data['id']
         delete_recipe(ID)
         return OK
-    except:
+    except Exception as e:
+        print(e)
         return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 
 @routes_blueprint.route('/receitas/user_all_recipes', methods=['GET'])
 @auth_required
 def get_user_recipes():
-    return json.dumps(get_user_recipes_as_dict(current_user.identity()), default=str)
+    return json.dumps(get_user_recipes_as_dict(current_user().identity))
 
 @routes_blueprint.route('/receitas', methods=['GET'])
 def get_recipe_by_search():

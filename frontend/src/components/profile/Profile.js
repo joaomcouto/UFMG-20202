@@ -28,13 +28,13 @@ const Profile = () =>{
             <h4 className={classes.header}>Minhas Receitas:</h4>
             <CardList className={`${classes.List}`} list={userRecipes}/>
             <div className={['w-100', 'text-right'].join` `}>
-              <Button variant="link" href="/recipes">Ver mais...</Button>
+              <Button variant="link" href="/profile/recipes">Ver mais...</Button>
             </div>
           </div>
           
           <div>
           <h4 className={classes.header}>Receitas favoritas:</h4>
-          <CardList list={favoriteRecipes}/>
+          <CardList list={favoriteRecipes}/> 
           <div className={['w-100', 'text-right'].join` `}>
             <Button variant="link" href="/recipes">Ver mais...</Button>
           </div>

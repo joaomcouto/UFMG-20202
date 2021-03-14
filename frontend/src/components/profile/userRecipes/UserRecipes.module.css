@@ -1,0 +1,9 @@
+.Container {
+  background: #efefef;
+  flex-grow: 1;
+}
+
+.Container > div {
+  width: 50%;
+  margin: auto;
+}
