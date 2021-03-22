@@ -57,16 +57,16 @@ while True:
         for neighbor in neighbors:
             neighborIp = neighbor.split(":")[0]
             neighborPort = int(neighbor.split(":")[1])
-            print("Peer mandando query pra seus vizinho", neighborIp,neighborPort) 
-            #udpSocket.sendto(sendMsg , (neighborIp, neighborPort))
+            print("Peer mandando query pra seu vizinho", neighborIp,neighborPort) 
+            udpSocket.sendto(sendMsg , (neighborIp, neighborPort))
         #print(sendMsg) #Ta certin
 
         #Respondendo ao cliente: chunck info
         sendMsg = (3).to_bytes(2 , 'big')
         chuncksInStorage = []
-        for chunckId in chunckList:
-            if(int(chunckId) in localStorage.keys()):
-                chuncksInStorage.append(int(chunckId))
+        for cId in chunckList:
+            if(int(cId) in localStorage.keys()):
+                chuncksInStorage.append(int(cId))
         sendMsg += (len(chuncksInStorage)).to_bytes(2, 'big')
 
         print("Peer tem os seguintes chunks:", chuncksInStorage)
@@ -76,7 +76,58 @@ while True:
         udpSocket.sendto(sendMsg, (dataSenderIp, dataSenderPort) )   
 
     if (msgType == 2): #Recebeu query de vizinho, responder cliente e retransmitir pra vizinhos com ttl menor
-        pass     
+
+        print("Peer recebeu a query ", receivedData)
+
+        if(int.from_bytes(receivedData[8:10], 'big') > 1):
+            sendMsg = receivedData[:8]
+            sendMsg += (int.from_bytes(receivedData[8:10], 'big') - 1).to_bytes(2, 'big')
+            sendMsg += receivedData[10:]
+            #sendMsg[8:10] = (int.from_bytes(receivedData[8:10], 'big') - 1).to_bytes(2, 'big')
+
+
+            #Transmitindo pra vizinhos
+            for neighbor in neighbors:
+                neighborIp = neighbor.split(":")[0]
+                neighborPort = int(neighbor.split(":")[1])
+                if(neighborIp != dataSenderIp and neighborPort != dataSenderPort):
+                    print("Peer mandando query pra seu vizinho", neighborIp,neighborPort) 
+                    udpSocket.sendto(sendMsg , (neighborIp, neighborPort))
+
+
+        #respondendo chunck info para cliente apartir de query
+        chunckList = []
+        queryChunkCount = int.from_bytes(receivedData[10:12], 'big')
+        queryIdList = receivedData[12:]
+
+        for i in range(0,(queryChunkCount*2)-1,2): 
+            #chunckList.append(int.from_bytes(queryIdList[i],'big'))
+            chunckList.append(int.from_bytes(queryIdList[i:i+2], 'big'))
+        print("Peer identificou na query os chunks ", chunckList)
+
+        sendMsg = (3).to_bytes(2 , 'big')
+        chuncksInStorage = []
+        for chunckId in chunckList:
+            if(int(chunckId) in localStorage.keys()):
+                chuncksInStorage.append(int(chunckId))
+        sendMsg += (len(chuncksInStorage)).to_bytes(2, 'big')
+
+        print("Peer QUERY tem os seguintes chunks:", chuncksInStorage)
+        for i in chuncksInStorage:
+            sendMsg += (i).to_bytes(2, 'big')  
+        print("Peer QUERY verificou seus chuncks e  vai responder chunck info:" , sendMsg)
+        queryIp = ""
+        for byte in receivedData[2:6]:
+            #queryIp += int.from_bytes(byte, 'big')
+            queryIp += str(byte)
+            queryIp += "."
+        queryIp = queryIp[:-1]
+        
+        queryPort = int.from_bytes(receivedData[6:8],'big')
+
+        print("Para ", queryIp,queryPort)
+
+        udpSocket.sendto(sendMsg,(queryIp,queryPort))
 
     if (msgType == 4): #Recebeu get do cliente
         
