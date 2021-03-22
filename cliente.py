@@ -97,20 +97,37 @@ for i,key in enumerate(chunkPeers.keys()):
 
 start = time.time()
 timeOut = 5
+f = open("output-" + udpSocket.getsockname()[0] + ".log" , "w")
 while True: #Loop recebimento de chunks
     receivedData = bytes()
+
     try:
         receivedData, udpAddr  = udpSocket.recvfrom(1024)
-        if(receivedData[1] == 5):
 
+        dataSenderIp = udpAddr[0]
+        dataSenderPort = udpAddr[1]
+
+        print("Cliente recebeu chunk ", int.from_bytes(receivedData[2:4],'big') ,"de", udpAddr, "\n")
+        print("A mensagem:", receivedData)
+
+        if(receivedData[1] == 5):
+            receivedChunkId = int.from_bytes(receivedData[2:4],'big')
+            f.write("{}:{} - {}\n".format(dataSenderIp,dataSenderPort,receivedChunkId))
     except:
         pass
-
-
-
     end = time.time()
     if( (end - start) > timeOut):
         break 
+
+for i,key in enumerate(chunkPeers.keys()):
+    if(peerIndexPerChunk[i] == -1):
+        f.write("{}:{} - {}\n".format("0.0.0.0","0",key))
+
+
+f.close()
+
+
+
 
 
 
