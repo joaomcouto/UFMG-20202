@@ -111,6 +111,43 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
   - Problemas no login causaram a necessidade de migrar a infraestrutura de autenticação
   - A proposta de utilizar o Selenium para simulações mais robustas se provou complexo demais para ser executado com apenas metade do tempo do sprint faltando. Estudaremos a possibilidade de dar continuidade a essa iniciativa durante o sprint 3.
 
+
+-------------------------------------------------------------------------------------------------------------------------
+
+## Sprint 3
+
+### Histórias de Usuário:
+
+#### Listagem:
+- Um usuário do MyRecipes deseja visualizar se uma receita está entre suas favoritas, caso ele carregue ela individualmente
+
+#### Perfil & Receitas:
+- Um usuário do MyRecipes deseja avaliar receitas, utilizando um sistema de nota (1 a 5)
+
+#### Responsabilidades:
+- Pedro, Vinícius e João responsáveis pelas tarefas de backend, modelando o domínio do problema, implementando as APIs, refatorando erros de backend, elaborando novos testes (de integração e unitários) e efetivando alterações do banco: através de novas tabelas e alteração de colunas já existentes
+
+- Vitor e João responsável pelo frontend e implementação das telas com as quais o usuário interage para visualizar receitas cadastradas e favoritas, além de diversas outras modificações necessárias devido a mudanças nos endpoints
+
+#### Testes:
+- João: 
+
+- Pedro: https://github.com/VLamartine/pds2020-2/blob/beb956668f351a20660489ddde9cc73c2fa0fdd5/backend/tests.py#L325
+
+- Vinicius: 
+
+- Vitor:
+#### Retrospective
+
+- Pontos positivos:
+  - Conseguimos cumprir todas as histórias propostas (como listados acima, sprint 2)
+  - Ótima comunicação do grupo, conseguimos inclusive parear para resolver problemas, refatorar o código e trocar informações para melhorar a implementação.
+  - Como de costume, utilizar testes de back end logo no começo do sprint permitiu um fluxo mais dinamico e efetivo de escrita de código, teste, correções e refatorações
+  
+- Pontos Negativos: 
+  - a
+  - b
+
 ### Kanban: https://github.com/VLamartine/pds2020-2/projects/1
 
 ### pds2020-2
