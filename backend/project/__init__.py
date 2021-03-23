@@ -14,6 +14,8 @@ from project.models import User
 from config import BaseConfig
 import os
 
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
 
 ################
 #### config ####
