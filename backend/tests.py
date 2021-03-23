@@ -194,9 +194,6 @@ class TestCase(BaseTestCase):
             result = get_favorite_relation(1, newAuthor)
             self.assertEqual(result.is_active(), False)
 
-
-
-
     def test_favorite_status_response(self):
         newTitle = 'bolo de chocolate'
         newIngredients = '2 ovos, 100ml leite, fermento'

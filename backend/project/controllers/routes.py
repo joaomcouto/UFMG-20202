@@ -64,7 +64,7 @@ def login():
             login_info = dict(dbUser.as_dict(), **access)
             return json.dumps(login_info)   
         except Exception as e:
-            #print(e)
+            print("Exception:", e)
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/refresh', methods=['GET'])
@@ -93,7 +93,7 @@ def new_recipe():
         try:
             
             data = request.form.to_dict()
-            print(data)
+            #print(data)
             #print(current_user())
             title = data['title']
             ingredients = data['ingredients']
@@ -116,7 +116,8 @@ def edit_recipe():
         return OK
     else:
         try:
-            data = request.form.to_dict()
+            data = request.get_json()
+            print(data)
             ID = data['id']
             title = data['title']
             ingredients = data['ingredients']
@@ -129,7 +130,7 @@ def edit_recipe():
             edit_recipe(ID, title, ingredients, directions, author, time, text, image)
             return OK
         except Exception as e:
-            print(e)
+            print("Exception:", e)
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/delete_recipe', methods=['POST'])
@@ -137,12 +138,12 @@ def edit_recipe():
 def delete_recipe():   
     try:
         data = request.get_json()
-        print(data)
+        #print(data)
         ID = data['id']
         delete_recipe(ID)
         return OK
     except Exception as e:
-        print(e)
+        print("Exception:", e)
         return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 
@@ -161,7 +162,7 @@ def get_recipe_by_search():
         return json.dumps(get_recipe_by_filters(search, orderBy, limit=limit), default=str)
 
     except Exception as e:
-        print(e)
+        print("Exception:", e)
         return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/receitas/favoritas', methods=['GET'])
@@ -185,7 +186,7 @@ def get_recipe_by_ID(id):
             recipe = get_recipe_by_id(int(id))
             return json.dumps(recipe), 200, {'ContentType':'application/json'}
         except Exception as e:
-            print(e)
+            print("Exception:", e)
             return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
