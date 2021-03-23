@@ -1,13 +1,14 @@
 from flask import Flask, flash, escape, request, render_template, redirect, url_for, Blueprint, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask_praetorian import auth_required, current_user
+from flask_praetorian import auth_required, current_user, auth_accepted
 from sqlalchemy import desc
-from project import db, bcrypt, guard, User   # pragma: no cover
+from project import app, db, bcrypt, guard, User   # pragma: no cover
 from project.models import Recipe, FavoriteRecipes, ReviewRecipe  # pragma: no cover
 import json
 from datetime import datetime
 import traceback
+import os
 
 OK = json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
@@ -101,8 +102,12 @@ def new_recipe():
             author = data['userId']
             time = data['time'] 
             text = data['text']
-            # image = data['image'] if data.has_key('image') else None
-            image = ''
+            
+            try:
+                image = data['image']
+            except:
+                image = ''
+
             recipe = save_new_recipe(title, ingredients, directions, author, time, text, image)
             return json.dumps({'success': True, 'id': recipe.ID}), 201, {'ContentType':'application/json'}
         except Exception as e:
@@ -117,7 +122,7 @@ def edit_recipe():
     else:
         try:
             data = request.get_json()
-            print(data)
+            #print(data)
             ID = data['id']
             title = data['title']
             ingredients = data['ingredients']
@@ -180,10 +185,23 @@ def get_favorite_recipe_by_search():
         return json.dumps({'success':False}), 505, {'ContentType':'application/json'}
 
 @routes_blueprint.route('/receitas/<id>', methods=['GET'])
+@auth_accepted
 def get_recipe_by_ID(id):
     if(id):
         try:
+            token = guard.read_token_from_header()
+        except:
+            token = '';
+        
+        try:
             recipe = get_recipe_by_id(int(id))
+            if(token != ''):
+                author = current_user().identity
+                favorite_status = get_favorite_relation(id, author).is_active() if check_exists_favorite(id, author) else False
+                 
+                all_recipe_info = dict(recipe, **{'favorite_status': favorite_status})
+                return json.dumps(all_recipe_info), 200, {'ContentType':'application/json'}
+
             return json.dumps(recipe), 200, {'ContentType':'application/json'}
         except Exception as e:
             print("Exception:", e)
@@ -284,7 +302,7 @@ def save_new_recipe(title, ingredients, directions, author, time=None, text=None
         autor = author,
         tempo_preparo = time,
         texto = text,
-        imagem = image,
+        imagem = upload_file(image) if image != None else image,
         reviews = 0,
         stars = 0
         )
@@ -420,4 +438,20 @@ def submit_new_review(id, author, stars):
     
     db.session.add(review)
     db.session.commit()
+
+
+###########################################
+#### File Upload ##########################
+###########################################
+def upload_file(newFile):
+    # try:
+    #     filename = newFile.filename
+    # except:
+    #     filename = newFile[1]
+
+    # print(filename)
+    # path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    # newFile.save(path)
+    # return path
+    return None
 

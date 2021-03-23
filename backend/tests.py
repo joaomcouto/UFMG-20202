@@ -1,4 +1,5 @@
 import unittest
+import io
 
 from datetime import datetime
 from flask import request
@@ -320,6 +321,43 @@ class TestCase(BaseTestCase):
 
             self.assert200(response)
             self.assertEqual(result, None)
+
+## Tests Sprint 3 - Pedro 
+    def test_get_recipe_when_logged_returns_favorite_status_as_well(self):
+        newTitle = 'bolo de chocolate'
+        newIngredients = '2 ovos, 100ml leite, fermento'
+        newDirections = 'batedeira tudo e assar'
+
+        with self.client:
+            test_data = save_test_user()
+            newAuthor, token = self.login_id_and_token(test_data)
+            save_new_recipe(newTitle, newIngredients, newDirections, newAuthor)
+            save_new_favorite(1, newAuthor)
+            response = self.client.get(
+                '/receitas/1?token='+token, 
+                headers=get_headers('application/json', token))
+
+            data = json.loads(response.get_data())
+
+            self.assert200(response)
+            self.assertEqual(data['titulo'], newTitle)    
+            self.assertEqual(data['ingredientes'], newIngredients)    
+            self.assertEqual(data['modo_preparo'], newDirections)
+            self.assertEqual(data['favorite_status'], True)
+
+    # def test_save_file(self):
+    #     newTitle = 'bolo de chocolate'
+    #     newIngredients = '2 ovos, 100ml leite, fermento'
+    #     newDirections = 'batedeira tudo e assar'
+    #     newFile = (io.BytesIO(b"abcdef"), 'test.jpg')
+       
+    #     with self.client:
+    #         test_data = save_test_user()
+    #         newAuthor, token = self.login_id_and_token(test_data)
+    #         save_new_recipe(newTitle, newIngredients, newDirections, newAuthor, image = newFile)
+    #         result = get_recipe_by_id(1)
+    #         print(result)
+    #         self.assert200(200)
 
 # Testes Vinicius
     def test_home_endpoint(self):
