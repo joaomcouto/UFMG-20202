@@ -120,7 +120,8 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
 
 #### Listagem:
 - Um usuário do MyRecipes deseja visualizar se uma receita está entre suas favoritas, caso ele carregue ela individualmente
-- Um usuaário do MyRecipes deseja conseguir editar/deletar as Receitas dele.
+- Um usuário do MyRecipes deseja conseguir editar dele.
+- Um usuário do MyRecipes deseja conseguir deletar suas receitas.
 
 #### Perfil & Receitas:
 - Um usuário do MyRecipes deseja avaliar receitas, utilizando um sistema de nota (1 a 5)
