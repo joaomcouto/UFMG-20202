@@ -146,8 +146,7 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
   - Como de costume, utilizar testes de back end logo no começo do sprint permitiu um fluxo mais dinamico e efetivo de escrita de código, teste, correções e refatorações
   
 - Pontos Negativos: 
-  - 
-  - 
+  - Sprint foi mais corrida, com o fim de semestre acontecendo, então no geral o grupo sentiu um aperto maior.
 
 ### Kanban: https://github.com/VLamartine/pds2020-2/projects/1
 
