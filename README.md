@@ -123,15 +123,12 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
 - Um usuário do MyRecipes deseja conseguir editar dele.
 - Um usuário do MyRecipes deseja conseguir deletar suas receitas.
 
-#### Perfil & Receitas:
-- Um usuário do MyRecipes deseja utilizar novos filtros na sua pesquisa.
-
 #### Responsabilidades:
 - Pedro, Vinícius e João responsáveis pelas tarefas de backend, modelando o domínio do problema, implementando as APIs, refatorando erros de backend, elaborando novos testes (de integração e unitários) e efetivando alterações do banco: através de novas tabelas e alteração de colunas já existentes
 
 - Vitor responsável pelo frontend e implementação das telas com as quais o usuário interage para visualizar receitas cadastradas e favoritas, além de diversas outras modificações necessárias devido a mudanças nos endpoints
 
-- Joao responsável pela implementação de testes completos de frontend para
+- Joao responsável pela utilização do framework Selenium para implementar testes completos de todo o frontend, passando
 
 #### Testes:
 - João: https://github.com/VLamartine/pds2020-2/blob/77f9d7fe143ab72bec818a6aebe8cd09dc74673a/seleniumTesting/main.py#L27
@@ -151,6 +148,7 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
   
 - Pontos Negativos: 
   - Sprint foi mais corrida devido ao final do semestre, com o fim de semestre acontecendo, então no geral o grupo sentiu um aperto maior.
+  - Selenium demandou um tempo de desenvolvimento maior do que o esperavamos inicialmente, como consequência Vitor 
 
 ### Kanban: https://github.com/VLamartine/pds2020-2/projects/1
 
