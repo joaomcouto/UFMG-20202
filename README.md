@@ -120,9 +120,11 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
 
 #### Listagem:
 - Um usuário do MyRecipes deseja visualizar se uma receita está entre suas favoritas, caso ele carregue ela individualmente
+- Um usuaário do MyRecipes deseja conseguir editar/deletar as Receitas dele.
 
 #### Perfil & Receitas:
 - Um usuário do MyRecipes deseja avaliar receitas, utilizando um sistema de nota (1 a 5)
+- Um usuário do MyRecipes deseja utilizar novos filtros na sua pesquisa.
 
 #### Responsabilidades:
 - Pedro, Vinícius e João responsáveis pelas tarefas de backend, modelando o domínio do problema, implementando as APIs, refatorando erros de backend, elaborando novos testes (de integração e unitários) e efetivando alterações do banco: através de novas tabelas e alteração de colunas já existentes
