@@ -29,18 +29,20 @@ const Create = () => {
 
   React.useEffect(() => {
     // Buscar receita no back se tiver um Id
-    const url = `${process.env.REACT_APP_SERVER_URL}/receitas/${id}`;
-    setEditForm(true);
-    fetch(url).then(data => data.json()).then(response => {
-      console.log('After fetching');
-      setFormData({
-        title: response.titulo,
-        time: response.tempo_preparo,
-        servings: response.texto,
-        ingredients: response.ingredientes,
-        howTo: response.modo_preparo,
+    if(id){
+      const url = `${process.env.REACT_APP_SERVER_URL}/receitas/${id}`;
+      setEditForm(true);
+      fetch(url).then(data => data.json()).then(response => {
+        console.log('After fetching');
+        setFormData({
+          title: response.titulo,
+          time: response.tempo_preparo,
+          servings: response.texto,
+          ingredients: response.ingredientes,
+          howTo: response.modo_preparo,
+        });
       });
-    });
+    }    
   }, [id]);
 
   const handleImageChange = (e) => {

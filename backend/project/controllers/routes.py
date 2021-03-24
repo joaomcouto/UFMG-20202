@@ -121,8 +121,7 @@ def edit_recipe():
         return OK
     else:
         try:
-            data = request.get_json()
-            #print(data)
+            data = request.form.to_dict()
             ID = data['id']
             title = data['title']
             ingredients = data['ingredients']
