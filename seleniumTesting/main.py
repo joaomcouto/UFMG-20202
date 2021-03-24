@@ -24,6 +24,8 @@ class PythonOrgSearch(unittest.TestCase):
         self.driver.close()
 
 
+#Testes Sprint 3 - João
+
 class IndexPageRefresher(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Chrome("/home/joaomcouto/chromedriver") 
