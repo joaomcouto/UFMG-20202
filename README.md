@@ -130,7 +130,7 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
 - Vitor e João responsável pelo frontend e implementação das telas com as quais o usuário interage para visualizar receitas cadastradas e favoritas, além de diversas outras modificações necessárias devido a mudanças nos endpoints
 
 #### Testes:
-- João: 
+- João: https://github.com/VLamartine/pds2020-2/blob/77f9d7fe143ab72bec818a6aebe8cd09dc74673a/seleniumTesting/main.py#L27
 
 - Pedro: https://github.com/VLamartine/pds2020-2/blob/beb956668f351a20660489ddde9cc73c2fa0fdd5/backend/tests.py#L325
 
@@ -140,13 +140,14 @@ O MyRecipes permite cadastro de receitas que podem ser compartilhadas entre usu�
 #### Retrospective
 
 - Pontos positivos:
-  - Conseguimos cumprir todas as histórias propostas (como listados acima, sprint 2)
+  - Amplo sucesso na implementação do Selenium
+  - Conseguimos cumprir todas as histórias propostas (como listados acima, sprint 3)
   - Ótima comunicação do grupo, conseguimos inclusive parear para resolver problemas, refatorar o código e trocar informações para melhorar a implementação.
   - Como de costume, utilizar testes de back end logo no começo do sprint permitiu um fluxo mais dinamico e efetivo de escrita de código, teste, correções e refatorações
   
 - Pontos Negativos: 
-  - a
-  - b
+  - 
+  - 
 
 ### Kanban: https://github.com/VLamartine/pds2020-2/projects/1
 
