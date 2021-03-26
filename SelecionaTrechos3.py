@@ -1,12 +1,31 @@
-# Este programa python recebe como contribuicoes para a publicacao de um video listas com trechos de intereSse e trechos que devem ser vetados. Cada trecho é representado pelos indices dos frames de inicio e fim
-# As contribuicoes vem de diversas fontes, e portanto podem estar desordenadas ou sobrepostas
-# Seu objetivo e gerar uma lista de trechos a publicar, ordenada, sem sobreposicoes, cobrindo apenas os trechos de interesse mas nao os trechos vetados
+# Este código é uma função de uma plataforma de edição de vídeo colobarativa. 
+# No contexto da edição de um vídeo especifico o administrador envia duas listas:
+            #Uma lista contendo tuplas de trechos que seus colaboradores mais gostaram
+            #Uma lista contendo tuplas de trechos que seus colaboradores acham que devem ser removidos
 
-# Revisao 1: Legibilidade:      Nomeclatura orientada a tipos de dados dificulta entendimento do codigo, prejudicando manutenção e evolução
-# Revisao 2: Sintaxe:           Comando "return" nao tem a mesma identacao da definicao da funcao, "def" e sim a dos comandos da funcao que terminam em sua declaração
+# Cada trecho é representado por uma tupla (indice dos frame de inicio,indice do frame final)
+
+# Ambas as listas de entrada podem estar desordenadas e com trechos com sobreposições
+
+# Assim, a funcão deste este programa python é receber essas duas listas e retornar uma lista final de trechos
+# Essa lista final é construida de tal forma que
+     # Contemple todos os trechos da primeira lista (trechos mais gostados) desde que, 
+     # não estejam dentro da lista de trechos a serem removidos
+# Ou seja, o programa 
+    # 1 - Ordena e elimina sobreposições (fazendo merges de trechos) de cada lista e depois,
+    # 2 - elimina da lista de inclusão todos os trechos que estejam na lista de exclusão
+
+# Revisao 1: Legibilidade:      Variaveis com nomes não semânticos, torna dificil entender e, por consequencia manter e evoluir o codigo
+
+# Revisao 2: Sintaxe:           Comando "return" das funções nao tem a mesma identacao da definicao do "def" delas
+
 # Revisao 3: Bug:               O programa tenta percorrer retirar elementos mesmo de listas vazias
 
-#  CODIGO
+# Revisao 4: Logica/Correção:   Na repetição da função Removeintervalos, espera-se que a variavel de controle do loop varie necessariamente a cada iteracao e em cada iteraçao tenha um tratammento adequado.
+#                               O exame dos blocos if mostra duas atribuições ao "ProximoCandidato" dentro de uma mesma iteração.
+#                               Sintomaticamente, testes apresentam resultados com trechos vetados
+
+# Revisao 5: Legibilidade:      Ausencia de comentarios esclarecendo razões das opções de implementação
 
 def NormalizaLista ( ListaTrechos )   :
     ListaNormalizada = [ ]
