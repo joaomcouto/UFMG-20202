@@ -7,26 +7,18 @@ temp = sys.argv[1]
 pocPeerIp = temp.split(":")[0]
 pocPeerPort = int(temp.split (":")[1])
 
-
-
 print("POC IP:", pocPeerIp, "\n")
 print("POC port:", pocPeerPort, "\n")
-
 
 desiredChunks = [int(a) for a in sys.argv[2].split(",")]
 
 print("Desired Chunks:", desiredChunks, "\n")
 
 
-
-
-#Cliente deve conseguir receber chunks de varios peers simultaneamente
-
 sendMsg = (1).to_bytes(2,'big') 
 sendMsg += (len(desiredChunks)).to_bytes(2,'big') 
 for chunkId in desiredChunks:
     sendMsg += (chunkId).to_bytes(2,'big') 
-
 
 print(sendMsg) 
 
@@ -37,7 +29,7 @@ udpSocket.setblocking(0)
 
 
 chunkPeers = {k:[] for k in desiredChunks}
-#print(chunkPeers)
+
 
 start = time.time()
 timeOut = 5
@@ -60,10 +52,9 @@ while True: #Loop recebimento chunk info
                 matchedChunkId = int.from_bytes(matchedChunkList[i:i+2], 'big')
                 chunkPeers[matchedChunkId].append(udpAddr)
     except:
-        #print("teste")
-        #time.sleep(1)
+
         pass
-   # print("teste2") 
+
 
 
     end = time.time()

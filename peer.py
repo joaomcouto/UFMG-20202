@@ -23,18 +23,9 @@ for chunk in keyValuesFile:
     chunkString = chunk.split(": ")[1]
     localStorage[chunkId] = chunkString.strip("\n ") 
 
-#print(localStorage.keys())
-#print(localStorage.values())
-#print(localStorage)
 
 udpSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 udpSocket.bind((localIp, localPort))
-
-
-#Peers precisam conseguir lidar com varias consultas ao mesmo tempo
-#Peers precisam conseguir transmitir varios chinks a clientes diferentes ao mesmo tempo
-
-
 
 
 while True:
@@ -145,16 +136,3 @@ while True:
 
         udpSocket.sendto(sendMsg, udpAddr)
             
-        
-
-
-
-        #Problema ate segunda ordem: vizinho chamar vizinhos que o chamam e isso ficar em loop e floodar o buffer
-
-
-
-
-#     print(data)
-#     print(udpAddr)
-#     sendMsg = (1).to_bytes(2,'big') 
-#     udpSocket.sendto(sendMsg , (udpAddr))
