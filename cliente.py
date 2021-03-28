@@ -115,7 +115,7 @@ while True: #Loop recebimento de chunks
         dataSenderPort = udpAddr[1]
 
         print("Cliente recebeu chunk ", int.from_bytes(receivedData[2:4],'big') ,"de", udpAddr, "\n")
-        print("A mensagem:", receivedData)
+        #print("A mensagem:", receivedData)
 
         if(receivedData[1] == 5):
             receivedChunkId = int.from_bytes(receivedData[2:4],'big')
