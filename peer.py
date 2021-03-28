@@ -1,4 +1,3 @@
-
 import sys
 import socket 
 import os
@@ -16,7 +15,9 @@ print("E seus vizinhos são", neighbors, "\n")
 
 keyValuesFile = open(keyValuesFileName, "r")
 
-localStorage = dict()
+localStorage = dict() #Trata-se de um dicionário indexado pelos índices de chunks que um dado peer tem disponível localmente. 
+#Cada indice de chunk é então mapeado para uma string que guarda o nome do arquivo associado com o chunk. 
+#É utilizado para verificar quais arquivos estão presentes no armazenamento local do peer
 
 for chunk in keyValuesFile:
     chunkId = int(chunk[0])
@@ -54,7 +55,16 @@ while True:
 
         #Respondendo ao cliente: chunck info
         sendMsg = (3).to_bytes(2 , 'big')
-        chuncksInStorage = []
+
+        chuncksInStorage = [] #Uma lista utilizada na construção de mensagens de CHUNK_INFO: 
+        #dada uma lista de chunks desejados por um cliente, seja via QUERY, seja via HELLO, 
+        #o peer verifica a presença de cada chunk nas chaves do dicionário localStorage. 
+        #Os chunks que estiverem presentes estão disponiveis localmente no peer portanto têm seus índice apendados a esta lista. 
+        #Assim ao final temos uma lista de chunks para os quais houve casamento entre os chunks requisitados por um cliente 
+        #e os chunks presentes no peer.
+
+
+
         for cId in chunckList:
             if(int(cId) in localStorage.keys()):
                 chuncksInStorage.append(int(cId))
@@ -87,7 +97,13 @@ while True:
 
 
         #respondendo chunck info para cliente apartir de query
-        chunckList = []
+
+        chunckList = [] #apenas uma lista auxiliar utilizada para armazenar os índices dos chunks extraídos de uma query. 
+        #É utilizada para iteramos sobre os chunks da query e então verificar se estão presents no localStorage do peer, 
+        #auxiliando na construção de transmissões do tipo CHUNCK_INFO
+
+
+
         queryChunkCount = int.from_bytes(receivedData[10:12], 'big')
         queryIdList = receivedData[12:]
 
