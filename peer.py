@@ -68,11 +68,21 @@ while True:
 
         print("POC recebeu do cliente a lista", chunckList)
         temp=[]
-        for cId in chunckList:
-            temp.append(int(cId))
-            if(int(cId) in localStorage.keys()):
-                chuncksInStorage.append(int(cId))
+        # for cId in chunckList:
+        #     temp.append(int(cId))
+        #     if(int(cId) in localStorage.keys()):
+        #         chuncksInStorage.append(int(cId))
+        # sendMsg += (len(chuncksInStorage)).to_bytes(2, 'big')
+
+
+        for ch in range(0,(int.from_bytes(chunckCount,'big')*2)-1,2):
+            temp.append(int.from_bytes(chunckList[ch:ch+2], 'big'))
+            if(int.from_bytes(chunckList[ch:ch+2], 'big') in localStorage.keys()):
+                chuncksInStorage.append(int.from_bytes(chunckList[ch:ch+2], 'big'))
         sendMsg += (len(chuncksInStorage)).to_bytes(2, 'big')
+
+
+
 
         print("Que tem os chunks," , temp)
 
@@ -107,8 +117,6 @@ while True:
         chunckList = [] #apenas uma lista auxiliar utilizada para armazenar os índices dos chunks extraídos de uma query. 
         #É utilizada para iteramos sobre os chunks da query e então verificar se estão presents no localStorage do peer, 
         #auxiliando na construção de transmissões do tipo CHUNCK_INFO
-
-
 
         queryChunkCount = int.from_bytes(receivedData[10:12], 'big')
         queryIdList = receivedData[12:]
