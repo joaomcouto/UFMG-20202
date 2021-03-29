@@ -22,7 +22,6 @@ localStorage = dict() #Trata-se de um dicionário indexado pelos índices de chu
 
 for chunk in keyValuesFile:
     chunkId = int(chunk.split(": ")[0])
-    #chunkId = int(chunk[0])
     chunkString = chunk.split(": ")[1]
     localStorage[chunkId] = chunkString.strip("\n ") 
 
@@ -54,7 +53,6 @@ while True:
             neighborPort = int(neighbor.split(":")[1])
             print("Peer mandando query pra seu vizinho", neighborIp,neighborPort) 
             udpSocket.sendto(sendMsg , (neighborIp, neighborPort))
-        #print(sendMsg) #Ta certin
 
         #Respondendo ao cliente: chunck info
         sendMsg = (3).to_bytes(2 , 'big')
@@ -68,21 +66,12 @@ while True:
 
         print("POC recebeu do cliente a lista", chunckList)
         temp=[]
-        # for cId in chunckList:
-        #     temp.append(int(cId))
-        #     if(int(cId) in localStorage.keys()):
-        #         chuncksInStorage.append(int(cId))
-        # sendMsg += (len(chuncksInStorage)).to_bytes(2, 'big')
-
 
         for ch in range(0,(int.from_bytes(chunckCount,'big')*2)-1,2):
             temp.append(int.from_bytes(chunckList[ch:ch+2], 'big'))
             if(int.from_bytes(chunckList[ch:ch+2], 'big') in localStorage.keys()):
                 chuncksInStorage.append(int.from_bytes(chunckList[ch:ch+2], 'big'))
         sendMsg += (len(chuncksInStorage)).to_bytes(2, 'big')
-
-
-
 
         print("Que tem os chunks," , temp)
 
@@ -112,7 +101,7 @@ while True:
                     udpSocket.sendto(sendMsg , (neighborIp, neighborPort))
 
 
-        #respondendo chunck info para cliente apartir de query
+        #Respondendo chunck info para cliente apartir de query
 
         chunckList = [] #apenas uma lista auxiliar utilizada para armazenar os índices dos chunks extraídos de uma query. 
         #É utilizada para iteramos sobre os chunks da query e então verificar se estão presents no localStorage do peer, 
@@ -122,7 +111,6 @@ while True:
         queryIdList = receivedData[12:]
 
         for i in range(0,(queryChunkCount*2)-1,2): 
-            #chunckList.append(int.from_bytes(queryIdList[i],'big'))
             chunckList.append(int.from_bytes(queryIdList[i:i+2], 'big'))
         print("Peer identificou na query os chunks ", chunckList)
 
@@ -139,7 +127,6 @@ while True:
         print("Peer QUERY verificou seus chuncks e  vai responder chunck info:" , sendMsg)
         queryIp = ""
         for byte in receivedData[2:6]:
-            #queryIp += int.from_bytes(byte, 'big')
             queryIp += str(byte)
             queryIp += "."
         queryIp = queryIp[:-1]
@@ -159,12 +146,8 @@ while True:
         sendMsg += requestedChunk.to_bytes(2,'big')
         sendMsg += os.path.getsize(localStorage[requestedChunk]).to_bytes(2,'big')
         f2 = open(localStorage[requestedChunk], "rb")
-        #print("Abrir", localStorage[requestedChunk])
         sendMsg +=  f2.read(1024)
 
-        #print("Bytes no final", sendMsg[-5:])
-
-        #print("Peer enviando mensagem," , sendMsg)
-
         udpSocket.sendto(sendMsg, udpAddr)
+        f2.close()
             

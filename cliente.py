@@ -17,14 +17,12 @@ desiredChunks = [int(a) for a in sys.argv[2].split(",")] #trata-se de uma lista 
 
 print("Desired Chunks:", desiredChunks, "\n")
 
-
 sendMsg = (1).to_bytes(2,'big') 
 sendMsg += (len(desiredChunks)).to_bytes(2,'big') 
 for chunkId in desiredChunks:
     sendMsg += (chunkId).to_bytes(2,'big') 
 
-#print("Cliente fez contato com POC via mensagem", sendMsg, "\n")
-#print(sendMsg) 
+print("Cliente fez contato com POC com a mensagem", sendMsg, "\n")
 
 udpSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 udpSocket.sendto(sendMsg , (pocPeerIp, pocPeerPort)) #Ponto de contato inicial
@@ -62,11 +60,7 @@ while True: #Loop recebimento chunk info
                 matchedChunkId = int.from_bytes(matchedChunkList[i:i+2], 'big')
                 chunkPeers[matchedChunkId].append(udpAddr)
     except:
-
         pass
-
-
-
     end = time.time()
     if( (end - start) > timeOut):
         break 
@@ -79,8 +73,6 @@ peerIndexPerChunk = [] #uma lista que guarda o índice do peer dentro de cada li
 #A construção dessa lista é randomica: para cada chunk selecionamos um peer qualquer dentre as opções presentes no chunkPeers 
 #e guardamos o indice dele nesta lista.
         
-
-
 
 for key in chunkPeers.keys():
     if(len(chunkPeers[key]) > 0):
@@ -133,7 +125,6 @@ while True: #Loop recebimento de chunks
 for i,key in enumerate(chunkPeers.keys()):
     if(peerIndexPerChunk[i] == -1):
         f.write("{}:{} - {}\n".format("0.0.0.0","0",key))
-
 
 f.close()
 
