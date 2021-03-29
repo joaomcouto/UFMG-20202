@@ -11,6 +11,7 @@ neighbors = sys.argv[3:]
 print("Este peer escuta no IP", localIp, "\n")
 print("Na porta", localPort, "\n")
 print("Seu arquivo keyValues é o", keyValuesFileName, "\n")
+
 print("E seus vizinhos são", neighbors, "\n")
 
 keyValuesFile = open(keyValuesFileName, "r")
@@ -20,10 +21,12 @@ localStorage = dict() #Trata-se de um dicionário indexado pelos índices de chu
 #É utilizado para verificar quais arquivos estão presentes no armazenamento local do peer
 
 for chunk in keyValuesFile:
-    chunkId = int(chunk[0])
+    chunkId = int(chunk.split(": ")[0])
+    #chunkId = int(chunk[0])
     chunkString = chunk.split(": ")[1]
     localStorage[chunkId] = chunkString.strip("\n ") 
 
+print("Ele tem os chunks", localStorage.keys())
 
 udpSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 udpSocket.bind((localIp, localPort))
@@ -63,12 +66,15 @@ while True:
         #Assim ao final temos uma lista de chunks para os quais houve casamento entre os chunks requisitados por um cliente 
         #e os chunks presentes no peer.
 
-
-
+        print("POC recebeu do cliente a lista", chunckList)
+        temp=[]
         for cId in chunckList:
+            temp.append(int(cId))
             if(int(cId) in localStorage.keys()):
                 chuncksInStorage.append(int(cId))
         sendMsg += (len(chuncksInStorage)).to_bytes(2, 'big')
+
+        print("Que tem os chunks," , temp)
 
         print("Peer tem os seguintes chunks:", chuncksInStorage)
         for i in chuncksInStorage:
@@ -147,6 +153,8 @@ while True:
         f2 = open(localStorage[requestedChunk], "rb")
         #print("Abrir", localStorage[requestedChunk])
         sendMsg +=  f2.read(1024)
+
+        #print("Bytes no final", sendMsg[-5:])
 
         #print("Peer enviando mensagem," , sendMsg)
 

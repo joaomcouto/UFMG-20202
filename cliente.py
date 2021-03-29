@@ -23,7 +23,8 @@ sendMsg += (len(desiredChunks)).to_bytes(2,'big')
 for chunkId in desiredChunks:
     sendMsg += (chunkId).to_bytes(2,'big') 
 
-print(sendMsg) 
+#print("Cliente fez contato com POC via mensagem", sendMsg, "\n")
+#print(sendMsg) 
 
 udpSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 udpSocket.sendto(sendMsg , (pocPeerIp, pocPeerPort)) #Ponto de contato inicial
@@ -91,7 +92,7 @@ for i,key in enumerate(chunkPeers.keys()):
     if(peerIndexPerChunk[i] != -1):
         print("acessando peers da key," , key, "\n")
         print("que são", chunkPeers[key])
-        print("pegaremos o de index", i, "ou seja, " ,  peerIndexPerChunk[i]) #Ta correto era erro no random
+        print("pegaremos o de index", i, "ou seja, " ,  peerIndexPerChunk[i]) 
 
         addrForGet = chunkPeers[key][peerIndexPerChunk[i]]
         sendMsg = (4).to_bytes(2, 'big')
@@ -105,21 +106,24 @@ for i,key in enumerate(chunkPeers.keys()):
 start = time.time()
 timeOut = 5
 f = open("output-" + udpSocket.getsockname()[0] + ".log" , "w")
+
 while True: #Loop recebimento de chunks
     receivedData = bytes()
 
     try:
-        receivedData, udpAddr  = udpSocket.recvfrom(1024)
+        receivedData, udpAddr  = udpSocket.recvfrom(2048)
 
         dataSenderIp = udpAddr[0]
         dataSenderPort = udpAddr[1]
 
         print("Cliente recebeu chunk ", int.from_bytes(receivedData[2:4],'big') ,"de", udpAddr, "\n")
-        #print("A mensagem:", receivedData)
 
         if(receivedData[1] == 5):
             receivedChunkId = int.from_bytes(receivedData[2:4],'big')
             f.write("{}:{} - {}\n".format(dataSenderIp,dataSenderPort,receivedChunkId))
+            fOut = open("BigBuckBunny_RECEIVED_" + str(receivedChunkId) + ".m4s" , "wb")
+            fOut.write(receivedData[6:])
+            fOut.close()
     except:
         pass
     end = time.time()
