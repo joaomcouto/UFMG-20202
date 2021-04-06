@@ -1,0 +1,29 @@
+Meu neom eh Joao marcos acouto vou apresentar meu trabalho, vamos la
+
+
+Calibracao da camera, usei matlab ao inves de cotave, que estava crashando repetidas vezes.. sem muito segredo ai, só peguei frames aleatorios do video e calibrei
+
+Segundo passo, ja passamos para indentficaicão dos alvos padrão, a seguir as 3 rotações dele, uma a cada 90 graus.. Aqui já temos as coordenadas das quatro pontas dele, que são tambem rotacionadas para identificar o rot1, rot2,rot3
+
+Agora chegamos ja na parte de deteccção de alvos, para determinar aonde que as renderizações deverão ser posicionadas
+
+Dei tudo bem compartimetalizado aqui.. Primeiro fazemos greyscale, binarização, contornos, identiricação de poligonos, filtragem por aqueles que tem 4 lados. Para estes, calculamos a homografia, fazer a mudança de perspectiva e entao fazemos a comparação com todas as rotações do alvo /...
+No caso de alguma dessa diferenças absoluta entre ele os alvos for menor que um dado threshold então classificamos isso como um match
+
+
+Uma vez nesse ponto, o que  falta pra fazer o processamento de um video inteiror é simplesmente aplicar esse processos em todos os frames do video. Assim ao final pra cada frame temos uma lista de duplas, onde cada dupla é o contorno de um poligono e o indice da rotação com a qual ele deu match
+
+Dai uma abstração acima temos uma lista dessas listas, onde cada posição se refere a um frame do video
+
+Com isso em mãos basta calcular os parametros extrinsecos usando solve pnp, acho que é a parte mais direto a ponto, recebe os instrinsecos, os pontos equivalentes entre o alvo e cada poligono, etc
+
+E ai chegamos na aprte mais interessante que foi a renderização por OpenGL.. Aqui ta um pouco fora de ordem comparado com o processo de renderização pq né funções tem que estar declaradas antes de serem usadas, entao vou so explicar por alto que qui cada um faz
+
+
+differ_counter é só uma auxiliar que utilizei pra calcular as arestas de um cubo dado os vertices... Dado dois vertices ele só retorna quantas coordenadas eles se diferem.. Dai no caso de ser apenas uma voce sabe que eles estão conectados por uma aresta no cubo.. Dai assim consigo gerar as duplas de vertices que representam arestas... nada demais só não tava a fim de fazer na mão 
+
+Dai eu removo um vertice que to usando como marcador de direção que é esse 1,2.. Eu desenho ele separadamente com uma cor diferenciada antes de ir pro resto
+
+O init_open_gl é o que se esperar né, seta parametros pra maquina de estado do openGL, igual no esqueleto então enfim, proxima
+
+Background, ta mais ou menos igual o que foi explicado na aula 
