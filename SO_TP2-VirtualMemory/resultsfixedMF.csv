@@ -1,0 +1,220 @@
+Executando Simulador...
+Arquivo de Entrada: compilador.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 4 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 4343
+Dirty Pages: 928
+Tempo de Execução: 0.104897
+
+Leitura: 892816, Escrita: 107184
+Executando Simulador...
+Arquivo de Entrada: compilador.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 8 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 7498
+Dirty Pages: 1697
+Tempo de Execução: 0.103026
+
+Leitura: 892816, Escrita: 107184
+Executando Simulador...
+Arquivo de Entrada: compilador.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 16 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 15231
+Dirty Pages: 3021
+Tempo de Execução: 0.106904
+
+Leitura: 892816, Escrita: 107184
+Executando Simulador...
+Arquivo de Entrada: compilador.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 32 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 22969
+Dirty Pages: 3823
+Tempo de Execução: 0.105159
+
+Leitura: 892816, Escrita: 107184
+Executando Simulador...
+Arquivo de Entrada: compilador.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 64 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 30122
+Dirty Pages: 4999
+Tempo de Execução: 0.106238
+
+Leitura: 892816, Escrita: 107184
+Executando Simulador...
+Arquivo de Entrada: matriz.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 4 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 2829
+Dirty Pages: 765
+Tempo de Execução: 0.106821
+
+Leitura: 932830, Escrita: 67170
+Executando Simulador...
+Arquivo de Entrada: matriz.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 8 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 3002
+Dirty Pages: 990
+Tempo de Execução: 0.108975
+
+Leitura: 932830, Escrita: 67170
+Executando Simulador...
+Arquivo de Entrada: matriz.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 16 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 3782
+Dirty Pages: 1260
+Tempo de Execução: 0.108178
+
+Leitura: 932830, Escrita: 67170
+Executando Simulador...
+Arquivo de Entrada: matriz.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 32 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 5846
+Dirty Pages: 1953
+Tempo de Execução: 0.109493
+
+Leitura: 932830, Escrita: 67170
+Executando Simulador...
+Arquivo de Entrada: matriz.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 64 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 10409
+Dirty Pages: 3158
+Tempo de Execução: 0.105843
+
+Leitura: 932830, Escrita: 67170
+Executando Simulador...
+Arquivo de Entrada: simulador.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 4 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 4510
+Dirty Pages: 1855
+Tempo de Execução: 0.109658
+
+Leitura: 839017, Escrita: 160983
+Executando Simulador...
+Arquivo de Entrada: simulador.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 8 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 4773
+Dirty Pages: 2085
+Tempo de Execução: 0.110067
+
+Leitura: 839017, Escrita: 160983
+Executando Simulador...
+Arquivo de Entrada: simulador.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 16 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 6289
+Dirty Pages: 2678
+Tempo de Execução: 0.108830
+
+Leitura: 839017, Escrita: 160983
+Executando Simulador...
+Arquivo de Entrada: simulador.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 32 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 9264
+Dirty Pages: 3668
+Tempo de Execução: 0.116932
+
+Leitura: 839017, Escrita: 160983
+Executando Simulador...
+Arquivo de Entrada: simulador.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 64 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 12757
+Dirty Pages: 4424
+Tempo de Execução: 0.112904
+
+Leitura: 839017, Escrita: 160983
+Executando Simulador...
+Arquivo de Entrada: compressor.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 4 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 317
+Dirty Pages: 0
+Tempo de Execução: 0.105893
+
+Leitura: 877581, Escrita: 122419
+Executando Simulador...
+Arquivo de Entrada: compressor.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 8 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 255
+Dirty Pages: 0
+Tempo de Execução: 0.106673
+
+Leitura: 877581, Escrita: 122419
+Executando Simulador...
+Arquivo de Entrada: compressor.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 16 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 209
+Dirty Pages: 0
+Tempo de Execução: 0.107578
+
+Leitura: 877581, Escrita: 122419
+Executando Simulador...
+Arquivo de Entrada: compressor.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 32 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 236
+Dirty Pages: 47
+Tempo de Execução: 0.105563
+
+Leitura: 877581, Escrita: 122419
+Executando Simulador...
+Arquivo de Entrada: compressor.log
+Tamanho da memoria: 4096 KB
+Tamanho da pagina: 64 KB
+Técnica de Reposição: 2a
+Total de Acessos: 1000000
+Pagefaults: 372
+Dirty Pages: 131
+Tempo de Execução: 0.108415
+
+Leitura: 877581, Escrita: 122419
