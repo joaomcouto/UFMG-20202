@@ -1,5 +1,6 @@
 {
     "files.associations": {
+<<<<<<< HEAD
         "*.tcc": "cpp",
         "algorithm": "cpp",
         "random": "cpp",
@@ -56,5 +57,8 @@
         "streambuf": "cpp",
         "thread": "cpp",
         "typeinfo": "cpp"
+=======
+        "tp1_v2.C": "cpp"
+>>>>>>> r2remote/main
     }
 }
