@@ -1,0 +1,1 @@
+Para cada React Component criar uma pasta contendo um arquivo jsx contendo o conteúdo do componente e um arquivo css contendo o estilo utilizado.

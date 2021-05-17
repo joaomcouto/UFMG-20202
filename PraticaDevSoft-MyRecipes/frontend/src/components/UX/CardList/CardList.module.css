@@ -1,0 +1,22 @@
+.Card {
+  margin: 1rem;
+  background-color: #ffffcb !important;
+}
+
+.Link {
+  text-decoration: none;
+  color: black;
+}
+
+.w_100{
+  width: 100%;
+}
+
+.image {
+  max-height: 100px;
+}
+
+.card_body {
+  margin-top: 1rem;
+  margin-left: 1rem;
+}

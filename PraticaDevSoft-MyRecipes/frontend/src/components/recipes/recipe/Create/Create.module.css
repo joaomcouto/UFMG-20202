@@ -1,0 +1,96 @@
+.w80 {
+  width: 80% !important;
+}
+
+.mAuto {
+  margin: 0 auto 0 auto;
+}
+
+.contentEvenly {
+  justify-content: space-evenly;
+}
+
+.container {
+  background-color: #efefef;
+  flex-grow: 1;
+  padding-top: 1rem;
+}
+
+.title {
+  width: 80% !important;
+  margin: 0 auto;
+}
+
+.name {
+  background-color: #929292 !important;
+  color: white !important;
+  font-size: 1.25rem !important;
+  border: 3px solid #525252 !important;
+  border-radius: 10px !important;
+}
+
+.name::placeholder {
+  color: white !important;
+}
+
+.recipe_info {
+  background: #929292;
+  width: 80%;
+  border-radius: 10px;
+  padding: 1rem;
+  border: 3px solid #525252;
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+.info_title {
+  width: 100%;
+}
+
+.portion {
+  margin: 1rem auto 0 auto;
+}
+
+.image {
+  margin-bottom: 1rem;
+}
+
+.image_submit { 
+  background: white;
+  width: 100%;
+  color: black;
+}
+
+.image_submit_input {
+  display: none;
+}
+
+.textarea {
+  width: 100%;
+  height: 200px;
+  border: none;
+  border-radius: 10px;
+}
+
+.submit {
+  font-size: 1.5rem !important;
+}
+
+.error_message {
+  color: red;
+}
+@media(min-width:992px){
+  .container {
+    padding: 0;
+    background-color: white;
+  }
+  .form {
+    width: 50%;
+    background: #efefef;
+    padding-top: 1rem;
+  }
+
+  .submit {
+    font-size: 1rem !important
+  }
+}

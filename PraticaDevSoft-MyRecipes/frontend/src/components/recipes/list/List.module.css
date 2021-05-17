@@ -1,0 +1,39 @@
+ .Container {
+  background: #efefef;
+  flex-grow: 1;
+}
+
+.search_bar {
+  width: calc(100% - 2rem);
+  margin: 0.5rem 1rem;
+}
+
+.help_button {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  outline: none;
+  border: none;
+}
+
+.exemplo {
+  border: 1px solid;
+  padding: 0.5rem;
+  border-radius: 10px;
+  background: #eee;
+}
+@media (min-width: 992px){
+  
+  .Container > div {
+    width: 50%;
+  }
+  
+  .Container h4 {
+    text-align: center;
+  }
+  
+  .search_bar {
+    margin: 1rem auto;
+    width: 100%;
+  }
+}
